@@ -12,7 +12,7 @@ export function MobileMePage() {
 
   const handleSignOut = async () => {
     await signOut()
-    navigate('/login')
+    navigate('/mobile/login', { replace: true })
   }
 
   const ITEMS = [
