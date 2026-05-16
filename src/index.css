@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 60 9% 98%;
+    --foreground: 140 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 140 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 10% 8%;
+    --primary: 142 76% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 140 10% 94%;
+    --secondary-foreground: 140 10% 15%;
+    --muted: 140 6% 94%;
+    --muted-foreground: 140 5% 45%;
+    --accent: 140 10% 94%;
+    --accent-foreground: 142 76% 29%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 140 8% 90%;
+    --input: 140 8% 90%;
+    --ring: 142 76% 29%;
+    --radius: 0.625rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+  .slide-in {
+    animation: slideUp 0.4s ease-out;
+  }
+}
