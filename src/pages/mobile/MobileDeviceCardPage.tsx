@@ -38,11 +38,15 @@ const HAZARD_LABEL: Record<string, string> = {
 }
 
 function eventLabel(e: LifecycleEvent) {
+  const byActor = e.actor_name ? `by ${e.actor_name}` : ''
+  const loc = e.location ?? ''
+  const actorAndLoc = [byActor, loc].filter(Boolean).join(' · ')
+
   switch (e.event_type) {
-    case 'registered':  return { title: 'Registered', sub: e.location ?? e.actor_name ?? '' }
-    case 'transferred': return { title: 'Ownership transferred', sub: e.metadata?.to_email ?? '' }
-    case 'disposed':    return { title: 'Disposed for recycling', sub: e.location ?? '' }
-    default:            return { title: e.event_type, sub: e.actor_name ?? '' }
+    case 'registered':  return { title: 'Registered', sub: actorAndLoc }
+    case 'transferred': return { title: 'Ownership transferred', sub: e.metadata?.to_email ?? actorAndLoc }
+    case 'disposed':    return { title: 'Disposed for recycling', sub: actorAndLoc }
+    default:            return { title: e.event_type, sub: actorAndLoc }
   }
 }
 
