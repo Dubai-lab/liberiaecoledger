@@ -1,20 +1,70 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Leaf, TrendingUp, Loader2 } from 'lucide-react'
+import { Leaf, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 import type { EcoCredit } from '@/types/database'
 
 const LRD_PER_CREDIT = 150
 
-function fmt(n: number) {
-  return new Intl.NumberFormat('en-LR').format(n)
+// Tier thresholds (lifetime earned)
+const TIERS = [
+  { id: 'seedling',  label: 'SEEDLING',  min: 0,    max: 499  },
+  { id: 'sapling',   label: 'SAPLING',   min: 500,  max: 1999 },
+  { id: 'steward',   label: 'STEWARD',   min: 2000, max: 4999 },
+  { id: 'champion',  label: 'CHAMPION',  min: 5000, max: Infinity },
+]
+
+const TIER_BENEFITS: Record<string, string> = {
+  seedling: 'Seedling tier gets you started earning EcoCredits for every responsibly recycled device.',
+  sapling:  'Sapling tier unlocks priority device pickup scheduling and 1.2× credits on bulk disposals.',
+  steward:  'Steward tier unlocks free disposal pickup, 1.5× credits on rare-earth recovery, and priority warranty support.',
+  champion: 'Champion tier unlocks all benefits plus an annual EcoFund grant match and VIP recycling partner access.',
+}
+
+// Redeem catalogue (Liberia-appropriate items)
+const CATALOGUE = [
+  { id: 'airtime',   title: 'LRD 500 mobile airtime',      partner: 'Lonestar / Orange MTN', cost: 250, category: 'Mobile money' },
+  { id: 'solar',     title: 'Off-grid solar lantern',       partner: 'SolarAid Liberia',      cost: 900, category: 'Green energy' },
+  { id: 'tree',      title: 'Tree planted in your name',    partner: 'FDA Liberia',           cost: 120, category: 'Conservation' },
+  { id: 'grocery',   title: 'LRD 1,000 grocery voucher',   partner: 'Monrovia Market',       cost: 500, category: 'Grocery' },
+  { id: 'repair',    title: '20% off next device repair',   partner: 'EcoLedger partner',     cost: 400, category: 'OEM partner' },
+  { id: 'ecofund',   title: 'EcoFund donation match',       partner: 'NGO partner',           cost: 50,  category: 'Charity' },
+]
+
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime()
+  const mins  = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days  = Math.floor(diff / 86400000)
+  const weeks = Math.floor(days / 7)
+  if (mins < 60)   return `${mins}m ago`
+  if (hours < 24)  return `${hours}h ago`
+  if (days === 1)  return 'yesterday'
+  if (days < 7)    return `${days}d ago`
+  return `${weeks}w ago`
+}
+
+function fmt(n: number) { return new Intl.NumberFormat('en-LR').format(Math.round(n)) }
+
+function truncateWallet(addr: string | null) {
+  if (!addr) return null
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`
+}
+
+function historyLabel(c: EcoCredit): string {
+  if (c.description) return c.description
+  if (c.type === 'redeemed') return `Redeem · ${c.source}`
+  if (c.type === 'bonus')    return `Bonus · ${c.source}`
+  return `Disposal · ${c.source}`
 }
 
 export function EcoCreditsPage() {
   const { profile } = useAuth()
   const [credits, setCredits] = useState<EcoCredit[]>([])
   const [loading, setLoading] = useState(true)
+  const [redeeming, setRedeeming] = useState<string | null>(null)
 
   useEffect(() => {
     if (!profile) return
@@ -29,113 +79,270 @@ export function EcoCreditsPage() {
       })
   }, [profile])
 
-  const balance = credits
-    .filter(c => c.type === 'earned' || c.type === 'bonus')
-    .reduce((sum, c) => sum + c.amount, 0)
-  const redeemed = credits
-    .filter(c => c.type === 'redeemed')
-    .reduce((sum, c) => sum + c.amount, 0)
+  // Derived values
+  const earned   = credits.filter(c => c.type === 'earned' || c.type === 'bonus').reduce((s, c) => s + c.amount, 0)
+  const redeemed = credits.filter(c => c.type === 'redeemed').reduce((s, c) => s + c.amount, 0)
+  const balance  = earned - redeemed
+
+  const now = new Date()
+  const ytdEarned = credits
+    .filter(c => (c.type === 'earned' || c.type === 'bonus') && new Date(c.created_at).getFullYear() === now.getFullYear())
+    .reduce((s, c) => s + c.amount, 0)
+
+  // Current tier based on lifetime earned
+  const currentTier = TIERS.slice().reverse().find(t => earned >= t.min) ?? TIERS[0]
+  const nextTier    = TIERS[TIERS.indexOf(currentTier) + 1] ?? null
+  const tierPct     = nextTier
+    ? Math.min(((earned - currentTier.min) / (nextTier.min - currentTier.min)) * 100, 100)
+    : 100
+
+  const handleRedeem = async (item: typeof CATALOGUE[0]) => {
+    if (!profile) return
+    if (balance < item.cost) {
+      toast.error(`Not enough EcoCredits. You need ${item.cost} EC but have ${fmt(balance)} EC.`)
+      return
+    }
+    setRedeeming(item.id)
+    const { error } = await supabase.from('eco_credits').insert({
+      user_id:     profile.id,
+      amount:      item.cost,
+      type:        'redeemed',
+      source:      item.title,
+      description: `Redeemed: ${item.title}`,
+      device_id:   null,
+      disposal_id: null,
+    })
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success(`Redeemed! ${item.title} — our team will contact you shortly.`)
+      // Refresh credits
+      const { data } = await supabase
+        .from('eco_credits').select('*').eq('user_id', profile.id).order('created_at', { ascending: false })
+      setCredits(data ?? [])
+    }
+    setRedeeming(null)
+  }
+
+  const handleCashOut = () => {
+    toast.info('Cash out to mobile money will be available after smart contract deployment on Polygon Amoy.')
+  }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="mb-6">
-        <p className="text-xs text-muted-foreground tracking-widest uppercase mb-0.5">Consumer</p>
-        <h1 className="text-2xl font-semibold">EcoCredits</h1>
-      </div>
+    <div className="min-h-screen p-6" style={{ background: '#f5f5f2' }}>
+      {/* Breadcrumb */}
+      <p className="text-xs text-gray-400 mb-5">
+        <span>Consumer</span> <span className="mx-1">/</span> <span className="text-gray-700 font-medium">Rewards</span>
+      </p>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {[
-          {
-            label: 'Available Balance',
-            value: fmt(balance - redeemed),
-            sub: `≈ LRD ${fmt((balance - redeemed) * LRD_PER_CREDIT)}`,
-            icon: <Leaf className="w-5 h-5 text-eco-700" />,
-            highlight: true,
-          },
-          {
-            label: 'Total Earned',
-            value: fmt(balance),
-            sub: 'All time',
-            icon: <TrendingUp className="w-5 h-5 text-muted-foreground" />,
-            highlight: false,
-          },
-          {
-            label: 'Redeemed',
-            value: fmt(redeemed),
-            sub: 'All time',
-            icon: <Leaf className="w-5 h-5 text-muted-foreground" />,
-            highlight: false,
-          },
-        ].map((card, i) => (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07 }}
-            className={`p-5 rounded-xl border ${card.highlight ? 'bg-eco-700 text-white border-eco-700' : 'bg-white border-border'}`}
-          >
-            <div className={`mb-3 ${card.highlight ? 'opacity-80' : ''}`}>{card.icon}</div>
-            <p className={`text-2xl font-semibold ${card.highlight ? 'text-white' : 'text-foreground'}`}>
-              {card.value}
+      <div className="flex gap-5 items-start">
+
+        {/* ── Left column ──────────────────────────────────────────── */}
+        <div className="flex-[3] space-y-5 min-w-0">
+
+          {/* Hero balance card */}
+          <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#0f1410' }}>
+            {/* Decorative circle */}
+            <div className="absolute right-0 top-0 w-56 h-56 rounded-full opacity-10 translate-x-16 -translate-y-16"
+              style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
+
+            <p className="text-[10px] tracking-widest text-white/40 uppercase mb-4">
+              EcoCredit Balance
+              {profile?.wallet_address && (
+                <> · Wallet {truncateWallet(profile.wallet_address)?.toUpperCase()}</>
+              )}
             </p>
-            <p className={`text-xs mt-0.5 ${card.highlight ? 'text-white/70' : 'text-muted-foreground'}`}>
-              {card.label}
-            </p>
-            <p className={`text-xs mt-1 font-medium ${card.highlight ? 'text-white/90' : 'text-muted-foreground'}`}>
-              {card.sub}
-            </p>
-          </motion.div>
-        ))}
-      </div>
 
-      {/* Rate info */}
-      <div className="bg-eco-50 border border-eco-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <Leaf className="w-4 h-4 text-eco-700 flex-shrink-0" />
-        <p className="text-sm text-eco-800">
-          1 EcoCredit = <strong>LRD {fmt(LRD_PER_CREDIT)}</strong>.
-          Credits are earned when devices you own are properly recycled at a verified facility.
-        </p>
-      </div>
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-white/40" />
+            ) : (
+              <>
+                <div className="flex items-baseline gap-3 mb-1">
+                  <p className="text-5xl font-bold text-white leading-none">{fmt(balance)}</p>
+                  <p className="text-base text-white/50">EcoCredits · ≈ LRD {fmt(balance * LRD_PER_CREDIT)}</p>
+                </div>
 
-      {/* Transaction history */}
-      <h2 className="text-sm font-semibold mb-3">Transaction History</h2>
+                <div className="flex gap-8 mt-5 mb-6">
+                  {[
+                    { label: 'EARNED YTD', value: `+${fmt(ytdEarned)}`, color: '#6dba7f' },
+                    { label: 'REDEEMED',   value: `-${fmt(redeemed)}`,  color: '#f87171' },
+                    { label: 'BALANCE',    value: fmt(balance),         color: 'white' },
+                  ].map(stat => (
+                    <div key={stat.label}>
+                      <p className="text-[10px] tracking-widest text-white/40 uppercase mb-1">{stat.label}</p>
+                      <p className="text-xl font-bold" style={{ color: stat.color }}>{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('catalogue')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#0f1410] bg-white hover:bg-white/90 transition-colors"
+                  >
+                    Redeem rewards
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCashOut}
+                    className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white border border-white/20 hover:border-white/40 transition-colors"
+                  >
+                    Cash out to mobile money
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Redeem catalogue */}
+          <div id="catalogue" className="bg-white rounded-2xl border border-gray-200 p-5">
+            <h2 className="text-sm font-semibold text-gray-900 mb-4">Redeem catalogue</h2>
+            <div className="grid grid-cols-3 gap-4">
+              {CATALOGUE.map((item) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="border border-gray-200 rounded-xl overflow-hidden"
+                >
+                  {/* Image placeholder */}
+                  <div className="aspect-video relative overflow-hidden" style={{ background: '#f0ede6' }}>
+                    <svg className="absolute inset-0 w-full h-full opacity-40">
+                      <defs>
+                        <pattern id={`sp-${item.id}`} patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(45)">
+                          <line x1="0" y1="0" x2="0" y2="12" stroke="#c8c5bd" strokeWidth="6" />
+                        </pattern>
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#sp-${item.id})`} />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-[9px] tracking-widest text-gray-400 uppercase font-bold">
+                      IMAGE
+                    </span>
+                  </div>
+
+                  <div className="p-3">
+                    <p className="text-sm font-semibold text-gray-900 leading-tight mb-0.5">{item.title}</p>
+                    <p className="text-xs text-gray-400 mb-3">{item.partner}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-gray-900">{item.cost} <span className="font-normal text-gray-400">EC</span></span>
+                      <button
+                        type="button"
+                        disabled={!!redeeming || balance < item.cost}
+                        onClick={() => handleRedeem(item)}
+                        className="text-xs font-semibold text-[#2d6a3f] hover:underline disabled:opacity-40 disabled:no-underline transition-opacity"
+                      >
+                        {redeeming === item.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Redeem'}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
-      ) : credits.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Leaf className="w-8 h-8 mx-auto mb-3 opacity-30" />
-          <p className="text-sm">No EcoCredits yet. Properly recycle a device to start earning.</p>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {credits.map((c, i) => (
-            <motion.div
-              key={c.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.03 }}
-              className="flex items-center gap-4 p-4 bg-white border border-border rounded-xl"
-            >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${c.type === 'redeemed' ? 'bg-red-50' : 'bg-eco-50'}`}>
-                <Leaf className={`w-4 h-4 ${c.type === 'redeemed' ? 'text-red-500' : 'text-eco-700'}`} />
+
+        {/* ── Right column ─────────────────────────────────────────── */}
+        <div className="flex-[2] space-y-5 min-w-0">
+
+          {/* Tier card */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-gray-900">Tier · {currentTier.label.charAt(0) + currentTier.label.slice(1).toLowerCase()}</h2>
+              {nextTier && (
+                <span className="text-xs text-gray-400">
+                  {fmt(earned)} / {fmt(nextTier.min)} to {nextTier.label.charAt(0) + nextTier.label.slice(1).toLowerCase()}
+                </span>
+              )}
+            </div>
+
+            {/* Progress bar */}
+            <div className="h-2 rounded-full overflow-hidden mb-3" style={{ background: '#f0ede6' }}>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${tierPct}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="h-full rounded-full"
+                style={{ background: '#2d6a3f' }}
+              />
+            </div>
+
+            {/* Tier steps */}
+            <div className="flex justify-between mb-4">
+              {TIERS.map(t => {
+                const isActive   = t.id === currentTier.id
+                const isPast     = TIERS.indexOf(t) < TIERS.indexOf(currentTier)
+                return (
+                  <div key={t.id} className="flex flex-col items-center gap-1">
+                    <span
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: isActive || isPast ? '#2d6a3f' : '#e8e5de' }}
+                    />
+                    <span
+                      className="text-[9px] tracking-widest font-bold"
+                      style={{ color: isActive ? '#0f1410' : '#9b9b98' }}
+                    >
+                      {isActive && '● '}{t.label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            <p className="text-xs text-gray-500 leading-relaxed">
+              {TIER_BENEFITS[currentTier.id]}
+            </p>
+          </div>
+
+          {/* Earning history */}
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-semibold text-gray-900">Earning history</h2>
+            </div>
+
+            {loading ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{c.description ?? c.source}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(c.created_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
-                </p>
+            ) : credits.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center px-5">
+                <Leaf className="w-7 h-7 text-gray-200 mb-2" />
+                <p className="text-sm text-gray-400">No credits yet. Recycle a device to start earning.</p>
               </div>
-              <p className={`text-sm font-semibold flex-shrink-0 ${c.type === 'redeemed' ? 'text-red-600' : 'text-eco-700'}`}>
-                {c.type === 'redeemed' ? '-' : '+'}{fmt(c.amount)} EC
-              </p>
-            </motion.div>
-          ))}
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {credits.slice(0, 10).map((c, i) => (
+                  <motion.div
+                    key={c.id}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="flex items-center justify-between px-5 py-3.5"
+                  >
+                    <div className="min-w-0 pr-4">
+                      <p className="text-sm font-medium text-gray-900 truncate">{historyLabel(c)}</p>
+                      <p className="text-xs text-gray-400">{timeAgo(c.created_at)}</p>
+                    </div>
+                    <span
+                      className="text-sm font-bold flex-shrink-0 font-mono"
+                      style={{ color: c.type === 'redeemed' ? '#c0392b' : '#2d6a3f' }}
+                    >
+                      {c.type === 'redeemed' ? '− ' : '+ '}{fmt(c.amount)} EC
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Rate info */}
+          <div className="rounded-xl p-4 text-xs text-gray-500 leading-relaxed" style={{ background: '#f0ede6' }}>
+            <span className="font-semibold text-gray-900">1 EcoCredit = LRD {LRD_PER_CREDIT}.</span>{' '}
+            Credits are earned when devices you own are properly recycled at a verified EcoLedger facility.
+            Cash-out requires smart contract deployment — coming soon.
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
