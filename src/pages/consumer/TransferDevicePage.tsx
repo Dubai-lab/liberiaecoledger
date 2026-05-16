@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 import type { Device } from '@/types/database'
@@ -41,10 +42,10 @@ export function TransferDevicePage() {
     setLoading(true)
 
     try {
-      // Resolve recipient by email
+      // Resolve recipient by email (fetch wallet_address too for on-chain relay)
       const { data: recipient } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, wallet_address')
         .eq('email', recipientEmail.toLowerCase().trim())
         .maybeSingle()
 
@@ -91,7 +92,47 @@ export function TransferDevicePage() {
         },
       })
 
-      toast.success('Transfer initiated. The recipient will need to confirm.')
+      // Award 5 EcoCredits to sender
+      await supabase.from('eco_credits').insert({
+        user_id: profile.id,
+        amount: 5,
+        type: 'earned',
+        source: 'transfer',
+        device_id: deviceId,
+        description: `Transferred ${selectedDevice?.brand ?? ''} ${selectedDevice?.model ?? ''} to new owner`,
+      })
+
+      await supabase.from('notifications').insert({
+        user_id: profile.id,
+        title: 'Transfer initiated — 5 EcoCredits earned!',
+        body: `Your device transfer has been initiated. You earned 5 EC for responsible transfer.`,
+        type: 'success',
+        is_read: false,
+        link: '/consumer/credits',
+      })
+
+      toast.success('Transfer initiated — 5 EcoCredits earned!')
+
+      // Anchor on-chain via relay (non-fatal)
+      if (profile.wallet_address) {
+        toast.loading('Anchoring to Sepolia blockchain…', { id: 'relay' })
+        const toAddr = (recipient as { id: string; wallet_address?: string | null }).wallet_address
+        const result = await relayTx({
+          action: 'transfer',
+          deviceId,
+          userWallet: profile.wallet_address,
+          toWallet: toAddr ?? profile.wallet_address,
+        })
+        if (result) {
+          toast.success(
+            <span>On-chain confirmed! <a href={`${EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="underline">View tx</a></span>,
+            { id: 'relay', duration: 6000 }
+          )
+        } else {
+          toast.dismiss('relay')
+        }
+      }
+
       navigate('/consumer')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Transfer failed')

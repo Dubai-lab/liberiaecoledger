@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ChevronLeft, Upload, Loader2, Leaf } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { uploadToIPFS } from '@/lib/pinata'
+import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 import type { Device, RecyclerFacility } from '@/types/database'
@@ -107,12 +108,18 @@ export function LogDisposalPage() {
     setLoading(true)
 
     try {
-      // Fetch device owner before any mutations
+      // Fetch device owner + wallet before any mutations
       const { data: deviceData } = await supabase
         .from('devices')
         .select('current_owner_id, brand, model')
         .eq('id', form.deviceId)
         .single()
+
+      const { data: ownerProfile } = await supabase
+        .from('profiles')
+        .select('wallet_address')
+        .eq('id', deviceData?.current_owner_id ?? '')
+        .maybeSingle()
 
       // Upload evidence files to IPFS
       const evidenceUrls: string[] = []
@@ -181,7 +188,28 @@ export function LogDisposalPage() {
         }
       }
 
-      toast.success(`Disposal logged! ${calculatedCredits > 0 ? `${calculatedCredits} EcoCredits awarded.` : ''}`)
+      toast.success(`Disposal logged! ${calculatedCredits > 0 ? `${calculatedCredits} EcoCredits awarded to device owner.` : ''}`)
+
+      // Anchor on-chain via relay — mints ECO tokens to device owner's wallet
+      const ownerWallet = ownerProfile?.wallet_address
+      if (ownerWallet) {
+        toast.loading('Anchoring disposal to Sepolia blockchain…', { id: 'relay' })
+        const result = await relayTx({
+          action: 'dispose',
+          deviceId: form.deviceId,
+          userWallet: ownerWallet,
+          creditsAmount: calculatedCredits,
+        })
+        if (result) {
+          toast.success(
+            <span>On-chain confirmed! <a href={`${EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="underline">View tx</a></span>,
+            { id: 'relay', duration: 6000 }
+          )
+        } else {
+          toast.dismiss('relay')
+        }
+      }
+
       navigate('/recycler')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to log disposal')

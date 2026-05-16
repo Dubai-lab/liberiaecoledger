@@ -35,29 +35,29 @@ createRoot(document.getElementById('root')!).render(
         },
         ...(wcProjectId ? { walletConnectCloudProjectId: wcProjectId } : {}),
         defaultChain: {
-          id: 80002,
-          name: 'Polygon Amoy',
-          network: 'maticamoy',
-          nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+          id: 11155111,
+          name: 'Sepolia',
+          network: 'sepolia',
+          nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
           rpcUrls: {
-            default: { http: ['https://rpc-amoy.polygon.technology'] },
+            default: { http: ['https://ethereum-sepolia-rpc.publicnode.com'] },
           },
           blockExplorers: {
-            default: { name: 'Amoy Polygonscan', url: 'https://amoy.polygonscan.com' },
+            default: { name: 'Sepolia Etherscan', url: 'https://sepolia.etherscan.io' },
           },
           testnet: true,
         },
         supportedChains: [
           {
-            id: 80002,
-            name: 'Polygon Amoy',
-            network: 'maticamoy',
-            nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+            id: 11155111,
+            name: 'Sepolia',
+            network: 'sepolia',
+            nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
             rpcUrls: {
-              default: { http: ['https://rpc-amoy.polygon.technology'] },
+              default: { http: ['https://ethereum-sepolia-rpc.publicnode.com'] },
             },
             blockExplorers: {
-              default: { name: 'Amoy Polygonscan', url: 'https://amoy.polygonscan.com' },
+              default: { name: 'Sepolia Etherscan', url: 'https://sepolia.etherscan.io' },
             },
             testnet: true,
           },

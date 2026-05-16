@@ -5,6 +5,7 @@ import { ChevronLeft, Upload, Loader2, ExternalLink, Download, CheckCircle } fro
 import QRCode from 'react-qr-code'
 import { supabase } from '@/lib/supabase'
 import { uploadToIPFS } from '@/lib/pinata'
+import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 
@@ -122,8 +123,47 @@ export function RegisterDevicePage() {
       })
 
       if (receipt_url) setIpfsUrl(receipt_url)
-      toast.success('Device registered successfully!')
+
+      // Award 10 EcoCredits in Supabase
+      await supabase.from('eco_credits').insert({
+        user_id: profile.id,
+        amount: 10,
+        type: 'earned',
+        source: 'registration',
+        device_id: device.id,
+        description: `Registered ${form.brand} ${form.model} on EcoLedger`,
+      })
+
+      // Send in-app notification
+      await supabase.from('notifications').insert({
+        user_id: profile.id,
+        title: 'Device registered — 10 EcoCredits earned!',
+        body: `Your ${form.brand} ${form.model} is now on the EcoLedger. You earned 10 EC for registering.`,
+        type: 'success',
+        is_read: false,
+        link: '/consumer/credits',
+      })
+
+      toast.success('Device registered — 10 EcoCredits earned!')
       setRegisteredDevice({ id: device.id, brand: form.brand, model: form.model })
+
+      // Anchor on-chain via relay (non-fatal — DB record already saved)
+      if (profile.wallet_address) {
+        toast.loading('Anchoring to Sepolia blockchain…', { id: 'relay' })
+        const result = await relayTx({
+          action: 'register',
+          deviceId: device.id,
+          userWallet: profile.wallet_address,
+        })
+        if (result) {
+          toast.success(
+            <span>On-chain confirmed! <a href={`${EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="underline">View tx</a></span>,
+            { id: 'relay', duration: 6000 }
+          )
+        } else {
+          toast.dismiss('relay')
+        }
+      }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Registration failed')
     } finally {
