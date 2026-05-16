@@ -1,0 +1,8 @@
+{
+  "network": "polygon-amoy",
+  "chainId": 80002,
+  "deployedAt": "2026-05-16",
+  "deployer": "0x5c0C2e3ff975d3A3932c129400D7b260F59B3F8F",
+  "EcoToken": "0xd38088CCE0a62A09EeaFA4519c7c5baAc9a589B8",
+  "EcoLedger": "PENDING"
+}
