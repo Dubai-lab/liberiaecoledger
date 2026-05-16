@@ -149,7 +149,7 @@ export function MobileLoginPage() {
           </p>
 
           {/* OTP boxes */}
-          <div className="flex gap-3 mb-6 justify-between">
+          <div className="flex gap-2 mb-6">
             {otp.map((digit, i) => (
               <input
                 key={i}
@@ -160,7 +160,7 @@ export function MobileLoginPage() {
                 value={digit}
                 onChange={e => handleOtpChange(i, e.target.value)}
                 onKeyDown={e => handleOtpKeyDown(i, e)}
-                className="flex-1 aspect-square text-center text-2xl font-bold bg-white border-2 rounded-2xl focus:outline-none transition-colors"
+                className="flex-1 min-w-0 h-14 text-center text-xl font-bold bg-white border-2 rounded-xl focus:outline-none transition-colors"
                 style={{ borderColor: digit ? '#0f0f0e' : '#e8e5de' }}
               />
             ))}
