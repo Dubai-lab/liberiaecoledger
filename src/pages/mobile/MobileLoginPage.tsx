@@ -23,12 +23,12 @@ export function MobileLoginPage() {
 
   const { sendCode: sendEmail, loginWithCode: verifyEmail } = useLoginWithEmail({
     onComplete: () => navigate('/mobile'),
-    onError: (e) => { toast.error(e.message ?? 'Verification failed'); setVerifying(false) },
+    onError: (e) => { toast.error(String(e) || 'Verification failed'); setVerifying(false) },
   })
 
   const { sendCode: sendSms, loginWithCode: verifySms } = useLoginWithSms({
     onComplete: () => navigate('/mobile'),
-    onError: (e) => { toast.error(e.message ?? 'Verification failed'); setVerifying(false) },
+    onError: (e) => { toast.error(String(e) || 'Verification failed'); setVerifying(false) },
   })
 
   useEffect(() => {
