@@ -53,9 +53,12 @@ export function MobileScanPage() {
 
     return () => {
       mountedRef.current = false
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {})
-        scannerRef.current = null
+      const s = scannerRef.current
+      scannerRef.current = null
+      if (s) {
+        s.stop()
+          .then(() => { try { s.clear() } catch { /* ignore */ } })
+          .catch(() => {})
       }
     }
   }, [])

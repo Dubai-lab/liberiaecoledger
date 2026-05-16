@@ -47,15 +47,19 @@ export function MobileDeviceCardPage() {
   const [device, setDevice] = useState<Device | null>(null)
   const [lifecycle, setLifecycle] = useState<LifecycleEvent[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
 
   useEffect(() => {
-    if (!id) return
+    if (!id) { setLoading(false); return }
     Promise.all([
-      supabase.from('devices').select('*').eq('id', id).single(),
+      supabase.from('devices').select('*').eq('id', id).maybeSingle(),
       supabase.from('device_lifecycle').select('*').eq('device_id', id).order('created_at', { ascending: true }),
     ]).then(([devRes, lcRes]) => {
-      setDevice(devRes.data)
+      setDevice(devRes.data ?? null)
       setLifecycle(lcRes.data ?? [])
+      setLoading(false)
+    }).catch(() => {
+      setFetchError(true)
       setLoading(false)
     })
   }, [id])
@@ -68,10 +72,10 @@ export function MobileDeviceCardPage() {
     )
   }
 
-  if (!device) {
+  if (fetchError || !device) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#f0ede6' }}>
-        <p className="text-sm text-[#9b9b98]">Device not found.</p>
+        <p className="text-sm text-[#9b9b98]">{fetchError ? 'Could not load device.' : 'Device not found.'}</p>
         <button type="button" onClick={() => navigate(-1)} className="mt-4 text-sm font-semibold underline text-[#0f0f0e]">Go back</button>
       </div>
     )
@@ -86,6 +90,7 @@ export function MobileDeviceCardPage() {
       <div className="flex items-center gap-3 mb-5">
         <button
           type="button"
+          aria-label="Go back"
           onClick={() => navigate(-1)}
           className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
         >
