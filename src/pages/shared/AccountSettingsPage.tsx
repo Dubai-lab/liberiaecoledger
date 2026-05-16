@@ -17,7 +17,7 @@ interface ProfileData {
 }
 
 export function AccountSettingsPage() {
-  const { profile, signOut } = useAuth()
+  const { profile, activeRole, signOut } = useAuth()
   const navigate = useNavigate()
 
   const [data, setData] = useState<ProfileData | null>(null)
@@ -226,8 +226,8 @@ export function AccountSettingsPage() {
         </div>
       </section>
 
-      {/* Danger zone */}
-      <section className="bg-white rounded-2xl border border-red-200 overflow-hidden">
+      {/* Danger zone — not available for admin accounts */}
+      {activeRole !== 'admin' && <section className="bg-white rounded-2xl border border-red-200 overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-4 border-b border-red-100">
           <AlertTriangle className="w-4 h-4 text-red-500" />
           <h2 className="font-semibold text-sm text-red-600">Danger Zone</h2>
@@ -282,7 +282,7 @@ export function AccountSettingsPage() {
             </div>
           )}
         </div>
-      </section>
+      </section>}
     </div>
   )
 }
