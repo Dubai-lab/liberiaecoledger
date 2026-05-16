@@ -12,54 +12,75 @@ interface ScanResult {
 
 export function MobileScanPage() {
   const navigate = useNavigate()
-  const [result, setResult] = useState<ScanResult | null>(null)
-  const [scanning, setScanning] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [manualImei, setManualImei] = useState('')
-  const scannerRef = useRef<any>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const rafRef = useRef<number>(0)
   const mountedRef = useRef(true)
+
+  const [cameraReady, setCameraReady] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null)
+  const [result, setResult] = useState<ScanResult | null>(null)
+  const [searching, setSearching] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [manualInput, setManualInput] = useState('')
+
+  // Stop camera and animation loop
+  const stopCamera = () => {
+    cancelAnimationFrame(rafRef.current)
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop())
+      streamRef.current = null
+    }
+    if (videoRef.current) videoRef.current.srcObject = null
+  }
 
   useEffect(() => {
     mountedRef.current = true
-    let scanner: any = null
 
-    const startScanner = async () => {
+    const startCamera = async () => {
       try {
-        const { Html5Qrcode } = await import('html5-qrcode')
-        if (!mountedRef.current) return
-        scanner = new Html5Qrcode('qr-reader')
-        scannerRef.current = scanner
-        setScanning(true)
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+        })
+        if (!mountedRef.current) { stream.getTracks().forEach(t => t.stop()); return }
 
-        await scanner.start(
-          { facingMode: 'environment' },
-          { fps: 10, qrbox: { width: 250, height: 180 } },
-          async (decodedText: string) => {
-            try { await scanner.stop() } catch { /* ignore */ }
+        streamRef.current = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play()
+          setCameraReady(true)
+        }
+
+        // Use native BarcodeDetector if available (Chrome, newer Safari)
+        if ('BarcodeDetector' in window) {
+          const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] })
+          const scan = async () => {
             if (!mountedRef.current) return
-            setScanning(false)
-            lookupDevice(decodedText)
-          },
-          () => {}
-        )
+            try {
+              if (videoRef.current && videoRef.current.readyState >= 2) {
+                const codes = await detector.detect(videoRef.current)
+                if (codes.length > 0 && mountedRef.current) {
+                  stopCamera()
+                  lookupDevice(codes[0].rawValue)
+                  return
+                }
+              }
+            } catch { /* ignore individual frame errors */ }
+            rafRef.current = requestAnimationFrame(scan)
+          }
+          rafRef.current = requestAnimationFrame(scan)
+        }
       } catch {
         if (!mountedRef.current) return
-        setScanning(false)
-        setError('Camera access denied. Enter IMEI or Device ID below.')
+        setCameraError('Camera access denied. Use manual input below.')
       }
     }
 
-    startScanner()
+    startCamera()
 
     return () => {
       mountedRef.current = false
-      const s = scannerRef.current
-      scannerRef.current = null
-      if (s) {
-        s.stop()
-          .then(() => { try { s.clear() } catch { /* ignore */ } })
-          .catch(() => {})
-      }
+      stopCamera()
     }
   }, [])
 
@@ -68,6 +89,7 @@ export function MobileScanPage() {
     if (!clean) return
     setError(null)
     setResult(null)
+    setSearching(true)
 
     const { data } = await supabase
       .from('devices')
@@ -76,12 +98,13 @@ export function MobileScanPage() {
       .limit(1)
 
     if (!mountedRef.current) return
+    setSearching(false)
 
     if (data && data.length > 0) {
       const d = data[0]
       setResult({ deviceId: d.id, brand: d.brand, model: d.model, imei: d.imei })
     } else {
-      setError('No device found for this code. Check the QR or IMEI and try again.')
+      setError('No device found. Check the code and try again.')
     }
   }
 
@@ -94,10 +117,17 @@ export function MobileScanPage() {
       </div>
 
       {/* Camera viewfinder */}
-      <div className="mx-5 rounded-2xl overflow-hidden relative" style={{ background: '#1a1a1a', minHeight: 300 }}>
-        <div id="qr-reader" className="w-full" style={{ minHeight: 300 }} />
+      <div className="mx-5 rounded-2xl overflow-hidden relative bg-[#1a1a1a]" style={{ minHeight: 300 }}>
+        <video
+          ref={videoRef}
+          playsInline
+          muted
+          className="w-full object-cover"
+          style={{ minHeight: 300, display: cameraReady ? 'block' : 'none' }}
+        />
 
-        {scanning && (
+        {/* Scan overlay */}
+        {cameraReady && !result && (
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <div className="relative w-56 h-44">
               <div className="absolute top-0 left-0 w-7 h-7 border-t-2 border-l-2 border-white rounded-tl-md" />
@@ -106,13 +136,17 @@ export function MobileScanPage() {
               <div className="absolute bottom-0 right-0 w-7 h-7 border-b-2 border-r-2 border-white rounded-br-md" />
               <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-[#2d6a3f] rounded-full" />
             </div>
-            <p className="text-[10px] tracking-widest text-white/60 uppercase mt-6">Hold steady · Scanning…</p>
+            <p className="text-[10px] tracking-widest text-white/60 uppercase mt-6">
+              {!('BarcodeDetector' in window) ? 'Enter code below — auto-scan not supported on this browser' : 'Hold steady · Scanning…'}
+            </p>
           </div>
         )}
 
-        {!scanning && !result && (
+        {!cameraReady && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-xs text-white/50 text-center px-6">{error ?? 'Starting camera…'}</p>
+            <p className="text-xs text-white/50 text-center px-6">
+              {cameraError ?? 'Starting camera…'}
+            </p>
           </div>
         )}
       </div>
@@ -122,19 +156,20 @@ export function MobileScanPage() {
         <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-2">Or enter manually</p>
         <div className="flex gap-2">
           <input
-            value={manualImei}
-            onChange={e => setManualImei(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && lookupDevice(manualImei)}
+            value={manualInput}
+            onChange={e => setManualInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && lookupDevice(manualInput)}
             placeholder="IMEI, Serial number, or Device ID"
             className="flex-1 bg-white border border-[#e8e5de] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0f0f0e]"
           />
           <button
             type="button"
-            onClick={() => lookupDevice(manualImei)}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
+            onClick={() => lookupDevice(manualInput)}
+            disabled={searching}
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
             style={{ background: '#0f0f0e' }}
           >
-            Search
+            {searching ? '…' : 'Search'}
           </button>
         </div>
         {error && <p className="text-xs text-red-500 mt-2 px-1">{error}</p>}
