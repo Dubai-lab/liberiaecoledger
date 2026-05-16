@@ -30,3 +30,10 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Hardhat / contracts
+contracts/node_modules/
+contracts/.env
+contracts/artifacts/
+contracts/cache/
+contracts/typechain-types/
