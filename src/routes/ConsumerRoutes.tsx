@@ -3,7 +3,7 @@ import { MyDevicesPage } from '@/pages/consumer/MyDevicesPage'
 import { RegisterDevicePage } from '@/pages/consumer/RegisterDevicePage'
 import { TransferDevicePage } from '@/pages/consumer/TransferDevicePage'
 import { EcoCreditsPage } from '@/pages/consumer/EcoCreditsPage'
-import { NotificationsPage } from '@/pages/consumer/NotificationsPage'
+import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 import { DeviceDetailPage } from '@/pages/consumer/DeviceDetailPage'
 
 export function ConsumerRoutes() {

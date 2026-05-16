@@ -5,6 +5,7 @@ import { InvitationsPage } from '@/pages/admin/InvitationsPage'
 import { RecyclersPage } from '@/pages/admin/RecyclersPage'
 import { SmartContractsPage } from '@/pages/admin/SmartContractsPage'
 import { SystemSettingsPage } from '@/pages/admin/SystemSettingsPage'
+import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 
 export function AdminRoutes() {
   return (
@@ -15,6 +16,7 @@ export function AdminRoutes() {
       <Route path="recyclers" element={<RecyclersPage />} />
       <Route path="contracts" element={<SmartContractsPage />} />
       <Route path="settings" element={<SystemSettingsPage />} />
+      <Route path="notifications" element={<NotificationsPage />} />
     </Routes>
   )
 }
