@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import logoCompactLight from '@/brands/logo-compact-light.png'
 
 function fmt(n: number) { return new Intl.NumberFormat().format(n) }
 
@@ -61,12 +62,9 @@ export function MobileScanHomePage() {
   return (
     <div className="px-5 pt-6 pb-4">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex-shrink-0" />
-        <div>
-          <p className="text-base font-semibold text-[#0f0f0e] leading-tight">EcoLedger</p>
-          <p className="text-xs text-[#9b9b98]">{firstName} · Consumer</p>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
+        <p className="text-xs text-[#9b9b98]">{firstName}</p>
       </div>
 
       {/* Wallet balance card */}

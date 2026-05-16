@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import logoCompactLight from '@/brands/logo-compact-light.png'
 
 const LRD = 150
 
@@ -55,12 +56,9 @@ export function MobileRewardsPage() {
   return (
     <div className="px-5 pt-6 pb-8" style={{ background: '#f0ede6', minHeight: '100vh' }}>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex-shrink-0" />
-        <div>
-          <p className="text-base font-semibold text-[#0f0f0e]">Rewards</p>
-          <p className="text-xs text-[#9b9b98]">EcoCredit wallet</p>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
+        <p className="text-xs text-[#9b9b98]">EcoCredits</p>
       </div>
 
       {/* Balance card */}

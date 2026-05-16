@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import logoCompactDark from '@/brands/logo-compact-dark.png'
+import logoCompactLight from '@/brands/logo-compact-light.png'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Cpu, Send, Leaf, Bell, Factory, BookOpen,
@@ -101,17 +103,8 @@ export function DashboardLayout() {
         ].join(' ')}
       >
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#1a2e1c' }}>
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="#fafaf7" strokeWidth={1.5}>
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-            </svg>
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-[#fafaf7] truncate">EcoLedger</p>
-            <p className="text-[10px] tracking-widest uppercase text-white/40 truncate">Liberia</p>
-          </div>
+        <div className="px-5 py-4 border-b border-white/10 flex items-center gap-3">
+          <img src={logoCompactDark} alt="EcoLedger" className="h-8 w-auto object-contain flex-shrink-0" />
           <button
             type="button"
             aria-label="Close menu"
@@ -186,15 +179,7 @@ export function DashboardLayout() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-[#0f1410] flex items-center justify-center">
-              <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="#fafaf7" strokeWidth={1.5}>
-                <rect x="3" y="3" width="18" height="18" rx="3" />
-                <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-              </svg>
-            </div>
-            <span className="font-semibold text-sm">EcoLedger</span>
-          </div>
+          <img src={logoCompactLight} alt="EcoLedger" className="h-7 w-auto object-contain" />
           <div className="ml-auto flex items-center gap-2">
             <span className="text-xs text-muted-foreground hidden sm:block">{ROLE_LABEL[role]}</span>
             <div className="w-6 h-6 rounded-full bg-[#2f6b3a] flex items-center justify-center">

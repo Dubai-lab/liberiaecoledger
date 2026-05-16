@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import logoDark from '@/brands/logo-dark.png'
 import { usePrivy } from '@privy-io/react-auth'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
@@ -61,22 +62,8 @@ export function LoginPage() {
         />
 
         {/* Logo */}
-        <div className="flex items-center gap-3 relative z-10">
-          <div
-            className="w-9 h-9 rounded-lg flex items-center justify-center"
-            style={{ background: '#1a2e1c' }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fafaf7" strokeWidth={1.5}>
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-            </svg>
-          </div>
-          <div>
-            <p className="font-medium text-sm" style={{ color: '#fafaf7' }}>EcoLedger</p>
-            <p className="text-xs tracking-widest uppercase" style={{ color: '#fafaf7', opacity: 0.4 }}>
-              Tracking & Accountability
-            </p>
-          </div>
+        <div className="relative z-10">
+          <img src={logoDark} alt="EcoLedger" className="h-10 w-auto object-contain" />
         </div>
 
         {/* Hero text */}

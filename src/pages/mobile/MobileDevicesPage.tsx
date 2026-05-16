@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { Loader2 } from 'lucide-react'
+import logoCompactLight from '@/brands/logo-compact-light.png'
 
 interface Device {
   id: string
@@ -46,12 +47,9 @@ export function MobileDevicesPage() {
   return (
     <div className="px-5 pt-6" style={{ background: '#f0ede6', minHeight: '100vh' }}>
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex-shrink-0" />
-        <div>
-          <p className="text-base font-semibold text-[#0f0f0e]">My Devices</p>
-          <p className="text-xs text-[#9b9b98]">{devices.length} registered</p>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
+        <p className="text-xs text-[#9b9b98]">{devices.length} devices</p>
       </div>
 
       {devices.length === 0 ? (

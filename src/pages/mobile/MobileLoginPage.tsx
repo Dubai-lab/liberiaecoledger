@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logoCompactLight from '@/brands/logo-compact-light.png'
 import { useLoginWithEmail, useLoginWithSms } from '@privy-io/react-auth'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
@@ -88,17 +89,8 @@ export function MobileLoginPage() {
   return (
     <div className="min-h-screen flex flex-col px-6 pt-16 pb-10" style={{ background: '#f0ede6' }}>
       {/* Logo */}
-      <div className="flex items-center gap-3 mb-12">
-        <div className="w-10 h-10 rounded-2xl bg-[#0f0f0e] flex items-center justify-center">
-          <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fafaf7" strokeWidth={1.5}>
-            <rect x="3" y="3" width="18" height="18" rx="3" />
-            <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-          </svg>
-        </div>
-        <div>
-          <p className="text-base font-bold text-[#0f0f0e]">EcoLedger</p>
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase">Liberia</p>
-        </div>
+      <div className="mb-12">
+        <img src={logoCompactLight} alt="EcoLedger" className="h-9 w-auto object-contain" />
       </div>
 
       {step === 'input' ? (
