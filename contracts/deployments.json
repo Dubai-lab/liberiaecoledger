@@ -1,8 +1,9 @@
 {
-  "network": "polygon-amoy",
-  "chainId": 80002,
-  "deployedAt": "2026-05-16",
+  "network": "sepolia",
+  "chainId": 11155111,
+  "deployedAt": "2026-05-17",
   "deployer": "0x5c0C2e3ff975d3A3932c129400D7b260F59B3F8F",
-  "EcoToken": "0xd38088CCE0a62A09EeaFA4519c7c5baAc9a589B8",
-  "EcoLedger": "PENDING"
+  "EcoToken": "0xac3EDa3b7adEa469d5FF502C3cAEC697de955848",
+  "EcoLedger": "0xd38088CCE0a62A09EeaFA4519c7c5baAc9a589B8",
+  "amoy_EcoToken_unused": "0xd38088CCE0a62A09EeaFA4519c7c5baAc9a589B8"
 }
