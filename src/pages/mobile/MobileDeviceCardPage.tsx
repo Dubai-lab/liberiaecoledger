@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface Device {
   id: string
@@ -231,7 +230,7 @@ export function MobileDeviceCardPage() {
           </button>
           <button
             type="button"
-            onClick={() => toast.info('Go to the web dashboard to dispose this device.')}
+            onClick={() => navigate(`/mobile/dispose/${device.id}`)}
             className="flex-[2] py-4 rounded-2xl text-sm font-semibold border border-[#d8d5ce] text-[#0f0f0e]"
             style={{ background: 'white' }}
           >

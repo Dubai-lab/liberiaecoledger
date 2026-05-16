@@ -8,6 +8,7 @@ import { MobileMePage } from '@/pages/mobile/MobileMePage'
 import { MobileSettingsPage } from '@/pages/mobile/MobileSettingsPage'
 import { MobileAboutPage } from '@/pages/mobile/MobileAboutPage'
 import { MobileTransferPage } from '@/pages/mobile/MobileTransferPage'
+import { MobileDisposePage } from '@/pages/mobile/MobileDisposePage'
 
 export function MobileRoutes() {
   return (
@@ -21,6 +22,7 @@ export function MobileRoutes() {
       <Route path="settings" element={<MobileSettingsPage />} />
       <Route path="about" element={<MobileAboutPage />} />
       <Route path="transfer" element={<MobileTransferPage />} />
+      <Route path="dispose/:id" element={<MobileDisposePage />} />
     </Routes>
   )
 }

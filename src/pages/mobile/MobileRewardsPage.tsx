@@ -9,41 +9,84 @@ const LRD = 150
 
 function fmt(n: number) { return new Intl.NumberFormat().format(n) }
 
-const REDEEM_OPTIONS = [
-  { id: 'orange', label: 'Orange Money', sub: 'Mobile money transfer', icon: '🟠' },
-  { id: 'momo',   label: 'MTN MoMo',     sub: 'Mobile money transfer', icon: '🟡' },
-  { id: 'airtime',label: 'Airtime',       sub: 'Top up any network',    icon: '📱' },
-  { id: 'voucher',label: 'Voucher',       sub: 'Partner store credit',  icon: '🎟️' },
-]
+interface CatalogueItem {
+  id: string
+  name: string
+  description: string | null
+  cost_credits: number
+  icon_emoji: string | null
+  category: string | null
+  is_active: boolean
+}
 
 export function MobileRewardsPage() {
   const { profile, isLoading: authLoading } = useAuth()
   const [credits, setCredits] = useState<{ amount: number; type: string; description: string | null; created_at: string }[]>([])
+  const [catalogue, setCatalogue] = useState<CatalogueItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [amount, setAmount] = useState('')
+  const [selected, setSelected] = useState<CatalogueItem | null>(null)
+  const [redeeming, setRedeeming] = useState(false)
 
   useEffect(() => {
     if (authLoading) return
     if (!profile) { setLoading(false); return }
-    supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false })
-      .then(({ data }) => {
-        setCredits(data ?? [])
-        setLoading(false)
-      })
+    Promise.all([
+      supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false }),
+      supabase.from('reward_catalogue').select('id, name, description, cost_credits, icon_emoji, category, is_active').eq('is_active', true).order('cost_credits', { ascending: true }),
+    ]).then(([credRes, catRes]) => {
+      setCredits(credRes.data ?? [])
+      setCatalogue(catRes.data ?? [])
+      setLoading(false)
+    })
   }, [profile, authLoading])
 
   const earned   = credits.filter(c => c.type === 'earned' || c.type === 'bonus').reduce((s, c) => s + c.amount, 0)
   const redeemed = credits.filter(c => c.type === 'redeemed').reduce((s, c) => s + c.amount, 0)
   const balance  = earned - redeemed
 
-  const handleRedeem = () => {
-    if (!selected) return toast.error('Select a cashout method')
-    const n = Number(amount)
-    if (!n || n <= 0 || n > balance) return toast.error('Invalid amount')
-    toast.success(`Cashout of ${fmt(n)} EcoCredits (≈ LRD ${fmt(n * LRD)}) submitted via ${selected}`)
-    setAmount('')
-    setSelected(null)
+  const handleRedeem = async () => {
+    if (!selected || !profile) return
+    if (balance < selected.cost_credits) {
+      toast.error(`Not enough EcoCredits. You need ${fmt(selected.cost_credits)} EC.`)
+      return
+    }
+    setRedeeming(true)
+    try {
+      const { error: redemptionError } = await supabase.from('redemptions').insert({
+        user_id: profile.id,
+        catalogue_item_id: selected.id,
+        credits_spent: selected.cost_credits,
+        status: 'pending',
+      })
+      if (redemptionError) throw redemptionError
+
+      await supabase.from('eco_credits').insert({
+        user_id: profile.id,
+        amount: selected.cost_credits,
+        type: 'redeemed',
+        source: 'redemption',
+        description: `Redeemed: ${selected.name}`,
+      })
+
+      await supabase.from('notifications').insert({
+        user_id: profile.id,
+        title: 'Redemption submitted!',
+        body: `Your request for "${selected.name}" has been submitted and is pending fulfilment.`,
+        type: 'success',
+        is_read: false,
+        link: '/mobile/rewards',
+      })
+
+      // Refresh credits balance
+      const { data } = await supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false })
+      setCredits(data ?? [])
+      setSelected(null)
+      toast.success(`"${selected.name}" redemption submitted!`)
+    } catch {
+      toast.error('Redemption failed. Please try again.')
+    } finally {
+      setRedeeming(false)
+    }
   }
 
   if (loading) {
@@ -80,47 +123,58 @@ export function MobileRewardsPage() {
         </div>
       </div>
 
-      {/* Cashout section */}
-      <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">Cash Out Via</p>
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        {REDEEM_OPTIONS.map(opt => (
-          <button
-            key={opt.id}
-            onClick={() => setSelected(opt.id)}
-            className={`bg-white rounded-2xl p-4 text-left border-2 transition-all ${selected === opt.id ? 'border-[#0f0f0e]' : 'border-transparent'}`}
-          >
-            <p className="text-xl mb-1">{opt.icon}</p>
-            <p className="text-sm font-semibold text-[#0f0f0e]">{opt.label}</p>
-            <p className="text-xs text-[#9b9b98]">{opt.sub}</p>
-          </button>
-        ))}
-      </div>
+      {/* Catalogue */}
+      <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">Redeem Rewards</p>
+      {catalogue.length === 0 ? (
+        <div className="bg-white rounded-2xl p-5 mb-5 text-center">
+          <p className="text-sm text-[#9b9b98]">No rewards available yet.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 mb-5">
+          {catalogue.map(item => {
+            const canAfford = balance >= item.cost_credits
+            const isSelected = selected?.id === item.id
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSelected(isSelected ? null : item)}
+                className={`bg-white rounded-2xl p-4 text-left border-2 transition-all ${
+                  isSelected ? 'border-[#0f0f0e]' : 'border-transparent'
+                } ${!canAfford ? 'opacity-50' : ''}`}
+              >
+                <p className="text-xl mb-1">{item.icon_emoji ?? '🎁'}</p>
+                <p className="text-sm font-semibold text-[#0f0f0e] leading-tight">{item.name}</p>
+                {item.description && (
+                  <p className="text-xs text-[#9b9b98] mt-0.5 line-clamp-2">{item.description}</p>
+                )}
+                <p className="text-xs font-bold text-[#2d6a3f] mt-2">{fmt(item.cost_credits)} EC</p>
+                {!canAfford && (
+                  <p className="text-[10px] text-[#b0afa8] mt-0.5">Need {fmt(item.cost_credits - balance)} more</p>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      )}
 
+      {/* Selected item summary + confirm */}
       {selected && (
         <div className="bg-white rounded-2xl p-4 mb-4">
-          <p className="text-xs text-[#9b9b98] mb-2">Amount (EcoCredits)</p>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              placeholder={`Max ${fmt(balance)}`}
-              className="flex-1 border border-[#e8e5de] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0f0f0e]"
-            />
-          </div>
-          {amount && Number(amount) > 0 && (
-            <p className="text-xs text-[#9b9b98] mt-2">≈ LRD {fmt(Number(amount) * LRD)}</p>
-          )}
+          <p className="text-xs text-[#9b9b98] mb-1">Redeeming</p>
+          <p className="text-sm font-semibold text-[#0f0f0e]">{selected.name}</p>
+          <p className="text-xs text-[#9b9b98] mt-0.5">Cost: {fmt(selected.cost_credits)} EC · Balance after: {fmt(balance - selected.cost_credits)} EC</p>
         </div>
       )}
 
       <button
+        type="button"
         onClick={handleRedeem}
-        disabled={!selected || !amount}
-        className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40"
+        disabled={!selected || redeeming || (selected ? balance < selected.cost_credits : false)}
+        className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40 flex items-center justify-center gap-2"
         style={{ background: '#0f0f0e' }}
       >
-        Cash Out
+        {redeeming ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Redeem'}
       </button>
 
       {/* History */}

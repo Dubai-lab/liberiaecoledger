@@ -131,7 +131,7 @@ export function LogDisposalPage() {
         evidenceUrls.push(result.url)
       }
 
-      const { error } = await supabase.from('disposals').insert({
+      const { data: disposal, error } = await supabase.from('disposals').insert({
         device_id:    form.deviceId,
         recycler_id:  profile.id,
         facility_id:  facility.id,
@@ -150,7 +150,7 @@ export function LogDisposalPage() {
         },
         eco_credits_awarded: calculatedCredits,
         status: 'pending',
-      })
+      }).select('id').single()
       if (error) throw error
 
       // Mark device as disposed
@@ -172,20 +172,27 @@ export function LogDisposalPage() {
         },
       })
 
-      // Award EcoCredits via RPC (bypasses RLS — runs with SECURITY DEFINER)
+      // Award EcoCredits directly to device owner
       if (calculatedCredits > 0 && deviceData) {
-        const { error: rpcErr } = await supabase.rpc('award_eco_credits', {
-          p_user_id:     deviceData.current_owner_id,
-          p_amount:      calculatedCredits,
-          p_device_id:   form.deviceId,
-          p_source:      'recycling',
-          p_description: `Recycled at ${facility.name} — ${calculatedCredits} credits earned`,
+        await supabase.from('eco_credits').insert({
+          user_id:     deviceData.current_owner_id,
+          amount:      calculatedCredits,
+          type:        'earned',
+          source:      'recycling',
+          device_id:   form.deviceId,
+          disposal_id: disposal?.id ?? null,
+          description: `Recycled at ${facility.name} — ${calculatedCredits} EC earned`,
         })
-        if (rpcErr) {
-          // Non-fatal: disposal is logged, credits can be re-awarded manually
-          console.error('EcoCredits RPC error:', rpcErr)
-          toast.warning('Disposal logged, but EcoCredits could not be awarded. Run the SQL function in Supabase first.')
-        }
+
+        // Notify device owner
+        await supabase.from('notifications').insert({
+          user_id: deviceData.current_owner_id,
+          title:   `${calculatedCredits} EcoCredits awarded for recycling!`,
+          body:    `Your ${deviceData.brand} ${deviceData.model} was recycled at ${facility.name}. You earned ${calculatedCredits} EcoCredits.`,
+          type:    'success',
+          is_read: false,
+          link:    '/consumer/credits',
+        })
       }
 
       toast.success(`Disposal logged! ${calculatedCredits > 0 ? `${calculatedCredits} EcoCredits awarded to device owner.` : ''}`)

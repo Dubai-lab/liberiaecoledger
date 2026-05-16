@@ -54,8 +54,8 @@ function MeIcon({ active }: { active: boolean }) {
 
 export function MobileLayout() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#f0ede6' }}>
-      <main className="flex-1 overflow-auto pb-20">
+    <div className="min-h-screen flex flex-col max-w-md mx-auto w-full" style={{ background: '#f0ede6' }}>
+      <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20">
         <Outlet />
       </main>
 
