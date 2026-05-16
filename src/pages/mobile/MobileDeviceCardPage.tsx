@@ -15,6 +15,9 @@ interface Device {
   serial_number: string | null
   receipt_url: string | null
   hazard_class: string | null
+  manufacture_year: number | null
+  retailer_name: string | null
+  purchase_price_lrd: number | null
 }
 
 interface LifecycleEvent {
@@ -24,6 +27,14 @@ interface LifecycleEvent {
   location: string | null
   created_at: string
   metadata: any
+}
+
+const HAZARD_LABEL: Record<string, string> = {
+  none:           'None',
+  li_ion_battery: 'Lithium-Ion Battery',
+  mercury_ccfl:   'Mercury / CCFL',
+  toner:          'Toner Cartridge',
+  mixed:          'Mixed Hazardous',
 }
 
 function eventLabel(e: LifecycleEvent) {
@@ -38,7 +49,21 @@ function eventLabel(e: LifecycleEvent) {
 function statusColor(status: string) {
   if (status === 'in_use')   return { bg: '#e8f5ec', text: '#2d6a3f', label: 'IN USE' }
   if (status === 'disposed') return { bg: '#fde8e8', text: '#c0392b', label: 'DISPOSED' }
+  if (status === 'awaiting_transfer') return { bg: '#fdf3dc', text: '#b87a00', label: 'AWAITING TRANSFER' }
+  if (status === 'ready_for_disposal') return { bg: '#fde8d0', text: '#b85c00', label: 'READY FOR DISPOSAL' }
   return { bg: '#f0ede6', text: '#9b9b98', label: status.toUpperCase() }
+}
+
+function fmt(n: number) { return new Intl.NumberFormat().format(n) }
+
+function InfoRow({ label, value }: { label: string; value: string | number | null | undefined }) {
+  if (!value && value !== 0) return null
+  return (
+    <div>
+      <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-0.5">{label}</p>
+      <p className="text-sm font-semibold text-[#0f0f0e]">{value}</p>
+    </div>
+  )
 }
 
 export function MobileDeviceCardPage() {
@@ -82,7 +107,6 @@ export function MobileDeviceCardPage() {
   }
 
   const { bg, text, label } = statusColor(device.status)
-  const identifier = device.imei ?? device.serial_number
 
   return (
     <div className="px-5 pt-6 pb-8" style={{ background: '#f0ede6', minHeight: '100vh' }}>
@@ -104,7 +128,7 @@ export function MobileDeviceCardPage() {
         </div>
       </div>
 
-      {/* Device photo placeholder */}
+      {/* Device photo */}
       <div className="rounded-2xl overflow-hidden mb-4" style={{ background: '#e8e5de', minHeight: 180 }}>
         {device.receipt_url ? (
           <img src={device.receipt_url} alt={device.model} className="w-full object-cover" style={{ maxHeight: 220 }} />
@@ -123,7 +147,7 @@ export function MobileDeviceCardPage() {
         )}
       </div>
 
-      {/* Status badges */}
+      {/* Status + token badge */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-[11px] font-bold tracking-widest px-3 py-1 rounded-full" style={{ background: bg, color: text }}>
           {label}
@@ -137,16 +161,39 @@ export function MobileDeviceCardPage() {
       <h1 className="text-2xl font-bold text-[#0f0f0e] mb-0.5">
         {device.brand} {device.model}
       </h1>
-      <p className="text-sm text-[#9b9b98] mb-5">
-        {device.category && `${device.category} · `}
-        Registered {new Date(device.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-        {identifier ? ` · ${identifier.slice(0, 8)}…` : ''}
-      </p>
+      {device.category && (
+        <p className="text-sm text-[#9b9b98] mb-5">{device.category}</p>
+      )}
+
+      {/* Device Information */}
+      <div className="bg-white rounded-2xl p-4 mb-4">
+        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-4">Device Information</p>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4">
+          <InfoRow label="Brand" value={device.brand} />
+          <InfoRow label="Model" value={device.model} />
+          <InfoRow label="Category" value={device.category} />
+          <InfoRow label="Year" value={device.manufacture_year} />
+          <InfoRow label="Serial Number" value={device.serial_number} />
+          <InfoRow label="IMEI" value={device.imei} />
+          <InfoRow
+            label="Hazard Class"
+            value={device.hazard_class ? (HAZARD_LABEL[device.hazard_class] ?? device.hazard_class) : null}
+          />
+          <InfoRow label="Retailer" value={device.retailer_name} />
+          {device.purchase_price_lrd != null && (
+            <InfoRow label="Purchase Price" value={`LRD ${fmt(device.purchase_price_lrd)}`} />
+          )}
+          <InfoRow
+            label="Registered"
+            value={new Date(device.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          />
+        </div>
+      </div>
 
       {/* Lifecycle */}
       {lifecycle.length > 0 && (
         <div className="bg-white rounded-2xl p-4 mb-5">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-4">Lifecycle</p>
+          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-4">Lifecycle History</p>
           <div className="space-y-4">
             {lifecycle.map(e => {
               const { title, sub } = eventLabel(e)
