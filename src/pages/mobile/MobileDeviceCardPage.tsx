@@ -223,7 +223,7 @@ export function MobileDeviceCardPage() {
         <div className="flex gap-3">
           <button
             type="button"
-            onClick={() => toast.info('Go to the web dashboard to transfer this device.')}
+            onClick={() => navigate(`/mobile/transfer?device=${device.id}`)}
             className="flex-[3] py-4 rounded-2xl text-white text-sm font-bold"
             style={{ background: '#0f0f0e' }}
           >

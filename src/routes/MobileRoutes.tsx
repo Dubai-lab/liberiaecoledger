@@ -7,6 +7,7 @@ import { MobileRewardsPage } from '@/pages/mobile/MobileRewardsPage'
 import { MobileMePage } from '@/pages/mobile/MobileMePage'
 import { MobileSettingsPage } from '@/pages/mobile/MobileSettingsPage'
 import { MobileAboutPage } from '@/pages/mobile/MobileAboutPage'
+import { MobileTransferPage } from '@/pages/mobile/MobileTransferPage'
 
 export function MobileRoutes() {
   return (
@@ -19,6 +20,7 @@ export function MobileRoutes() {
       <Route path="me" element={<MobileMePage />} />
       <Route path="settings" element={<MobileSettingsPage />} />
       <Route path="about" element={<MobileAboutPage />} />
+      <Route path="transfer" element={<MobileTransferPage />} />
     </Routes>
   )
 }
