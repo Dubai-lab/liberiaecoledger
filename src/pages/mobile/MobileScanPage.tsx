@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import logoCompactLight from '@/brands/logo-compact-light.png'
+import jsQR from 'jsqr'
 
 interface ScanResult {
   deviceId: string
@@ -13,6 +14,7 @@ interface ScanResult {
 export function MobileScanPage() {
   const navigate = useNavigate()
   const videoRef = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const rafRef = useRef<number>(0)
   const mountedRef = useRef(true)
@@ -24,7 +26,6 @@ export function MobileScanPage() {
   const [error, setError] = useState<string | null>(null)
   const [manualInput, setManualInput] = useState('')
 
-  // Stop camera and animation loop
   const stopCamera = () => {
     cancelAnimationFrame(rafRef.current)
     if (streamRef.current) {
@@ -51,24 +52,59 @@ export function MobileScanPage() {
           setCameraReady(true)
         }
 
-        // Use native BarcodeDetector if available (Chrome, newer Safari)
-        if ('BarcodeDetector' in window) {
-          const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] })
-          const scan = async () => {
-            if (!mountedRef.current) return
-            try {
-              if (videoRef.current && videoRef.current.readyState >= 2) {
-                const codes = await detector.detect(videoRef.current)
-                if (codes.length > 0 && mountedRef.current) {
-                  stopCamera()
-                  lookupDevice(codes[0].rawValue)
-                  return
+        const startScanLoop = () => {
+          // Prefer native BarcodeDetector (faster, GPU-accelerated)
+          if ('BarcodeDetector' in window) {
+            const detector = new (window as any).BarcodeDetector({ formats: ['qr_code'] })
+            const scan = async () => {
+              if (!mountedRef.current) return
+              try {
+                if (videoRef.current && videoRef.current.readyState >= 2) {
+                  const codes = await detector.detect(videoRef.current)
+                  if (codes.length > 0 && mountedRef.current) {
+                    stopCamera()
+                    lookupDevice(codes[0].rawValue)
+                    return
+                  }
+                }
+              } catch { /* ignore individual frame errors */ }
+              rafRef.current = requestAnimationFrame(scan)
+            }
+            rafRef.current = requestAnimationFrame(scan)
+          } else {
+            // jsQR fallback — works on all browsers including older iOS Safari
+            const scan = () => {
+              if (!mountedRef.current) return
+              const video = videoRef.current
+              const canvas = canvasRef.current
+              if (video && canvas && video.readyState >= 2 && video.videoWidth > 0) {
+                canvas.width = video.videoWidth
+                canvas.height = video.videoHeight
+                const ctx = canvas.getContext('2d')
+                if (ctx) {
+                  ctx.drawImage(video, 0, 0)
+                  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+                  const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: 'dontInvert',
+                  })
+                  if (code && mountedRef.current) {
+                    stopCamera()
+                    lookupDevice(code.data)
+                    return
+                  }
                 }
               }
-            } catch { /* ignore individual frame errors */ }
+              rafRef.current = requestAnimationFrame(scan)
+            }
             rafRef.current = requestAnimationFrame(scan)
           }
-          rafRef.current = requestAnimationFrame(scan)
+        }
+
+        // Wait for video to have actual dimensions before starting scan loop
+        if (videoRef.current) {
+          videoRef.current.onloadedmetadata = startScanLoop
+        } else {
+          startScanLoop()
         }
       } catch {
         if (!mountedRef.current) return
@@ -125,6 +161,8 @@ export function MobileScanPage() {
           className="w-full object-cover"
           style={{ minHeight: 300, display: cameraReady ? 'block' : 'none' }}
         />
+        {/* Hidden canvas used by jsQR fallback */}
+        <canvas ref={canvasRef} className="hidden" />
 
         {/* Scan overlay */}
         {cameraReady && !result && (
@@ -136,9 +174,7 @@ export function MobileScanPage() {
               <div className="absolute bottom-0 right-0 w-7 h-7 border-b-2 border-r-2 border-white rounded-br-md" />
               <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-[#2d6a3f] rounded-full" />
             </div>
-            <p className="text-[10px] tracking-widest text-white/60 uppercase mt-6">
-              {!('BarcodeDetector' in window) ? 'Enter code below — auto-scan not supported on this browser' : 'Hold steady · Scanning…'}
-            </p>
+            <p className="text-[10px] tracking-widest text-white/60 uppercase mt-6">Hold steady · Scanning…</p>
           </div>
         )}
 
