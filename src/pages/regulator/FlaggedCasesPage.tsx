@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { ShieldAlert, Loader2, ChevronDown } from 'lucide-react'
+import { ShieldAlert, Loader2, ChevronRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import type { ComplianceFlag } from '@/types/database'
 
@@ -27,12 +28,18 @@ const FLAG_TYPE_LABEL: Record<string, string> = {
   missing_owner:        'Missing Owner Record',
 }
 
+function caseId(flag: ComplianceFlag) {
+  const year = new Date(flag.created_at).getFullYear()
+  const suffix = flag.id.replace(/-/g, '').slice(-4).toUpperCase()
+  return `INV-${year}-${suffix}`
+}
+
 export function FlaggedCasesPage() {
   const { profile } = useAuth()
+  const navigate = useNavigate()
   const [flags, setFlags] = useState<ComplianceFlag[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<string>('open')
-  const [expanded, setExpanded] = useState<string | null>(null)
   const [updating, setUpdating] = useState<string | null>(null)
 
   const loadFlags = useCallback(async () => {
@@ -126,82 +133,35 @@ export function FlaggedCasesPage() {
       ) : (
         <div className="space-y-2">
           {flags.map((flag, i) => (
-            <motion.div
+            <motion.button
               key={flag.id}
+              type="button"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
-              className="bg-white border border-border rounded-xl overflow-hidden"
+              onClick={() => navigate(`/regulator/flags/${flag.id}`)}
+              className="w-full bg-white border border-border rounded-xl flex items-center gap-4 p-4 text-left hover:bg-muted/30 transition-colors"
             >
-              {/* Header row */}
-              <button
-                type="button"
-                onClick={() => setExpanded(expanded === flag.id ? null : flag.id)}
-                className="w-full flex items-center gap-4 p-4 text-left hover:bg-muted/30 transition-colors"
-              >
-                <ShieldAlert className={`w-5 h-5 flex-shrink-0 ${flag.severity === 'critical' ? 'text-red-600' : 'text-yellow-500'}`} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                    <p className="text-sm font-medium">{FLAG_TYPE_LABEL[flag.flag_type] ?? flag.flag_type}</p>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${SEVERITY_STYLE[flag.severity]}`}>
-                      {flag.severity}
-                    </span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${STATUS_STYLE[flag.status]}`}>
-                      {flag.status}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {new Date(flag.created_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
-                    {flag.description && ` · ${flag.description}`}
-                  </p>
+              <ShieldAlert className={`w-5 h-5 flex-shrink-0 ${flag.severity === 'critical' ? 'text-red-600' : 'text-yellow-500'}`} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <p className="text-sm font-medium text-foreground">{caseId(flag)}</p>
+                  <span className="text-gray-300 text-xs">·</span>
+                  <p className="text-sm text-muted-foreground">{FLAG_TYPE_LABEL[flag.flag_type] ?? flag.flag_type}</p>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${SEVERITY_STYLE[flag.severity]}`}>
+                    {flag.severity}
+                  </span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${STATUS_STYLE[flag.status]}`}>
+                    {flag.status}
+                  </span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-muted-foreground flex-shrink-0 transition-transform ${expanded === flag.id ? 'rotate-180' : ''}`} />
-              </button>
-
-              {/* Expanded detail */}
-              {expanded === flag.id && (
-                <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">
-                  <p className="text-sm text-foreground">{flag.description}</p>
-
-                  {flag.status !== 'resolved' && flag.status !== 'dismissed' && (
-                    <div className="flex gap-2 flex-wrap">
-                      {flag.status === 'open' && (
-                        <button
-                          type="button"
-                          disabled={updating === flag.id}
-                          onClick={() => updateStatus(flag.id, 'investigating')}
-                          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-yellow-50 text-yellow-700 border border-yellow-200 hover:bg-yellow-100 transition-colors disabled:opacity-50"
-                        >
-                          {updating === flag.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Mark Investigating'}
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        disabled={updating === flag.id}
-                        onClick={() => updateStatus(flag.id, 'resolved')}
-                        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-eco-50 text-eco-700 border border-eco-200 hover:bg-eco-100 transition-colors disabled:opacity-50"
-                      >
-                        Mark Resolved
-                      </button>
-                      <button
-                        type="button"
-                        disabled={updating === flag.id}
-                        onClick={() => updateStatus(flag.id, 'dismissed')}
-                        className="px-3 py-1.5 text-xs font-medium rounded-lg bg-muted text-muted-foreground hover:bg-muted/70 transition-colors disabled:opacity-50"
-                      >
-                        Dismiss
-                      </button>
-                    </div>
-                  )}
-
-                  {flag.resolved_at && (
-                    <p className="text-xs text-muted-foreground">
-                      Resolved {new Date(flag.resolved_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
-                    </p>
-                  )}
-                </div>
-              )}
-            </motion.div>
+                <p className="text-xs text-muted-foreground truncate">
+                  {new Date(flag.created_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
+                  {flag.description && ` · ${flag.description}`}
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            </motion.button>
           ))}
         </div>
       )}
