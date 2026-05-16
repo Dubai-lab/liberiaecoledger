@@ -195,6 +195,33 @@ export interface EcoCredit {
   created_at: string
 }
 
+export interface RewardCatalogueItem {
+  id: string
+  title: string
+  partner: string
+  category: string
+  cost_ec: number
+  image_url: string | null
+  description: string | null
+  stock: number | null
+  is_active: boolean
+  created_at: string
+}
+
+export interface Redemption {
+  id: string
+  user_id: string
+  catalogue_item_id: string
+  item_title: string
+  item_partner: string
+  ec_cost: number
+  status: 'pending' | 'fulfilled' | 'failed'
+  notes: string | null
+  fulfilled_by: string | null
+  fulfilled_at: string | null
+  created_at: string
+}
+
 export interface RecyclerFacility {
   id: string
   owner_id: string

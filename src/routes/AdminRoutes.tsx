@@ -6,6 +6,7 @@ import { RecyclersPage } from '@/pages/admin/RecyclersPage'
 import { SmartContractsPage } from '@/pages/admin/SmartContractsPage'
 import { SystemSettingsPage } from '@/pages/admin/SystemSettingsPage'
 import { NotificationsPage } from '@/pages/shared/NotificationsPage'
+import { RewardsPage } from '@/pages/admin/RewardsPage'
 
 export function AdminRoutes() {
   return (
@@ -17,6 +18,7 @@ export function AdminRoutes() {
       <Route path="contracts" element={<SmartContractsPage />} />
       <Route path="settings" element={<SystemSettingsPage />} />
       <Route path="notifications" element={<NotificationsPage />} />
+      <Route path="rewards" element={<RewardsPage />} />
     </Routes>
   )
 }

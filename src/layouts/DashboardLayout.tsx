@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Cpu, Send, Leaf, Bell, Factory, BookOpen,
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
-  ChevronRight, Menu, X, LogOut, ChevronDown,
+  ChevronRight, Menu, X, LogOut, ChevronDown, Gift,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
@@ -54,6 +54,7 @@ const NAV: Record<UserRole, NavItem[]> = {
     { label: 'Users',             path: '/admin/users',                  icon: <Users className="w-4 h-4" /> },
     { label: 'Invitations',       path: '/admin/invitations',            icon: <MailPlus className="w-4 h-4" /> },
     { label: 'Recyclers',         path: '/admin/recyclers',              icon: <Recycle className="w-4 h-4" /> },
+    { label: 'Rewards',           path: '/admin/rewards',                icon: <Gift className="w-4 h-4" /> },
     { label: 'Smart Contracts',   path: '/admin/contracts',              icon: <Code2 className="w-4 h-4" /> },
     { label: 'System Settings',   path: '/admin/settings',               icon: <Settings className="w-4 h-4" /> },
     { label: 'Notifications',     path: '/admin/notifications',          icon: <Bell className="w-4 h-4" /> },
