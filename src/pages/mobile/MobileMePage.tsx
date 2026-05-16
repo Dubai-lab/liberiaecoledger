@@ -16,9 +16,9 @@ export function MobileMePage() {
   }
 
   const ITEMS = [
-    { label: 'Switch to Web App', sub: 'Access full dashboard', action: () => navigate('/consumer') },
-    { label: 'Account Settings',  sub: 'Email, password, preferences', action: () => {} },
-    { label: 'About EcoLedger',   sub: 'Version 1.0 · Polygon Amoy', action: () => {} },
+    { label: 'Switch to Web App', sub: 'Access full dashboard',      action: () => navigate('/consumer') },
+    { label: 'Account Settings',  sub: 'Name, phone, organization',  action: () => navigate('/mobile/settings') },
+    { label: 'About EcoLedger',   sub: 'Version 1.0 · Polygon Amoy', action: () => navigate('/mobile/about') },
   ]
 
   return (
