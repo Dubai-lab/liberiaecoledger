@@ -151,9 +151,9 @@ export function useAuth() {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    if (authenticated) await logout()
     setState({ isLoading: false, isAuthenticated: false, profile: null, activeRole: null })
+    try { await supabase.auth.signOut() } catch { /* ignore */ }
+    try { if (authenticated) await logout() } catch { /* ignore */ }
   }
 
   return { ...state, switchRole, signOut, refetch: loadProfile }

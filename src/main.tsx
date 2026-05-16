@@ -17,6 +17,7 @@ const queryClient = new QueryClient({
 })
 
 const privyAppId = import.meta.env.VITE_PRIVY_APP_ID as string
+const wcProjectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID as string | undefined
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -26,12 +27,13 @@ createRoot(document.getElementById('root')!).render(
         appearance: {
           theme: 'light',
           accentColor: '#15803d',
-          logo: '/favicon.svg',
+          logo: 'https://liberiaecoledger.com/app-icon-192.png',
         },
         loginMethods: ['email', 'wallet'],
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
         },
+        ...(wcProjectId ? { walletConnectCloudProjectId: wcProjectId } : {}),
         defaultChain: {
           id: 80002,
           name: 'Polygon Amoy',
