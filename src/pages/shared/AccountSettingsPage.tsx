@@ -68,7 +68,9 @@ export function AccountSettingsPage() {
   const handleResetPassword = async () => {
     const email = data?.email ?? profile?.email
     if (!email) return
-    const { error } = await supabase.auth.resetPasswordForEmail(email)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
     if (error) toast.error('Could not send reset email.')
     else {
       setResetSent(true)

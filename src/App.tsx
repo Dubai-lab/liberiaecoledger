@@ -17,6 +17,7 @@ import { AdminRoutes } from '@/routes/AdminRoutes'
 import { MobileRoutes } from '@/routes/MobileRoutes'
 import { MobileLoginPage } from '@/pages/mobile/MobileLoginPage'
 import { AccountSettingsPage } from '@/pages/shared/AccountSettingsPage'
+import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -28,6 +29,9 @@ export default function App() {
 
   return (
     <Routes>
+      {/* Password reset — public, no layout needed */}
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+
       {/* Public auth routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
