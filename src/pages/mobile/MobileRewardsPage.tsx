@@ -17,20 +17,21 @@ const REDEEM_OPTIONS = [
 ]
 
 export function MobileRewardsPage() {
-  const { profile } = useAuth()
+  const { profile, isLoading: authLoading } = useAuth()
   const [credits, setCredits] = useState<{ amount: number; type: string; description: string | null; created_at: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<string | null>(null)
   const [amount, setAmount] = useState('')
 
   useEffect(() => {
-    if (!profile) return
+    if (authLoading) return
+    if (!profile) { setLoading(false); return }
     supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false })
       .then(({ data }) => {
         setCredits(data ?? [])
         setLoading(false)
       })
-  }, [profile])
+  }, [profile, authLoading])
 
   const earned   = credits.filter(c => c.type === 'earned' || c.type === 'bonus').reduce((s, c) => s + c.amount, 0)
   const redeemed = credits.filter(c => c.type === 'redeemed').reduce((s, c) => s + c.amount, 0)

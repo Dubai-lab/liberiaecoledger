@@ -9,10 +9,10 @@ interface Device {
   id: string
   brand: string
   model: string
-  storage_gb: number | null
+  category: string | null
   status: string
-  registered_at: string
-  image_url: string | null
+  created_at: string
+  receipt_url: string | null
 }
 
 function statusPill(status: string) {
@@ -22,19 +22,25 @@ function statusPill(status: string) {
 }
 
 export function MobileDevicesPage() {
-  const { profile } = useAuth()
+  const { profile, isLoading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [devices, setDevices] = useState<Device[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!profile) return
-    supabase.from('devices').select('*').eq('current_owner_id', profile.id).order('registered_at', { ascending: false })
+    if (authLoading) return
+    if (!profile) { setLoading(false); return }
+
+    supabase
+      .from('devices')
+      .select('id, brand, model, category, status, created_at, receipt_url')
+      .eq('current_owner_id', profile.id)
+      .order('created_at', { ascending: false })
       .then(({ data }) => {
         setDevices(data ?? [])
         setLoading(false)
       })
-  }, [profile])
+  }, [profile, authLoading])
 
   if (loading) {
     return (
@@ -46,7 +52,6 @@ export function MobileDevicesPage() {
 
   return (
     <div className="px-5 pt-6" style={{ background: '#f0ede6', minHeight: '100vh' }}>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
         <p className="text-xs text-[#9b9b98]">{devices.length} devices</p>
@@ -60,32 +65,27 @@ export function MobileDevicesPage() {
             </svg>
           </div>
           <p className="text-sm text-[#9b9b98]">No devices yet.</p>
-          <p className="text-xs text-[#b0afa8] mt-1">Scan a device or register one.</p>
+          <p className="text-xs text-[#b0afa8] mt-1">Register a device on the web dashboard first.</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 pb-6">
           {devices.map(d => {
             const { bg, text, label } = statusPill(d.status)
             return (
               <button
                 key={d.id}
+                type="button"
                 onClick={() => navigate(`/mobile/device/${d.id}`)}
                 className="w-full bg-white rounded-2xl p-4 flex items-center gap-4 text-left"
               >
-                <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0" style={{ background: '#e8e5de' }}>
-                  {d.image_url ? (
-                    <img src={d.image_url} alt={d.model} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="#b0afa8" strokeWidth={1.5}>
-                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                      </svg>
-                    </div>
-                  )}
+                <div className="w-14 h-14 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: '#e8e5de' }}>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="#b0afa8" strokeWidth={1.5}>
+                    <rect x="2" y="5" width="20" height="14" rx="2" />
+                  </svg>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-[#0f0f0e] truncate">{d.brand} {d.model}</p>
-                  {d.storage_gb && <p className="text-xs text-[#9b9b98]">{d.storage_gb}GB</p>}
+                  {d.category && <p className="text-xs text-[#9b9b98]">{d.category}</p>}
                   <span className="inline-block text-[10px] font-bold tracking-widest px-2 py-0.5 rounded-full mt-1" style={{ background: bg, color: text }}>
                     {label}
                   </span>
