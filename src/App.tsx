@@ -16,6 +16,7 @@ import { AuditorRoutes } from '@/routes/AuditorRoutes'
 import { AdminRoutes } from '@/routes/AdminRoutes'
 import { MobileRoutes } from '@/routes/MobileRoutes'
 import { MobileLoginPage } from '@/pages/mobile/MobileLoginPage'
+import { AccountSettingsPage } from '@/pages/shared/AccountSettingsPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -78,6 +79,7 @@ export default function App() {
         }
       >
         <Route index element={<Navigate to={`/${activeRole ?? 'login'}`} replace />} />
+        <Route path="/account" element={<AccountSettingsPage />} />
         <Route path="/consumer/*" element={<ConsumerRoutes />} />
         <Route path="/manufacturer/*" element={<ManufacturerRoutes />} />
         <Route path="/recycler/*" element={<RecyclerRoutes />} />

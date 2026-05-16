@@ -147,7 +147,11 @@ export function DashboardLayout() {
 
         {/* User profile + sign out */}
         <div className="px-3 py-4 border-t border-white/10">
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+          <button
+            type="button"
+            onClick={() => { navigate('/account'); setMobileOpen(false) }}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
+          >
             <div className="w-7 h-7 rounded-full bg-[#2f6b3a] flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-semibold text-white">{initials}</span>
             </div>
@@ -155,15 +159,16 @@ export function DashboardLayout() {
               <p className="text-xs font-medium text-white/80 truncate">{displayName}</p>
               <p className="text-[10px] text-white/40 truncate">{profile?.organization ?? 'EcoLedger'}</p>
             </div>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              title="Sign out"
-              className="text-white/30 hover:text-white/70 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
+            <Settings className="w-3.5 h-3.5 text-white/30 hover:text-white/70 flex-shrink-0" />
+          </button>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-colors text-xs"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Sign out
+          </button>
         </div>
       </aside>
 
