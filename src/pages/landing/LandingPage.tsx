@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logoCompactDark from '@/brands/logo-compact-dark.png'
 import logoCompactLight from '@/brands/logo-compact-light.png'
+import lifecycleIllustration from '@/brands/lifecycle-illustration.png'
 
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  as string
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
@@ -128,103 +129,14 @@ function LandingNav() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
-function DeviceLifecycleDiagram({ deviceCount }: { deviceCount: number }) {
-  // Cards positioned around a 280px circle, matching the reference design
-  // Angles measured clockwise from top: 1=top-left, 2=top-right, 3=right, 4=bottom, 5=left
-  const steps = [
-    { num: 1, title: 'Sold',        sub: 'POINT OF SALE',    angle: -135 },
-    { num: 2, title: 'In use',      sub: 'OWNER TRACKED',    angle: -45  },
-    { num: 3, title: 'Transferred', sub: 'ON-CHAIN HANDOFF', angle: 45   },
-    { num: 4, title: 'Recycled',    sub: 'VERIFIED DISPOSAL',angle: 135  },
-    { num: 5, title: 'Rewarded',    sub: 'ECOCREDITS PAID',  angle: 180  },
-  ]
-
-  const cx = 180, cy = 180, r = 130
-
-  function pos(angle: number) {
-    const rad = (angle * Math.PI) / 180
-    return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) }
-  }
-
-  // Build curved arrow paths between consecutive steps (clockwise)
-  function arcPath(from: number, to: number) {
-    const p1 = pos(steps[from].angle)
-    const p2 = pos(steps[to].angle)
-    const mx = (p1.x + p2.x) / 2
-    const my = (p1.y + p2.y) / 2
-    const dx = p2.x - p1.x
-    const dy = p2.y - p1.y
-    const nx = -dy * 0.25
-    const ny =  dx * 0.25
-    return `M ${p1.x} ${p1.y} Q ${mx + nx} ${my + ny} ${p2.x} ${p2.y}`
-  }
-
+function DeviceLifecycleDiagram() {
   return (
-    <div className="relative flex-shrink-0" style={{ width: 360, height: 360, background: '#f0ede6', borderRadius: 24 }}>
-      {/* SVG arrows */}
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 360 360">
-        <defs>
-          <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L8,3 z" fill="#2d6a3f" opacity="0.5" />
-          </marker>
-        </defs>
-        {[0,1,2,3,4].map(i => (
-          <path
-            key={i}
-            d={arcPath(i, (i + 1) % 5)}
-            fill="none"
-            stroke="#2d6a3f"
-            strokeWidth="1.5"
-            strokeDasharray="5,4"
-            strokeLinecap="round"
-            markerEnd="url(#arrowhead)"
-            opacity="0.55"
-          />
-        ))}
-      </svg>
-
-      {/* Center badge */}
-      <div
-        className="absolute flex flex-col items-center justify-center text-center"
-        style={{
-          width: 96, height: 96,
-          borderRadius: '50%',
-          background: '#0f0f0e',
-          left: cx - 48, top: cy - 48,
-        }}
-      >
-        <p className="text-[8px] font-semibold tracking-widest text-[#6b6b68] uppercase leading-none mb-0.5">TOKEN</p>
-        <p className="text-base font-bold text-white leading-none">#{deviceCount > 0 ? deviceCount.toLocaleString() : '—'}</p>
-        <p className="text-[7px] text-[#6b6b68] mt-0.5 leading-none">0xa31f…b042</p>
-      </div>
-
-      {/* Step cards */}
-      {steps.map(s => {
-        const { x, y } = pos(s.angle)
-        return (
-          <div
-            key={s.num}
-            className="absolute bg-white rounded-xl shadow-sm border border-[#e8e5de] px-3 py-2.5"
-            style={{
-              transform: 'translate(-50%, -50%)',
-              left: x, top: y,
-              minWidth: 100,
-            }}
-          >
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span
-                className="w-4 h-4 rounded-full bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
-                style={{ fontSize: 8, color: 'white', fontWeight: 700 }}
-              >
-                {s.num}
-              </span>
-              <p className="text-xs font-bold text-[#0f0f0e] leading-none">{s.title}</p>
-            </div>
-            <p className="text-[9px] font-semibold tracking-widest text-[#9b9b98] leading-none pl-5">{s.sub}</p>
-          </div>
-        )
-      })}
-    </div>
+    <img
+      src={lifecycleIllustration}
+      alt="Device lifecycle — Sold, In use, Transferred, Recycled, Rewarded"
+      className="flex-shrink-0 w-full max-w-sm object-contain"
+      draggable={false}
+    />
   )
 }
 
@@ -278,7 +190,7 @@ function HeroSection({ stats }: { stats: LandingStats }) {
         </div>
 
         <div className="hidden lg:flex justify-center flex-shrink-0">
-          <DeviceLifecycleDiagram deviceCount={stats.devices} />
+          <DeviceLifecycleDiagram />
         </div>
       </div>
     </section>
