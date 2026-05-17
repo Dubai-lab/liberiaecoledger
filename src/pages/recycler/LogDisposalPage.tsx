@@ -208,6 +208,10 @@ export function LogDisposalPage() {
           creditsAmount: calculatedCredits,
         })
         if (result) {
+          await supabase
+            .from('disposals')
+            .update({ tx_hash: result.txHash })
+            .eq('id', disposal!.id)
           toast.success(
             <span>On-chain confirmed! <a href={`${EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="underline">View tx</a></span>,
             { id: 'relay', duration: 6000 }

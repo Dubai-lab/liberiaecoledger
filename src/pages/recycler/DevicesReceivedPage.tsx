@@ -170,14 +170,13 @@ export function DevicesReceivedPage() {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
   const stats = useMemo(() => {
-    const confirmed = all.filter(d => d.status === 'confirmed')
-    const ytd = confirmed.filter(d => d.created_at >= yearStart)
+    const ytd = all.filter(d => d.created_at >= yearStart)
     return {
       processedYTD: ytd.length,
-      massKg:       confirmed.reduce((s, d) => s + (d.final_mass_kg ?? 0), 0),
-      creditsOut:   confirmed.reduce((s, d) => s + (d.eco_credits_awarded ?? 0), 0),
+      massKg:       all.reduce((s, d) => s + (d.final_mass_kg ?? 0), 0),
+      creditsOut:   all.reduce((s, d) => s + (d.eco_credits_awarded ?? 0), 0),
       pendingSync:  all.filter(d => !d.tx_hash).length,
-      thisMonth:    confirmed.filter(d => d.created_at >= monthStart).length,
+      thisMonth:    all.filter(d => d.created_at >= monthStart).length,
       consumers:    all.filter(d => d.eco_credits_awarded > 0).length,
     }
   }, [all, yearStart, monthStart])
@@ -469,8 +468,8 @@ export function DevicesReceivedPage() {
           <table className="w-full min-w-[960px] text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/20">
-                <th className="px-4 py-3 w-8">
-                  <input type="checkbox" className="rounded border-border" />
+                <th className="px-4 py-3 w-8" aria-label="Select all">
+                  <input type="checkbox" className="rounded border-border" aria-label="Select all rows" />
                 </th>
                 {[
                   'Device', 'Token ID', 'From Owner', 'Disposed',
