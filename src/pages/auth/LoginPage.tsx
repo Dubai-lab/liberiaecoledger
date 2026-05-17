@@ -7,13 +7,18 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 
+const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  as string
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+
 function useLoginStats() {
   const [s, setS] = useState({ devices: 0, recyclers: 0 })
   useEffect(() => {
-    Promise.all([
-      supabase.from('devices').select('*', { count: 'exact', head: true }),
-      supabase.from('recycler_facilities').select('*', { count: 'exact', head: true }).eq('is_active', true),
-    ]).then(([d, r]) => setS({ devices: d.count ?? 0, recyclers: r.count ?? 0 }))
+    fetch(`${SUPABASE_URL}/functions/v1/public-stats`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` },
+    })
+      .then(r => r.json())
+      .then(data => setS({ devices: data.devices ?? 0, recyclers: data.recyclers ?? 0 }))
+      .catch(() => {})
   }, [])
   return s
 }
