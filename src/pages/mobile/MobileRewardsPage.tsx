@@ -11,10 +11,11 @@ function fmt(n: number) { return new Intl.NumberFormat().format(n) }
 
 interface CatalogueItem {
   id: string
-  name: string
+  title: string
+  partner: string
   description: string | null
-  cost_credits: number
-  icon_emoji: string | null
+  cost_ec: number
+  image_url: string | null
   category: string | null
   is_active: boolean
 }
@@ -32,7 +33,7 @@ export function MobileRewardsPage() {
     if (!profile) { setLoading(false); return }
     Promise.all([
       supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false }),
-      supabase.from('reward_catalogue').select('id, name, description, cost_credits, icon_emoji, category, is_active').eq('is_active', true).order('cost_credits', { ascending: true }),
+      supabase.from('reward_catalogue').select('id, title, partner, description, cost_ec, image_url, category, is_active').eq('is_active', true).order('cost_ec', { ascending: true }),
     ]).then(([credRes, catRes]) => {
       setCredits(credRes.data ?? [])
       setCatalogue(catRes.data ?? [])
@@ -46,8 +47,8 @@ export function MobileRewardsPage() {
 
   const handleRedeem = async () => {
     if (!selected || !profile) return
-    if (balance < selected.cost_credits) {
-      toast.error(`Not enough EcoCredits. You need ${fmt(selected.cost_credits)} EC.`)
+    if (balance < selected.cost_ec) {
+      toast.error(`Not enough EcoCredits. You need ${fmt(selected.cost_ec)} EC.`)
       return
     }
     setRedeeming(true)
@@ -55,23 +56,25 @@ export function MobileRewardsPage() {
       const { error: redemptionError } = await supabase.from('redemptions').insert({
         user_id: profile.id,
         catalogue_item_id: selected.id,
-        credits_spent: selected.cost_credits,
+        item_title: selected.title,
+        item_partner: selected.partner,
+        ec_cost: selected.cost_ec,
         status: 'pending',
       })
       if (redemptionError) throw redemptionError
 
       await supabase.from('eco_credits').insert({
         user_id: profile.id,
-        amount: selected.cost_credits,
+        amount: selected.cost_ec,
         type: 'redeemed',
         source: 'redemption',
-        description: `Redeemed: ${selected.name}`,
+        description: `Redeemed: ${selected.title}`,
       })
 
       await supabase.from('notifications').insert({
         user_id: profile.id,
         title: 'Redemption submitted!',
-        body: `Your request for "${selected.name}" has been submitted and is pending fulfilment.`,
+        body: `Your request for "${selected.title}" has been submitted and is pending fulfilment.`,
         type: 'success',
         is_read: false,
         link: '/mobile/rewards',
@@ -81,7 +84,7 @@ export function MobileRewardsPage() {
       const { data } = await supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false })
       setCredits(data ?? [])
       setSelected(null)
-      toast.success(`"${selected.name}" redemption submitted!`)
+      toast.success(`"${selected.title}" redemption submitted!`)
     } catch {
       toast.error('Redemption failed. Please try again.')
     } finally {
@@ -132,7 +135,7 @@ export function MobileRewardsPage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 mb-5">
           {catalogue.map(item => {
-            const canAfford = balance >= item.cost_credits
+            const canAfford = balance >= item.cost_ec
             const isSelected = selected?.id === item.id
             return (
               <button
@@ -143,14 +146,18 @@ export function MobileRewardsPage() {
                   isSelected ? 'border-[#0f0f0e]' : 'border-transparent'
                 } ${!canAfford ? 'opacity-50' : ''}`}
               >
-                <p className="text-xl mb-1">{item.icon_emoji ?? '🎁'}</p>
-                <p className="text-sm font-semibold text-[#0f0f0e] leading-tight">{item.name}</p>
+                {item.image_url
+                  ? <img src={item.image_url} alt={item.title} className="w-10 h-10 rounded-lg object-cover mb-2" />
+                  : <p className="text-xl mb-1">🎁</p>
+                }
+                <p className="text-sm font-semibold text-[#0f0f0e] leading-tight">{item.title}</p>
+                <p className="text-[10px] text-[#b0afa8]">{item.partner}</p>
                 {item.description && (
                   <p className="text-xs text-[#9b9b98] mt-0.5 line-clamp-2">{item.description}</p>
                 )}
-                <p className="text-xs font-bold text-[#2d6a3f] mt-2">{fmt(item.cost_credits)} EC</p>
+                <p className="text-xs font-bold text-[#2d6a3f] mt-2">{fmt(item.cost_ec)} EC</p>
                 {!canAfford && (
-                  <p className="text-[10px] text-[#b0afa8] mt-0.5">Need {fmt(item.cost_credits - balance)} more</p>
+                  <p className="text-[10px] text-[#b0afa8] mt-0.5">Need {fmt(item.cost_ec - balance)} more</p>
                 )}
               </button>
             )
@@ -162,15 +169,15 @@ export function MobileRewardsPage() {
       {selected && (
         <div className="bg-white rounded-2xl p-4 mb-4">
           <p className="text-xs text-[#9b9b98] mb-1">Redeeming</p>
-          <p className="text-sm font-semibold text-[#0f0f0e]">{selected.name}</p>
-          <p className="text-xs text-[#9b9b98] mt-0.5">Cost: {fmt(selected.cost_credits)} EC · Balance after: {fmt(balance - selected.cost_credits)} EC</p>
+          <p className="text-sm font-semibold text-[#0f0f0e]">{selected.title}</p>
+          <p className="text-xs text-[#9b9b98] mt-0.5">Cost: {fmt(selected.cost_ec)} EC · Balance after: {fmt(balance - selected.cost_ec)} EC</p>
         </div>
       )}
 
       <button
         type="button"
         onClick={handleRedeem}
-        disabled={!selected || redeeming || (selected ? balance < selected.cost_credits : false)}
+        disabled={!selected || redeeming || (selected ? balance < selected.cost_ec : false)}
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40 flex items-center justify-center gap-2"
         style={{ background: '#0f0f0e' }}
       >
