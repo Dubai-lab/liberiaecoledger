@@ -103,9 +103,23 @@ export function EcoCreditsPage() {
       toast.error(`Not enough EcoCredits. You need ${item.cost_ec} EC but have ${fmt(balance)} EC.`)
       return
     }
+    if (item.stock !== null && item.stock <= 0) {
+      toast.error('This reward is out of stock.')
+      return
+    }
     setRedeeming(item.id)
     try {
-      // 1. Deduct from eco_credits
+      // 1. Decrement stock if limited (atomic — only updates if stock > 0)
+      if (item.stock !== null) {
+        const { error: stockErr } = await supabase
+          .from('reward_catalogue')
+          .update({ stock: item.stock - 1 })
+          .eq('id', item.id)
+          .gt('stock', 0)
+        if (stockErr) throw new Error('Stock update failed — item may have just sold out.')
+      }
+
+      // 2. Deduct from eco_credits
       const { error: creditErr } = await supabase.from('eco_credits').insert({
         user_id:     profile.id,
         amount:      item.cost_ec,
@@ -117,7 +131,7 @@ export function EcoCreditsPage() {
       })
       if (creditErr) throw creditErr
 
-      // 2. Create redemption record for admin to fulfill
+      // 3. Create redemption record for admin to fulfill
       const { error: redErr } = await supabase.from('redemptions').insert({
         user_id:           profile.id,
         catalogue_item_id: item.id,
@@ -128,7 +142,7 @@ export function EcoCreditsPage() {
       })
       if (redErr) throw redErr
 
-      // 3. Create in-app notification for this user
+      // 4. Create in-app notification for this user
       await supabase.from('notifications').insert({
         user_id: profile.id,
         title:   `Redemption placed — ${item.title}`,
@@ -255,7 +269,8 @@ export function EcoCreditsPage() {
               ) : (
                 <div className="grid grid-cols-3 gap-4">
                   {catalogue.map((item, i) => {
-                    const canAfford = balance >= item.cost_ec
+                    const outOfStock = item.stock !== null && item.stock <= 0
+                    const canAfford  = balance >= item.cost_ec && !outOfStock
                     return (
                       <motion.div
                         key={item.id}
@@ -293,9 +308,16 @@ export function EcoCreditsPage() {
                             <p className="text-[11px] text-gray-400 mb-2 leading-relaxed">{item.description}</p>
                           )}
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-bold text-gray-900">
-                              {item.cost_ec} <span className="font-normal text-gray-400">EC</span>
-                            </span>
+                            <div>
+                              <span className="text-sm font-bold text-gray-900">
+                                {item.cost_ec} <span className="font-normal text-gray-400">EC</span>
+                              </span>
+                              {item.stock !== null && (
+                                <p className="text-[10px] mt-0.5" style={{ color: item.stock <= 3 ? '#c0392b' : '#9b9b98' }}>
+                                  {item.stock === 0 ? 'Out of stock' : `${item.stock} left`}
+                                </p>
+                              )}
+                            </div>
                             <button
                               type="button"
                               disabled={!!redeeming || !canAfford}
@@ -305,6 +327,7 @@ export function EcoCreditsPage() {
                             >
                               {redeeming === item.id
                                 ? <Loader2 className="w-3 h-3 animate-spin" />
+                                : outOfStock ? 'Out of stock'
                                 : canAfford ? 'Redeem' : 'Not enough EC'}
                             </button>
                           </div>

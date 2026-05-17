@@ -17,6 +17,7 @@ interface CatalogueItem {
   cost_ec: number
   image_url: string | null
   category: string | null
+  stock: number | null
   is_active: boolean
 }
 
@@ -33,7 +34,7 @@ export function MobileRewardsPage() {
     if (!profile) { setLoading(false); return }
     Promise.all([
       supabase.from('eco_credits').select('amount, type, description, created_at').eq('user_id', profile.id).order('created_at', { ascending: false }),
-      supabase.from('reward_catalogue').select('id, title, partner, description, cost_ec, image_url, category, is_active').eq('is_active', true).order('cost_ec', { ascending: true }),
+      supabase.from('reward_catalogue').select('id, title, partner, description, cost_ec, image_url, category, stock, is_active').eq('is_active', true).order('cost_ec', { ascending: true }),
     ]).then(([credRes, catRes]) => {
       setCredits(credRes.data ?? [])
       setCatalogue(catRes.data ?? [])
@@ -51,8 +52,22 @@ export function MobileRewardsPage() {
       toast.error(`Not enough EcoCredits. You need ${fmt(selected.cost_ec)} EC.`)
       return
     }
+    if (selected.stock !== null && selected.stock <= 0) {
+      toast.error('This reward is out of stock.')
+      return
+    }
     setRedeeming(true)
     try {
+      // Decrement stock if limited
+      if (selected.stock !== null) {
+        const { error: stockErr } = await supabase
+          .from('reward_catalogue')
+          .update({ stock: selected.stock - 1 })
+          .eq('id', selected.id)
+          .gt('stock', 0)
+        if (stockErr) throw new Error('Item may have just sold out.')
+      }
+
       const { error: redemptionError } = await supabase.from('redemptions').insert({
         user_id: profile.id,
         catalogue_item_id: selected.id,
@@ -135,7 +150,8 @@ export function MobileRewardsPage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 mb-5">
           {catalogue.map(item => {
-            const canAfford = balance >= item.cost_ec
+            const outOfStock = item.stock !== null && item.stock <= 0
+            const canAfford  = balance >= item.cost_ec && !outOfStock
             const isSelected = selected?.id === item.id
             return (
               <button
@@ -156,9 +172,15 @@ export function MobileRewardsPage() {
                   <p className="text-xs text-[#9b9b98] mt-0.5 line-clamp-2">{item.description}</p>
                 )}
                 <p className="text-xs font-bold text-[#2d6a3f] mt-2">{fmt(item.cost_ec)} EC</p>
-                {!canAfford && (
+                {outOfStock ? (
+                  <p className="text-[10px] text-red-400 mt-0.5 font-semibold">Out of stock</p>
+                ) : item.stock !== null && item.stock <= 3 ? (
+                  <p className="text-[10px] text-red-400 mt-0.5">{item.stock} left</p>
+                ) : item.stock !== null ? (
+                  <p className="text-[10px] text-[#b0afa8] mt-0.5">{item.stock} left</p>
+                ) : !canAfford ? (
                   <p className="text-[10px] text-[#b0afa8] mt-0.5">Need {fmt(item.cost_ec - balance)} more</p>
-                )}
+                ) : null}
               </button>
             )
           })}
