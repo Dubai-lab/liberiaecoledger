@@ -18,6 +18,7 @@ import { MobileRoutes } from '@/routes/MobileRoutes'
 import { MobileLoginPage } from '@/pages/mobile/MobileLoginPage'
 import { AccountSettingsPage } from '@/pages/shared/AccountSettingsPage'
 import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage'
+import { LandingPage } from '@/pages/landing/LandingPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -29,6 +30,16 @@ export default function App() {
 
   return (
     <Routes>
+      {/* Landing page — public */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated
+            ? <Navigate to={`/${activeRole ?? 'consumer'}`} replace />
+            : <LandingPage />
+        }
+      />
+
       {/* Password reset — public, no layout needed */}
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
@@ -82,7 +93,7 @@ export default function App() {
             : <DashboardLayout />
         }
       >
-        <Route index element={<Navigate to={`/${activeRole ?? 'login'}`} replace />} />
+        <Route index element={<Navigate to={`/${activeRole ?? 'consumer'}`} replace />} />
         <Route path="/account" element={<AccountSettingsPage />} />
         <Route path="/consumer/*" element={<ConsumerRoutes />} />
         <Route path="/manufacturer/*" element={<ManufacturerRoutes />} />
@@ -92,7 +103,7 @@ export default function App() {
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
