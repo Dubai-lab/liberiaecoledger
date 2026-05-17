@@ -69,7 +69,7 @@ function LandingNav() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-8">
         <a href="#" className="flex items-center gap-2 flex-shrink-0">
-          <img src={logoCompactDark} alt="EcoLedger" className="h-7 w-auto object-contain" />
+          <img src={logoCompactLight} alt="EcoLedger" className="h-7 w-auto object-contain" />
         </a>
 
         <nav className="hidden lg:flex items-center gap-7 flex-1">
@@ -686,7 +686,7 @@ function LandingFooter() {
         <div className="flex flex-col lg:flex-row gap-12 mb-12">
           <div className="flex-shrink-0 max-w-xs">
             <div className="flex items-center gap-2 mb-4">
-              <img src={logoCompactLight} alt="EcoLedger" className="h-7 w-auto object-contain" />
+              <img src={logoCompactDark} alt="EcoLedger" className="h-7 w-auto object-contain" />
             </div>
             <p className="text-sm text-[#6b6b68] leading-relaxed">
               Blockchain-powered e-waste tracking for Liberia. Making accountability verifiable, one device at a time.
