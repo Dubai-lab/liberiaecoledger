@@ -19,6 +19,11 @@ import { MobileLoginPage } from '@/pages/mobile/MobileLoginPage'
 import { AccountSettingsPage } from '@/pages/shared/AccountSettingsPage'
 import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage'
 import { LandingPage } from '@/pages/landing/LandingPage'
+import { PrivacyPolicyPage } from '@/pages/legal/PrivacyPolicyPage'
+import { TermsOfServicePage } from '@/pages/legal/TermsOfServicePage'
+import { CookiePolicyPage } from '@/pages/legal/CookiePolicyPage'
+import { CodeOfEthicsPage } from '@/pages/legal/CodeOfEthicsPage'
+import { GDPRCompliancePage } from '@/pages/legal/GDPRCompliancePage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -39,6 +44,13 @@ export default function App() {
             : <LandingPage />
         }
       />
+
+      {/* Legal pages — public */}
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms"   element={<TermsOfServicePage />} />
+      <Route path="/cookies" element={<CookiePolicyPage />} />
+      <Route path="/ethics"  element={<CodeOfEthicsPage />} />
+      <Route path="/gdpr"    element={<GDPRCompliancePage />} />
 
       {/* Password reset — public, no layout needed */}
       <Route path="/reset-password" element={<ResetPasswordPage />} />
