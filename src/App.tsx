@@ -25,6 +25,11 @@ import { TermsOfServicePage } from '@/pages/legal/TermsOfServicePage'
 import { CookiePolicyPage } from '@/pages/legal/CookiePolicyPage'
 import { CodeOfEthicsPage } from '@/pages/legal/CodeOfEthicsPage'
 import { GDPRCompliancePage } from '@/pages/legal/GDPRCompliancePage'
+import { ConsumersPage } from '@/pages/platform/ConsumersPage'
+import { ManufacturersPage } from '@/pages/platform/ManufacturersPage'
+import { RecyclersPage } from '@/pages/platform/RecyclersPage'
+import { RegulatorsPage } from '@/pages/platform/RegulatorsPage'
+import { AuditorsPage } from '@/pages/platform/AuditorsPage'
 import { WhitepaperPage } from '@/pages/resources/WhitepaperPage'
 import { APIDocsPage } from '@/pages/resources/APIDocsPage'
 import { BlockExplorerPage } from '@/pages/resources/BlockExplorerPage'
@@ -52,6 +57,13 @@ export default function App() {
             : <LandingPage />
         }
       />
+
+      {/* Platform pages — public */}
+      <Route path="/platform/consumers"     element={<ConsumersPage />} />
+      <Route path="/platform/manufacturers" element={<ManufacturersPage />} />
+      <Route path="/platform/recyclers"     element={<RecyclersPage />} />
+      <Route path="/platform/regulators"    element={<RegulatorsPage />} />
+      <Route path="/platform/auditors"      element={<AuditorsPage />} />
 
       {/* Resources pages — public */}
       <Route path="/whitepaper"     element={<WhitepaperPage />} />

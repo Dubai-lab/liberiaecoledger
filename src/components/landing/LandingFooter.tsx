@@ -5,11 +5,11 @@ const cols = [
   {
     title: 'Platform',
     links: [
-      { label: 'Consumers',        href: '/#platforms' },
-      { label: 'Manufacturers',    href: '/#platforms' },
-      { label: 'Recyclers',        href: '/#platforms' },
-      { label: 'Regulators',       href: '/#platforms' },
-      { label: 'Public & Auditors',href: '/#platforms' },
+      { label: 'Consumers',         href: '/platform/consumers' },
+      { label: 'Manufacturers',     href: '/platform/manufacturers' },
+      { label: 'Recyclers',         href: '/platform/recyclers' },
+      { label: 'Regulators',        href: '/platform/regulators' },
+      { label: 'Public & Auditors', href: '/platform/auditors' },
     ],
   },
   {
