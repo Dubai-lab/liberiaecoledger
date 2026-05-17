@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/email.ts'
 import {
+  tplInvitation,
   tplDeviceRegistered,
   tplTransferRequest,
   tplTransferSent,
@@ -82,6 +83,18 @@ serve(async (req) => {
   try {
     const payload = await req.json()
     const { type, table, record, old_record } = payload
+
+    // ── Invitation created ────────────────────────────────────────────────────
+    if (table === 'invitations' && type === 'INSERT') {
+      const tpl = tplInvitation({
+        email:      record.email,
+        role:       record.role,
+        organization: record.organization ?? '',
+        token:      record.token,
+        expiryDays: record.expiry_days ?? 7,
+      })
+      await sendEmail({ to: record.email, ...tpl })
+    }
 
     // ── Device registered ─────────────────────────────────────────────────────
     if (table === 'device_lifecycle' && type === 'INSERT' && record.event_type === 'registered') {

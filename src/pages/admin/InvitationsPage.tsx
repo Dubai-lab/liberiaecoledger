@@ -70,10 +70,24 @@ export function InvitationsPage() {
 
       if (error) throw error
 
-      // Send notification email via Supabase Edge Function (or just show the code)
+      // Send invitation email automatically via notify edge function
+      await supabase.functions.invoke('notify', {
+        body: {
+          type: 'INSERT',
+          table: 'invitations',
+          record: {
+            email:       form.email.toLowerCase().trim(),
+            role:        form.role,
+            organization: form.organization.trim(),
+            token,
+            expiry_days: Number(form.expiryDays),
+          },
+        },
+      })
+
       toast.success(
-        `Invitation created! Access code: ${token}`,
-        { duration: 10000, description: `Send this code to ${form.email}` }
+        `Invitation sent to ${form.email}`,
+        { duration: 8000, description: `Access code ${token} has been emailed. The copy button is available as a backup.` }
       )
 
       setForm({ email: '', role: 'regulator', organization: '', expiryDays: '7' })

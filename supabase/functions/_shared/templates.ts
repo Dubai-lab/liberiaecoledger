@@ -35,6 +35,43 @@ function infoTable(rows: { label: string; value: string }[]): string {
   </table>`
 }
 
+// ─── Invitation ──────────────────────────────────────────────────────────────
+
+export function tplInvitation(o: { email: string; role: string; organization: string; token: string; expiryDays: number }) {
+  const roleLabel: Record<string, string> = {
+    regulator:    'Regulator',
+    auditor:      'NGO / Auditor',
+    manufacturer: 'Manufacturer',
+    recycler:     'Recycler',
+    admin:        'Platform Admin',
+  }
+  const label = roleLabel[o.role] ?? o.role
+  return {
+    subject: `Your EcoLedger Access Invitation — ${label}`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">You've Been Invited</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">
+        You have been invited to join the <strong>EcoLedger</strong> platform as a <strong>${label}</strong> on behalf of <strong>${o.organization}</strong>.
+      </p>
+      ${infoTable([
+        { label: 'Your role',     value: label },
+        { label: 'Organisation',  value: o.organization },
+        { label: 'Access code',   value: `<strong style="font-size:16px;letter-spacing:1px;">${o.token}</strong>` },
+        { label: 'Expires in',    value: `${o.expiryDays} day${o.expiryDays !== 1 ? 's' : ''}` },
+      ])}
+      <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#0f0f0e;">How to use your code:</p>
+      <ol style="margin:0 0 24px;padding-left:20px;font-size:14px;color:#6b7280;line-height:2.2;">
+        <li>Visit the EcoLedger platform using the button below</li>
+        <li>Click <strong>"Institutional / Invited access"</strong></li>
+        <li>Enter your email address and the access code above</li>
+        <li>Set your password and complete account setup</li>
+      </ol>
+      ${btn(`${APP_URL}/login/institutional`, 'Accept Invitation →')}
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">This code is personal — do not share it. It expires in ${o.expiryDays} day${o.expiryDays !== 1 ? 's' : ''}. If you believe you received this in error, you can safely ignore it.</p>
+    `),
+  }
+}
+
 // ─── Consumer ────────────────────────────────────────────────────────────────
 
 export function tplDeviceRegistered(o: { name: string; brand: string; model: string; deviceId: string; imei?: string }) {
