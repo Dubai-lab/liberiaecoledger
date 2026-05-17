@@ -13,7 +13,7 @@ function base(content: string): string {
       </td></tr>
       <tr><td style="background:#ffffff;border-radius:20px;padding:36px 32px;">${content}</td></tr>
       <tr><td align="center" style="padding-top:24px;">
-        <p style="margin:0;font-size:11px;color:#9b9b98;">EcoLedger · Liberia, West Africa · Polygon Amoy</p>
+        <p style="margin:0;font-size:11px;color:#9b9b98;">EcoLedger · Liberia, West Africa · Sepolia</p>
       </td></tr>
     </table>
   </td></tr>

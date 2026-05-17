@@ -134,16 +134,6 @@ export function RegisterDevicePage() {
         description: `Registered ${form.brand} ${form.model} on EcoLedger`,
       })
 
-      // Send in-app notification
-      await supabase.from('notifications').insert({
-        user_id: profile.id,
-        title: 'Device registered — 10 EcoCredits earned!',
-        body: `Your ${form.brand} ${form.model} is now on the EcoLedger. You earned 10 EC for registering.`,
-        type: 'success',
-        is_read: false,
-        link: '/consumer/credits',
-      })
-
       toast.success('Device registered — 10 EcoCredits earned!')
       setRegisteredDevice({ id: device.id, brand: form.brand, model: form.model })
 

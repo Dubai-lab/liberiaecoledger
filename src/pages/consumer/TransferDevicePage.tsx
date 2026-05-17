@@ -102,15 +102,6 @@ export function TransferDevicePage() {
         description: `Transferred ${selectedDevice?.brand ?? ''} ${selectedDevice?.model ?? ''} to new owner`,
       })
 
-      await supabase.from('notifications').insert({
-        user_id: profile.id,
-        title: 'Transfer initiated — 5 EcoCredits earned!',
-        body: `Your device transfer has been initiated. You earned 5 EC for responsible transfer.`,
-        type: 'success',
-        is_read: false,
-        link: '/consumer/credits',
-      })
-
       toast.success('Transfer initiated — 5 EcoCredits earned!')
 
       // Anchor on-chain via relay (non-fatal)
