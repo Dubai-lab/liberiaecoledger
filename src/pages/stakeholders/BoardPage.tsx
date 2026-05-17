@@ -131,7 +131,7 @@ export function BoardPage() {
               { label: 'Founded',         value: '2025' },
               { label: 'Board size',      value: '5 directors' },
               { label: 'Term length',     value: '3 years, max 2 terms' },
-              { label: 'Board contact',   value: 'board@liberiaecoledger.com' },
+              { label: 'Board contact',   value: 'support@liberiaecoledger.com' },
             ].map(f => (
               <div key={f.label} className="bg-[#fafaf8] rounded-xl px-4 py-3 border border-[#e8e5de]">
                 <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-1">{f.label}</p>
@@ -148,12 +148,12 @@ export function BoardPage() {
             For governance enquiries, institutional partnership proposals, or to report a concern under our Code of Ethics, contact the Board Secretary directly.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a href="mailto:board@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
-              board@liberiaecoledger.com
+            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
+              support@liberiaecoledger.com
             </a>
             <span className="text-[#e8e5de]">·</span>
-            <a href="mailto:ethics@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
-              ethics@liberiaecoledger.com (ethics reports)
+            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
+              support@liberiaecoledger.com (ethics reports)
             </a>
           </div>
         </div>

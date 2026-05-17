@@ -140,7 +140,7 @@ export function RegulatorPortalPage() {
             EcoLedger is designed to work alongside EPA Liberia's existing enforcement processes — not replace them. The portal generates reports in the formats required for internal EPA Liberia filing, Basel Convention annexures, and court submissions. We can arrange a live demonstration for your department's senior officers.
           </p>
           <a
-            href="mailto:regulators@liberiaecoledger.com"
+            href="mailto:support@liberiaecoledger.com"
             className="inline-block mt-4 text-sm font-semibold text-[#2d6a3f] hover:underline"
           >
             Contact our regulatory partnerships team →
@@ -158,7 +158,7 @@ export function RegulatorPortalPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0 flex-wrap">
             <a
-              href="mailto:regulators@liberiaecoledger.com"
+              href="mailto:support@liberiaecoledger.com"
               className="px-6 py-3 border border-white/20 text-white text-sm font-semibold rounded-xl hover:border-white/40 transition-colors"
             >
               Request a demo

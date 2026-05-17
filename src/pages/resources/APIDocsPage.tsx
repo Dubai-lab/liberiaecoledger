@@ -244,7 +244,7 @@ export function APIDocsPage() {
         <div className="border border-[#e8e5de] rounded-2xl p-6">
           <h2 className="text-base font-bold text-[#0f0f0e] mb-3">Rate Limits & Fair Use</h2>
           <p className="text-sm text-[#6b6b68] leading-relaxed">
-            The API is served via Supabase's managed infrastructure. Default rate limits apply per the Supabase free tier. For high-volume integrations (bulk manufacturer imports, NGO data exports), contact <a href="mailto:api@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">api@liberiaecoledger.com</a> to discuss a dedicated access agreement.
+            The API is served via Supabase's managed infrastructure. Default rate limits apply per the Supabase free tier. For high-volume integrations (bulk manufacturer imports, NGO data exports), contact <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a> to discuss a dedicated access agreement.
           </p>
         </div>
 

@@ -109,7 +109,7 @@ export function CookiePolicyPage() {
         </Section>
 
         <Section title="6. Contact">
-          <p>If you have questions about our use of cookies, contact <a href="mailto:privacy@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">privacy@liberiaecoledger.com</a>.</p>
+          <p>If you have questions about our use of cookies, contact <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
       </div>

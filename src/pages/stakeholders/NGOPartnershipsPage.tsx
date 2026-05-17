@@ -41,7 +41,7 @@ const benefits = [
 ]
 
 const process = [
-  { n: '01', title: 'Expression of interest', body: 'Send a brief description of your organisation and the partnership type you\'re interested in to partners@liberiaecoledger.com.' },
+  { n: '01', title: 'Expression of interest', body: 'Send a brief description of your organisation and the partnership type you\'re interested in to support@liberiaecoledger.com.' },
   { n: '02', title: 'Scoping conversation', body: 'A 30-minute call with our partnerships team to understand your data needs, field capacity, or community reach.' },
   { n: '03', title: 'Partnership agreement', body: 'We draft a lightweight MOU covering data use, attribution, confidentiality, and mutual obligations. No lengthy procurement required.' },
   { n: '04', title: 'Onboarding', body: 'Your team receives auditor credentials, API keys, and a platform walkthrough. You\'re operational within a week of signing.' },
@@ -132,7 +132,7 @@ export function NGOPartnershipsPage() {
           </div>
           <div className="flex gap-3 flex-shrink-0 flex-wrap">
             <a
-              href="mailto:partners@liberiaecoledger.com"
+              href="mailto:support@liberiaecoledger.com"
               className="px-6 py-3 border border-white/20 text-white text-sm font-semibold rounded-xl hover:border-white/40 transition-colors"
             >
               Email our team

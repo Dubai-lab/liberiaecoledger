@@ -97,7 +97,7 @@ export function TermsOfServicePage() {
         </Section>
 
         <Section title="11. Contact">
-          <p>For questions about these Terms, contact <a href="mailto:legal@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">legal@liberiaecoledger.com</a>.</p>
+          <p>For questions about these Terms, contact <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
       </div>

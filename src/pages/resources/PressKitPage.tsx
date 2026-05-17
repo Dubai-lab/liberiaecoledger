@@ -73,7 +73,7 @@ export function PressKitPage() {
               { label: 'SDGs targeted',   value: '12, 13, 3, 11' },
               { label: 'Stakeholder roles', value: 'Consumer, Manufacturer, Recycler, Regulator, Auditor' },
               { label: 'Mobile app',      value: 'Progressive Web App (PWA) for field recyclers' },
-              { label: 'Contact',         value: 'press@liberiaecoledger.com' },
+              { label: 'Contact',         value: 'support@liberiaecoledger.com' },
             ].map(f => (
               <div key={f.label} className="flex gap-3 border border-[#e8e5de] rounded-xl px-4 py-3">
                 <p className="text-xs font-semibold text-[#9b9b98] w-36 flex-shrink-0">{f.label}</p>
@@ -127,8 +127,8 @@ export function PressKitPage() {
           <p className="text-[10px] font-bold tracking-widest text-[#6b6b68] uppercase mb-3">Media Contact</p>
           <p className="text-white font-bold text-lg mb-1">EcoLedger Foundation — Press Office</p>
           <p className="text-[#9b9b98] text-sm mb-4">For interview requests, editorial use of assets, or partnership enquiries:</p>
-          <a href="mailto:press@liberiaecoledger.com" className="text-[#6dba7f] text-sm font-semibold hover:underline">
-            press@liberiaecoledger.com
+          <a href="mailto:support@liberiaecoledger.com" className="text-[#6dba7f] text-sm font-semibold hover:underline">
+            support@liberiaecoledger.com
           </a>
           <p className="text-[#6b6b68] text-xs mt-2">We aim to respond to media enquiries within 48 hours.</p>
         </div>

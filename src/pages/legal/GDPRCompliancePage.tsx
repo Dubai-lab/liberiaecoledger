@@ -50,7 +50,7 @@ export function GDPRCompliancePage() {
           <div className="bg-[#fafaf8] rounded-xl p-4 border border-[#e8e5de] mt-2">
             <p><strong className="text-[#0f0f0e]">Organisation:</strong> EcoLedger Foundation</p>
             <p><strong className="text-[#0f0f0e]">Address:</strong> Monrovia, Liberia, West Africa</p>
-            <p><strong className="text-[#0f0f0e]">Data contact:</strong> <a href="mailto:privacy@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">privacy@liberiaecoledger.com</a></p>
+            <p><strong className="text-[#0f0f0e]">Data contact:</strong> <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a></p>
           </div>
         </Section>
 
@@ -74,7 +74,7 @@ export function GDPRCompliancePage() {
             <Right title="Right to object (Art. 21)" body="You may object to processing based on our legitimate interest. We will cease processing unless we can demonstrate compelling legitimate grounds that override your interests." />
             <Right title="Rights related to automated decision-making (Art. 22)" body="EcoLedger does not make automated decisions with legal or similarly significant effects. Role assignments are made manually by authorised administrators." />
           </div>
-          <p className="mt-4">To exercise any of these rights, submit a request to <a href="mailto:privacy@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">privacy@liberiaecoledger.com</a>. We will acknowledge your request within 5 business days and respond substantively within 30 days.</p>
+          <p className="mt-4">To exercise any of these rights, submit a request to <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. We will acknowledge your request within 5 business days and respond substantively within 30 days.</p>
         </Section>
 
         <Section title="4. Data Transfers Outside the EEA">

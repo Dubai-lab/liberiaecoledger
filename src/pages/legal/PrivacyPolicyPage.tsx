@@ -31,7 +31,7 @@ export function PrivacyPolicyPage() {
 
         <Section title="1. Who We Are">
           <p>EcoLedger Foundation ("EcoLedger", "we", "us", "our") operates the Liberia EcoLedger platform — a blockchain-based electronic device lifecycle tracking registry for the Republic of Liberia. Our registered address is Monrovia, Liberia, West Africa.</p>
-          <p>For questions about this policy or your personal data, contact us at <a href="mailto:privacy@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">privacy@liberiaecoledger.com</a>.</p>
+          <p>For questions about this policy or your personal data, contact us at <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
         <Section title="2. What Data We Collect">
@@ -82,7 +82,7 @@ export function PrivacyPolicyPage() {
             <li><strong className="text-[#0f0f0e]">Data portability</strong> — request your data in a structured, machine-readable format</li>
             <li><strong className="text-[#0f0f0e]">Objection</strong> — object to processing based on legitimate interest</li>
           </ul>
-          <p>To exercise any of these rights, email <a href="mailto:privacy@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">privacy@liberiaecoledger.com</a>. We will respond within 30 days.</p>
+          <p>To exercise any of these rights, email <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. We will respond within 30 days.</p>
         </Section>
 
         <Section title="9. Security">

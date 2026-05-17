@@ -23,7 +23,7 @@ export function RequestAccessPage() {
     const body = encodeURIComponent(
       `Name: ${form.name}\nEmail: ${form.email}\nOrganisation: ${form.org}\nRole: ${form.role}\n\nMessage:\n${form.message}`
     )
-    window.location.href = `mailto:stakeholders@liberiaecoledger.com?subject=${subject}&body=${body}`
+    window.location.href = `mailto:support@liberiaecoledger.com?subject=${subject}&body=${body}`
     setSubmitted(true)
   }
 

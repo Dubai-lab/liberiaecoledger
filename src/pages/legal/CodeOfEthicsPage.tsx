@@ -71,7 +71,7 @@ export function CodeOfEthicsPage() {
         </Section>
 
         <Section title="Reporting a Concern">
-          <p>If you believe EcoLedger Foundation or any of its team members is acting in breach of this Code, you may report it confidentially to <a href="mailto:ethics@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">ethics@liberiaecoledger.com</a>. Reports are reviewed by the Board of Directors. Retaliation against anyone who reports in good faith is prohibited.</p>
+          <p>If you believe EcoLedger Foundation or any of its team members is acting in breach of this Code, you may report it confidentially to <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. Reports are reviewed by the Board of Directors. Retaliation against anyone who reports in good faith is prohibited.</p>
         </Section>
 
       </div>
