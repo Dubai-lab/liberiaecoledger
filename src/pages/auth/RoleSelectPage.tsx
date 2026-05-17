@@ -75,8 +75,6 @@ export function RoleSelectPage() {
       .eq('user_id', profile.id)
       .then(({ data }) => {
         const roles = data?.map(r => r.role as UserRole) ?? []
-        // always include consumer as a fallback
-        if (!roles.includes('consumer')) roles.push('consumer')
         setAssignedRoles(roles)
         setLoadingRoles(false)
       })

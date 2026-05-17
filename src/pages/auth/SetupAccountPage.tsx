@@ -113,15 +113,15 @@ export function SetupAccountPage() {
           .gt('expires_at', new Date().toISOString())
       }
 
-      // Set password (triggers session refresh in background)
-      const { error: authError } = await supabase.auth.updateUser({
-        password,
-        data: { full_name: fullName.trim() },
-      })
-      if (authError) throw authError
-
+      // Navigate first so the TOKEN_REFRESHED event from updateUser fires on role-select, not here
       toast.success('Account set up successfully! Welcome to EcoLedger.')
       navigate('/role-select', { replace: true })
+
+      // Fire password update after navigation — best-effort, profile is already saved
+      supabase.auth.updateUser({
+        password,
+        data: { full_name: fullName.trim() },
+      }).catch(() => {})
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Setup failed. Please try again.')
     } finally {
