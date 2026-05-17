@@ -219,7 +219,100 @@ export function tplBaselRevoked(o: { name: string; facilityName: string }) {
   }
 }
 
+// ─── Manufacturer ─────────────────────────────────────────────────────────────
+
+export function tplManufacturerDeviceRecycled(o: { name: string; brand: string; model: string; deviceId: string }) {
+  return {
+    subject: `End-of-life reached — ${o.brand} ${o.model}`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">Device Reached End of Life</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.name}, one of your registered devices has been marked for recycling on EcoLedger. This is part of your product's lifecycle compliance record.</p>
+      ${infoTable([
+        { label: 'Device', value: `${o.brand} ${o.model}` },
+        { label: 'Record ID', value: o.deviceId.slice(-8).toUpperCase() },
+        { label: 'Status', value: 'Ready for Disposal' },
+      ])}
+      ${btn(`${APP_URL}/manufacturer/analytics`, 'View Analytics')}
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">This event is permanently recorded on the EcoLedger blockchain for regulatory reporting.</p>
+    `),
+  }
+}
+
+export function tplManufacturerDeviceFlagged(o: { name: string; brand: string; model: string; severity: string; description: string; deviceId: string }) {
+  return {
+    subject: `Compliance alert — ${o.brand} ${o.model} flagged`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">Compliance Alert</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.name}, a compliance flag has been raised against one of your registered devices. Please review the details below.</p>
+      ${infoTable([
+        { label: 'Device', value: `${o.brand} ${o.model}` },
+        { label: 'Record ID', value: o.deviceId.slice(-8).toUpperCase() },
+        { label: 'Severity', value: o.severity.toUpperCase() },
+        { label: 'Description', value: o.description },
+      ])}
+      ${btn(`${APP_URL}/manufacturer`, 'View Dashboard')}
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">If you have information relevant to this case, please contact the EcoLedger compliance team.</p>
+    `),
+  }
+}
+
+// ─── Auditor ──────────────────────────────────────────────────────────────────
+
+export function tplAuditorNewFlag(o: { name: string; flagType: string; severity: string; description: string; deviceId?: string }) {
+  const rows = [
+    { label: 'Flag Type', value: o.flagType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) },
+    { label: 'Severity', value: o.severity.toUpperCase() },
+    { label: 'Description', value: o.description },
+    ...(o.deviceId ? [{ label: 'Device ID', value: o.deviceId.slice(-8).toUpperCase() }] : []),
+  ]
+  return {
+    subject: `New compliance flag raised — ${o.severity.toUpperCase()}`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">New Compliance Flag</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.name}, a new compliance flag has been raised on EcoLedger and requires audit review.</p>
+      ${infoTable(rows)}
+      ${btn(`${APP_URL}/auditor/records`, 'Review in Audit Console')}
+    `),
+  }
+}
+
+// ─── Recycler (stakeholder) ───────────────────────────────────────────────────
+
+export function tplStakeholderFlagged(o: { name: string; severity: string; description: string; deviceId?: string }) {
+  const rows = [
+    { label: 'Severity', value: o.severity.toUpperCase() },
+    { label: 'Description', value: o.description },
+    ...(o.deviceId ? [{ label: 'Device ID', value: o.deviceId.slice(-8).toUpperCase() }] : []),
+  ]
+  return {
+    subject: `Compliance flag — you have been notified`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">Compliance Flag — Action May Be Required</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.name}, you have been listed as a stakeholder on a compliance flag raised by a regulator on EcoLedger. Please review the details and cooperate with any investigation.</p>
+      ${infoTable(rows)}
+      ${btn(`${APP_URL}/recycler`, 'Go to Dashboard')}
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">If you believe this is an error or have clarifying information, contact the EcoLedger compliance team.</p>
+    `),
+  }
+}
+
 // ─── Regulator ────────────────────────────────────────────────────────────────
+
+export function tplFlagResolved(o: { regulatorName: string; severity: string; description: string; resolvedBy: string }) {
+  return {
+    subject: `Compliance flag resolved`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">Compliance Flag Resolved</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.regulatorName}, a compliance flag you raised has been marked as resolved.</p>
+      ${infoTable([
+        { label: 'Severity', value: o.severity.toUpperCase() },
+        { label: 'Description', value: o.description },
+        { label: 'Resolved by', value: o.resolvedBy },
+      ])}
+      ${btn(`${APP_URL}/regulator/flags`, 'View All Flags')}
+    `),
+  }
+}
 
 export function tplFlagCreated(o: { regulatorName: string; deviceId?: string; facilityName?: string; severity: string; description: string }) {
   const rows = [

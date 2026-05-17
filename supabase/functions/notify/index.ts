@@ -15,6 +15,11 @@ import {
   tplBaselGranted,
   tplBaselRevoked,
   tplFlagCreated,
+  tplFlagResolved,
+  tplStakeholderFlagged,
+  tplAuditorNewFlag,
+  tplManufacturerDeviceRecycled,
+  tplManufacturerDeviceFlagged,
 } from '../_shared/templates.ts'
 
 const supabase = createClient(
@@ -34,15 +39,29 @@ async function getProfile(userId: string) {
 }
 
 async function getAdmins(): Promise<{ id: string; email: string | null }[]> {
-  const { data } = await supabase
-    .from('user_roles')
-    .select('user_id')
-    .eq('role', 'admin')
-    .eq('is_verified', true)
+  const { data } = await supabase.from('user_roles').select('user_id').eq('role', 'admin').eq('is_verified', true)
   if (!data) return []
   const ids = data.map((r: any) => r.user_id)
   const { data: profiles } = await supabase.from('profiles').select('id, email').in('id', ids)
   return (profiles ?? []) as { id: string; email: string | null }[]
+}
+
+async function getAuditors(): Promise<{ id: string; email: string | null; full_name: string | null }[]> {
+  const { data } = await supabase.from('user_roles').select('user_id').eq('role', 'auditor').eq('is_verified', true)
+  if (!data) return []
+  const ids = data.map((r: any) => r.user_id)
+  const { data: profiles } = await supabase.from('profiles').select('id, email, full_name').in('id', ids)
+  return (profiles ?? []) as { id: string; email: string | null; full_name: string | null }[]
+}
+
+async function getManufacturerByBrand(brand: string): Promise<{ id: string; email: string | null; full_name: string | null } | null> {
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, email, full_name')
+    .ilike('organization', brand)
+    .limit(1)
+    .maybeSingle()
+  return data as { id: string; email: string | null; full_name: string | null } | null
 }
 
 function displayName(p: { full_name: string | null; email: string | null } | null): string {
@@ -325,7 +344,10 @@ serve(async (req) => {
 
     // ── Compliance flag created ───────────────────────────────────────────────
     if (table === 'compliance_flags' && type === 'INSERT') {
-      const regulator = await getProfile(record.raised_by)
+      const reporterId = record.raised_by ?? record.reporter_id
+      const regulator = await getProfile(reporterId)
+
+      // Confirm to regulator
       if (regulator?.email) {
         await sendEmail({
           to: regulator.email,
@@ -337,13 +359,115 @@ serve(async (req) => {
           }),
         })
       }
-      await saveNotification(
-        record.raised_by,
-        `Compliance Flag Raised — ${record.severity.toUpperCase()}`,
-        `Your compliance flag has been created and is now active. ${record.description}`,
-        'info',
-        `${APP_URL}/regulator/flags`,
-      )
+      if (reporterId) {
+        await saveNotification(reporterId, `Compliance Flag Raised — ${record.severity.toUpperCase()}`,
+          `Your compliance flag has been created and is now active. ${record.description}`, 'info', `${APP_URL}/regulator/flags`)
+      }
+
+      // Notify all auditors
+      const auditors = await getAuditors()
+      for (const auditor of auditors) {
+        if (auditor.email) {
+          await sendEmail({
+            to: auditor.email,
+            ...tplAuditorNewFlag({
+              name: auditor.full_name ?? auditor.email ?? 'Auditor',
+              flagType: record.flag_type ?? 'compliance',
+              severity: record.severity,
+              description: record.description,
+              deviceId: record.device_id ?? undefined,
+            }),
+          })
+        }
+        await saveNotification(auditor.id, `New Compliance Flag — ${record.severity.toUpperCase()}`,
+          `A new ${record.severity} compliance flag has been raised and requires audit review.`, 'action_required', `${APP_URL}/auditor/records`)
+      }
+
+      // Notify stakeholders looped in (recyclers, others)
+      const stakeholders: string[] = Array.isArray(record.stakeholders_looped) ? record.stakeholders_looped : []
+      for (const userId of stakeholders) {
+        if (userId === reporterId) continue
+        const stakeholder = await getProfile(userId)
+        if (stakeholder?.email) {
+          await sendEmail({
+            to: stakeholder.email,
+            ...tplStakeholderFlagged({
+              name: displayName(stakeholder),
+              severity: record.severity,
+              description: record.description,
+              deviceId: record.device_id ?? undefined,
+            }),
+          })
+        }
+        await saveNotification(userId, `Compliance Flag — Action May Be Required`,
+          `You have been listed as a stakeholder on a ${record.severity} compliance flag. ${record.description}`, 'warning', `${APP_URL}/recycler`)
+      }
+
+      // Notify manufacturer if a device is involved
+      if (record.device_id) {
+        const { data: device } = await supabase.from('devices').select('brand, model').eq('id', record.device_id).maybeSingle()
+        if (device) {
+          const manufacturer = await getManufacturerByBrand(device.brand)
+          if (manufacturer && manufacturer.email) {
+            await sendEmail({
+              to: manufacturer.email,
+              ...tplManufacturerDeviceFlagged({
+                name: displayName(manufacturer),
+                brand: device.brand,
+                model: device.model,
+                severity: record.severity,
+                description: record.description,
+                deviceId: record.device_id,
+              }),
+            })
+            await saveNotification(manufacturer.id, `Compliance Alert — ${device.brand} ${device.model}`,
+              `A compliance flag has been raised against your device. Severity: ${record.severity.toUpperCase()}.`, 'warning', `${APP_URL}/manufacturer`)
+          }
+        }
+      }
+    }
+
+    // ── Compliance flag resolved ──────────────────────────────────────────────
+    if (table === 'compliance_flags' && type === 'UPDATE' &&
+        old_record.status !== 'resolved' && record.status === 'resolved') {
+      const reporterId = record.raised_by ?? record.reporter_id
+      const regulator = await getProfile(reporterId)
+      const resolver = record.resolved_by ? await getProfile(record.resolved_by) : null
+      if (regulator?.email) {
+        await sendEmail({
+          to: regulator.email,
+          ...tplFlagResolved({
+            regulatorName: displayName(regulator),
+            severity: record.severity,
+            description: record.description,
+            resolvedBy: displayName(resolver),
+          }),
+        })
+      }
+      if (reporterId) {
+        await saveNotification(reporterId, `Compliance Flag Resolved`,
+          `A compliance flag you raised (${record.severity.toUpperCase()}) has been marked as resolved by ${displayName(resolver)}.`,
+          'success', `${APP_URL}/regulator/flags`)
+      }
+    }
+
+    // ── Device marked ready for disposal → notify manufacturer ───────────────
+    if (table === 'devices' && type === 'UPDATE' &&
+        old_record.status !== 'ready_for_disposal' && record.status === 'ready_for_disposal') {
+      const manufacturer = await getManufacturerByBrand(record.brand)
+      if (manufacturer && manufacturer.email) {
+        await sendEmail({
+          to: manufacturer.email,
+          ...tplManufacturerDeviceRecycled({
+            name: displayName(manufacturer),
+            brand: record.brand,
+            model: record.model,
+            deviceId: record.id,
+          }),
+        })
+        await saveNotification(manufacturer.id, `Device Reached End of Life — ${record.brand} ${record.model}`,
+          `Your ${record.brand} ${record.model} has been marked for recycling on EcoLedger.`, 'info', `${APP_URL}/manufacturer/analytics`)
+      }
     }
 
     return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } })
