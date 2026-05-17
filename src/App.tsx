@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { ScrollToTop } from '@/components/ScrollToTop'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { DashboardLayout } from '@/layouts/DashboardLayout'
@@ -34,6 +35,8 @@ export default function App() {
   const needsSetup = isAuthenticated && profile !== null && !profile.full_name
 
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       {/* Landing page — public */}
       <Route
@@ -116,5 +119,6 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   )
 }
