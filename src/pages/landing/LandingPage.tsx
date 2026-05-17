@@ -558,7 +558,7 @@ function AboutSection() {
             { label: 'Chain', value: 'Sepolia (EVM)' },
             { label: 'Stack', value: 'React · Supabase · Hardhat' },
             { label: 'Country', value: 'Liberia, West Africa' },
-            { label: 'Contact', value: 'invest@ecoledger.app' },
+            { label: 'Contact', value: 'support@liberiaecoledger.com' },
           ].map(f => (
             <div key={f.label} className="bg-white border border-[#e8e5de] rounded-xl p-4">
               <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-1">{f.label}</p>
