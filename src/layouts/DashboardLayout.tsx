@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Cpu, Send, Leaf, Bell, Factory, BookOpen,
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
-  ChevronRight, Menu, X, LogOut, ChevronDown, Gift, Building2,
+  ChevronRight, Menu, X, LogOut, Gift, Building2,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
@@ -27,6 +27,7 @@ const NAV: Record<UserRole, NavItem[]> = {
     { label: 'Device Catalogue', path: '/manufacturer/catalogue',        icon: <Cpu className="w-4 h-4" /> },
     { label: 'Register Units',   path: '/manufacturer/register',         icon: <Factory className="w-4 h-4" /> },
     { label: 'Analytics',        path: '/manufacturer/analytics',        icon: <BarChart3 className="w-4 h-4" /> },
+    { label: 'EPR Reports',      path: '/manufacturer/epr',              icon: <FileText className="w-4 h-4" /> },
     { label: 'Notifications',    path: '/manufacturer/notifications',    icon: <Bell className="w-4 h-4" /> },
   ],
   recycler: [
