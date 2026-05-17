@@ -327,8 +327,12 @@ export function DevicesReceivedPage() {
           },
           {
             label: 'Total Mass Recovered',
-            value: `${fmt(stats.massKg / 1000, 1)} t`,
-            sub:   `${fmt(stats.massKg, 0)} kg total recovered`,
+            value: stats.massKg >= 1000
+              ? `${fmt(stats.massKg / 1000, 1)} t`
+              : `${fmt(stats.massKg, 1)} kg`,
+            sub:   stats.massKg >= 1000
+              ? `${fmt(stats.massKg, 0)} kg total recovered`
+              : 'Total mass across all disposals',
             icon:  <TrendingUp className="w-5 h-5" />,
             color: 'text-blue-600',
             subColor: 'text-blue-600',
