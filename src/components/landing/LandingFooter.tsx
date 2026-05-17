@@ -25,11 +25,11 @@ const cols = [
   {
     title: 'Resources',
     links: [
-      { label: 'Whitepaper',     href: '/#how-it-works' },
-      { label: 'API docs',       href: '/#how-it-works' },
-      { label: 'Block explorer', href: '/#trust' },
-      { label: 'Press kit',      href: '/#about' },
-      { label: 'Changelog',      href: '/#about' },
+      { label: 'Whitepaper',     href: '/whitepaper' },
+      { label: 'API docs',       href: '/api-docs' },
+      { label: 'Block explorer', href: '/block-explorer' },
+      { label: 'Press kit',      href: '/press-kit' },
+      { label: 'Changelog',      href: '/changelog' },
     ],
   },
   {

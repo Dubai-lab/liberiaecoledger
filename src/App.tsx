@@ -25,6 +25,11 @@ import { TermsOfServicePage } from '@/pages/legal/TermsOfServicePage'
 import { CookiePolicyPage } from '@/pages/legal/CookiePolicyPage'
 import { CodeOfEthicsPage } from '@/pages/legal/CodeOfEthicsPage'
 import { GDPRCompliancePage } from '@/pages/legal/GDPRCompliancePage'
+import { WhitepaperPage } from '@/pages/resources/WhitepaperPage'
+import { APIDocsPage } from '@/pages/resources/APIDocsPage'
+import { BlockExplorerPage } from '@/pages/resources/BlockExplorerPage'
+import { PressKitPage } from '@/pages/resources/PressKitPage'
+import { ChangelogPage } from '@/pages/resources/ChangelogPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -47,6 +52,13 @@ export default function App() {
             : <LandingPage />
         }
       />
+
+      {/* Resources pages — public */}
+      <Route path="/whitepaper"     element={<WhitepaperPage />} />
+      <Route path="/api-docs"       element={<APIDocsPage />} />
+      <Route path="/block-explorer" element={<BlockExplorerPage />} />
+      <Route path="/press-kit"      element={<PressKitPage />} />
+      <Route path="/changelog"      element={<ChangelogPage />} />
 
       {/* Legal pages — public */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
