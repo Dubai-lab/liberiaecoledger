@@ -57,11 +57,9 @@ function deriveStatus(score: number): ManufacturerRow['status'] {
   return 'non_compliant'
 }
 
-function deriveScore(takeBackRate: number, isVerified: boolean): number {
-  // Base score from take-back rate (0–80 pts) + verification bonus (0–20 pts)
-  const rateScore   = Math.min(80, Math.round((takeBackRate / EPR_GOAL_PCT) * 80))
-  const verifyBonus = isVerified ? 20 : 0
-  return Math.min(100, rateScore + verifyBonus)
+function deriveScore(takeBackRate: number, devicesPlaced: number): number {
+  if (devicesPlaced === 0) return 0
+  return Math.min(100, Math.round((takeBackRate / EPR_GOAL_PCT) * 100))
 }
 
 function exportCSV(rows: ManufacturerRow[]) {
@@ -136,12 +134,12 @@ export function RegulatorManufacturersPage() {
         const placed = devices.filter(d => d.original_owner_id === p.id)
         const returned = placed.filter(d => d.status === 'disposed')
         const takeBackRate = placed.length > 0 ? (returned.length / placed.length) * 100 : 0
-        const score = deriveScore(takeBackRate, role?.is_verified ?? false)
+        const score = deriveScore(takeBackRate, placed.length)
         return {
           id: p.id,
           name: p.organization ?? role?.organization ?? p.full_name ?? p.email ?? 'Unknown',
           email: p.email,
-          isVerified: role?.is_verified ?? false,
+          isVerified: role?.is_verified ?? false,  // kept for display only
           devicesPlaced: placed.length,
           devicesReturned: returned.length,
           takeBackRate,
@@ -150,7 +148,8 @@ export function RegulatorManufacturersPage() {
         }
       })
 
-      setAll(rows.sort((a, b) => b.score - a.score))
+      // Only assess producers who have actually placed devices on the market
+      setAll(rows.filter(r => r.devicesPlaced > 0).sort((a, b) => b.score - a.score))
 
       // ── Monthly trend (last 24 months) ───────────────────────────────────
       const now = new Date()
