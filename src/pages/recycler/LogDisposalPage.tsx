@@ -149,7 +149,7 @@ export function LogDisposalPage() {
           lead_g:     Number(form.leadG)     || 0,
         },
         eco_credits_awarded: calculatedCredits,
-        status: 'pending',
+        status: 'confirmed',
       }).select('id').single()
       if (error) throw error
 

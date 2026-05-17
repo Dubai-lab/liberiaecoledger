@@ -53,6 +53,7 @@ function statusColor(status: string) {
   if (status === 'in_use')   return { bg: '#e8f5ec', text: '#2d6a3f', label: 'IN USE' }
   if (status === 'disposed') return { bg: '#fde8e8', text: '#c0392b', label: 'DISPOSED' }
   if (status === 'awaiting_transfer') return { bg: '#fdf3dc', text: '#b87a00', label: 'AWAITING TRANSFER' }
+  if (status === 'pending_intake')     return { bg: '#fde8d0', text: '#b85c00', label: 'PENDING ACCEPTANCE' }
   if (status === 'ready_for_disposal') return { bg: '#fde8d0', text: '#b85c00', label: 'READY FOR DISPOSAL' }
   return { bg: '#f0ede6', text: '#9b9b98', label: status.toUpperCase() }
 }

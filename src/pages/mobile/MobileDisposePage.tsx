@@ -51,7 +51,7 @@ export function MobileDisposePage() {
     setSubmitting(true)
     try {
       // Mark device as ready for disposal
-      await supabase.from('devices').update({ status: 'ready_for_disposal' }).eq('id', device.id)
+      await supabase.from('devices').update({ status: 'pending_intake' }).eq('id', device.id)
 
       // Log lifecycle event
       await supabase.from('device_lifecycle').insert({

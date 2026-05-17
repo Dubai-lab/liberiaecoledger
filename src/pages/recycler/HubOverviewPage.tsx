@@ -29,7 +29,8 @@ export function HubOverviewPage() {
     Promise.all([
       supabase.from('recycler_facilities').select('*').eq('owner_id', profile.id).maybeSingle(),
       supabase.from('disposals').select('id, eco_credits_awarded, status, created_at').eq('recycler_id', profile.id),
-    ]).then(([facilityRes, disposalsRes]) => {
+      supabase.from('devices').select('id').eq('status', 'pending_intake'),
+    ]).then(([facilityRes, disposalsRes, pendingRes]) => {
       setFacility(facilityRes.data ?? null)
 
       const disposals = disposalsRes.data ?? []
@@ -38,7 +39,7 @@ export function HubOverviewPage() {
 
       setStats({
         totalDisposals: disposals.filter(d => d.status === 'confirmed').length,
-        pendingIntake: disposals.filter(d => d.status === 'pending').length,
+        pendingIntake: pendingRes.data?.length ?? 0,
         totalCreditsAwarded: disposals.reduce((s, d) => s + (d.eco_credits_awarded ?? 0), 0),
         devicesThisMonth: disposals.filter(d => d.created_at >= startOfMonth).length,
       })

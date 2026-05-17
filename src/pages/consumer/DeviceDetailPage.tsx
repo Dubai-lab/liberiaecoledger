@@ -13,6 +13,7 @@ import type { Device, DeviceLifecycleEvent } from '@/types/database'
 const STATUS_COLORS: Record<string, string> = {
   in_use:             'bg-green-100 text-green-700',
   awaiting_transfer:  'bg-yellow-100 text-yellow-700',
+  pending_intake:     'bg-orange-100 text-orange-700',
   ready_for_disposal: 'bg-orange-100 text-orange-700',
   disposed:           'bg-gray-100 text-gray-500',
   flagged:            'bg-red-100 text-red-700',
@@ -21,6 +22,7 @@ const STATUS_COLORS: Record<string, string> = {
 const STATUS_LABEL: Record<string, string> = {
   in_use:             'In Use',
   awaiting_transfer:  'Awaiting Transfer',
+  pending_intake:     'Pending Recycler Acceptance',
   ready_for_disposal: 'Ready for Disposal',
   disposed:           'Disposed',
   flagged:            'Flagged',
@@ -87,7 +89,7 @@ export function DeviceDetailPage() {
     setActing(true)
     const { error } = await supabase
       .from('devices')
-      .update({ status: 'ready_for_disposal' })
+      .update({ status: 'pending_intake' })
       .eq('id', device.id)
     if (error) { toast.error(error.message) }
     else {

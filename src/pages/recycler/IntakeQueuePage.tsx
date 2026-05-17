@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ClipboardList, Loader2, CheckCircle } from 'lucide-react'
+import { ClipboardList, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import type { Device } from '@/types/database'
@@ -14,7 +14,7 @@ export function IntakeQueuePage() {
     supabase
       .from('devices')
       .select('*')
-      .in('status', ['ready_for_disposal', 'awaiting_transfer'])
+      .eq('status', 'pending_intake')
       .order('updated_at', { ascending: false })
       .then(({ data }) => {
         setDevices((data as Device[]) ?? [])
@@ -32,8 +32,8 @@ export function IntakeQueuePage() {
     if (error) {
       toast.error(error.message)
     } else {
-      setDevices(prev => prev.map(d => d.id === deviceId ? { ...d, status: 'ready_for_disposal' } : d))
-      toast.success('Device accepted into intake queue')
+      setDevices(prev => prev.filter(d => d.id !== deviceId))
+      toast.success('Device accepted — it will now appear in Log Disposal')
     }
     setAccepting(null)
   }
@@ -96,21 +96,15 @@ export function IntakeQueuePage() {
                 </p>
               </div>
 
-              {d.status === 'ready_for_disposal' ? (
-                <span className="flex items-center gap-1.5 text-xs text-eco-700 font-medium flex-shrink-0">
-                  <CheckCircle className="w-4 h-4" /> Ready
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => acceptDevice(d.id)}
-                  disabled={accepting === d.id}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-eco-700 text-eco-700 hover:bg-eco-50 transition-colors disabled:opacity-50 flex-shrink-0"
-                >
-                  {accepting === d.id ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-                  Accept
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => acceptDevice(d.id)}
+                disabled={accepting === d.id}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-eco-700 text-eco-700 hover:bg-eco-50 transition-colors disabled:opacity-50 flex-shrink-0"
+              >
+                {accepting === d.id ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+                Accept into facility
+              </button>
             </motion.div>
           ))}
         </div>
