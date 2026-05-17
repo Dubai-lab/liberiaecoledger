@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Cpu, Send, Leaf, Bell, Factory, BookOpen,
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
-  ChevronRight, Menu, X, LogOut, ChevronDown, Gift,
+  ChevronRight, Menu, X, LogOut, ChevronDown, Gift, Building2,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
@@ -40,6 +40,8 @@ const NAV: Record<UserRole, NavItem[]> = {
   regulator: [
     { label: 'National Overview', path: '/regulator',                    icon: <LayoutDashboard className="w-4 h-4" /> },
     { label: 'Compliance Map',    path: '/regulator/map',                icon: <MapPin className="w-4 h-4" /> },
+    { label: 'Recyclers',         path: '/regulator/recyclers',          icon: <Recycle className="w-4 h-4" /> },
+    { label: 'Manufacturers',     path: '/regulator/manufacturers',      icon: <Building2 className="w-4 h-4" /> },
     { label: 'Flagged Cases',     path: '/regulator/flags',              icon: <ShieldAlert className="w-4 h-4" /> },
     { label: 'Reports',           path: '/regulator/reports',            icon: <FileText className="w-4 h-4" /> },
     { label: 'Notifications',     path: '/regulator/notifications',      icon: <Bell className="w-4 h-4" /> },
