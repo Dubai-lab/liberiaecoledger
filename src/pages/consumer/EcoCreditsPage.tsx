@@ -149,7 +149,7 @@ export function EcoCreditsPage() {
   }
 
   const handleCashOut = () => {
-    toast.info('Cash out to mobile money will be available after smart contract deployment on Polygon Amoy.')
+    toast.info('Mobile money cash-out is coming soon. Use "Redeem Rewards" to spend your EcoCredits today.')
   }
 
   return (

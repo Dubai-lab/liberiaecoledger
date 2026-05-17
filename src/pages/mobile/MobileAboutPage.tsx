@@ -3,7 +3,7 @@ import logoCompactLight from '@/brands/logo-compact-light.png'
 
 const FACTS = [
   { label: 'Version',  value: '1.0.0' },
-  { label: 'Network',  value: 'Polygon Amoy (Testnet)' },
+  { label: 'Network',  value: 'Sepolia (Testnet)' },
   { label: 'Token Standard', value: 'ERC-721 · ERC-20' },
   { label: 'Country',  value: 'Liberia, West Africa' },
 ]

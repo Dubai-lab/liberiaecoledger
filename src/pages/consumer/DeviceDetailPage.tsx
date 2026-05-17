@@ -267,12 +267,12 @@ export function DeviceDetailPage() {
               </div>
             )}
             <a
-              href={`https://amoy.polygonscan.com/tx/${device.chain_tx_hash}`}
+              href={`https://sepolia.etherscan.io/tx/${device.chain_tx_hash}`}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-1.5 text-xs font-medium text-eco-700 hover:underline mt-2"
             >
-              View on Polygon Amoy <ExternalLink className="w-3 h-3" />
+              View on Sepolia <ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </motion.div>

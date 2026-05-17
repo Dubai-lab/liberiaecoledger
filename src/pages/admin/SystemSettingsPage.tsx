@@ -124,9 +124,9 @@ export function SystemSettingsPage() {
             <Cpu className="w-4 h-4 text-muted-foreground" />
             <h2 className="text-sm font-semibold">Blockchain</h2>
           </div>
-          <ConfigRow label="Network"       value="Polygon Amoy Testnet" />
-          <ConfigRow label="Chain ID"      value={CHAIN_ID ?? '80002'} mono />
-          <ConfigRow label="Smart Contract" value="Not deployed — tx hash anchoring active" />
+          <ConfigRow label="Network"       value="Sepolia Testnet" />
+          <ConfigRow label="Chain ID"      value={CHAIN_ID ?? '11155111'} mono />
+          <ConfigRow label="Smart Contract" value="EcoToken + EcoLedger deployed on Sepolia" />
           <ConfigRow label="IPFS"           value="Pinata (CIDv1)" />
         </motion.div>
 
