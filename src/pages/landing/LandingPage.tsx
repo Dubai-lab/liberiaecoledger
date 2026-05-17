@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import lifecycleIllustration from '@/brands/lifecycle-illustration.png'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
@@ -505,10 +505,10 @@ function CTASection() {
 
 function EthicsSection() {
   const docs = [
-    { title: 'Terms of Service',  sub: 'The legal agreement governing every transaction and relationship on the platform.', updated: 'UPDATED MAY 2026' },
-    { title: 'Privacy Policy',    sub: 'How we collect, store and protect your information. GDPR-aligned, no data sold.',      updated: 'GDPR · NO PII ON-CHAIN' },
-    { title: 'Cookie Policy',     sub: 'Strictly essential cookies only. No third-party tracking by default.',               updated: 'NO AD TRACKERS' },
-    { title: 'Code of Ethics',    sub: 'Environmental accountability extends to how we operate our own platform.',             updated: 'PUBLIC COMMITMENT' },
+    { title: 'Terms of Service',  sub: 'The legal agreement governing every transaction and relationship on the platform.', updated: 'UPDATED MAY 2026',   href: '/terms' },
+    { title: 'Privacy Policy',    sub: 'How we collect, store and protect your information. GDPR-aligned, no data sold.',      updated: 'GDPR · NO PII ON-CHAIN', href: '/privacy' },
+    { title: 'Cookie Policy',     sub: 'Strictly essential cookies only. No third-party tracking by default.',               updated: 'NO AD TRACKERS',    href: '/cookies' },
+    { title: 'Code of Ethics',    sub: 'Environmental accountability extends to how we operate our own platform.',             updated: 'PUBLIC COMMITMENT', href: '/ethics' },
   ]
 
   return (
@@ -523,7 +523,7 @@ function EthicsSection() {
               <p className="text-xs text-[#9b9b98] leading-relaxed mb-4">{d.sub}</p>
               <div className="flex items-center justify-between">
                 <p className="text-[9px] font-bold tracking-widest text-[#b0afa8]">{d.updated}</p>
-                <button type="button" className="text-[10px] font-semibold text-[#0f0f0e] underline underline-offset-2">Read →</button>
+                <Link to={d.href} className="text-[10px] font-semibold text-[#0f0f0e] underline underline-offset-2">Read →</Link>
               </div>
             </div>
           ))}
