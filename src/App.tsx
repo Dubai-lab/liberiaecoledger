@@ -93,7 +93,6 @@ export default function App() {
             : <DashboardLayout />
         }
       >
-        <Route index element={<Navigate to={`/${activeRole ?? 'consumer'}`} replace />} />
         <Route path="/account" element={<AccountSettingsPage />} />
         <Route path="/consumer/*" element={<ConsumerRoutes />} />
         <Route path="/manufacturer/*" element={<ManufacturerRoutes />} />

@@ -7,10 +7,28 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 
+function useLoginStats() {
+  const [s, setS] = useState({ devices: 0, recyclers: 0 })
+  useEffect(() => {
+    Promise.all([
+      supabase.from('devices').select('*', { count: 'exact', head: true }),
+      supabase.from('recycler_facilities').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    ]).then(([d, r]) => setS({ devices: d.count ?? 0, recyclers: r.count ?? 0 }))
+  }, [])
+  return s
+}
+
+function fmt(n: number) {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)} M`
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}K`
+  return String(n)
+}
+
 export function LoginPage() {
   const { login } = usePrivy()
   const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const stats = useLoginStats()
 
   useEffect(() => {
     if (isAuthenticated) navigate('/role-select')
@@ -61,9 +79,19 @@ export function LoginPage() {
           style={{ border: '1px solid #fafaf7' }}
         />
 
-        {/* Logo */}
-        <div className="relative z-10">
+        {/* Logo + back */}
+        <div className="relative z-10 flex items-center justify-between">
           <img src={logoDark} alt="EcoLedger" className="h-10 w-auto object-contain" />
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors"
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2}>
+              <path d="M19 12H5M12 5l-7 7 7 7" />
+            </svg>
+            Back to home
+          </button>
         </div>
 
         {/* Hero text */}
@@ -84,12 +112,11 @@ export function LoginPage() {
           </p>
         </motion.div>
 
-        {/* Stats */}
+        {/* Stats — real data */}
         <div className="flex gap-8 relative z-10">
           {[
-            { value: '2.41 M', label: 'Devices on chain' },
-            { value: '184', label: 'Verified Recyclers' },
-            { value: '12', label: 'Regulatory Bodies' },
+            { value: fmt(stats.devices)  || '—', label: 'Devices on chain' },
+            { value: fmt(stats.recyclers) || '—', label: 'Verified recyclers' },
           ].map(stat => (
             <div key={stat.label}>
               <div className="flex items-center gap-1.5 mb-0.5">
@@ -98,7 +125,7 @@ export function LoginPage() {
                   {stat.label}
                 </p>
               </div>
-              <p className="text-sm font-semibold" style={{ color: '#fafaf7' }}>{stat.value}</p>
+              <p className="text-sm font-semibold tabular-nums" style={{ color: '#fafaf7' }}>{stat.value}</p>
             </div>
           ))}
         </div>
