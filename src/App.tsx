@@ -35,6 +35,11 @@ import { APIDocsPage } from '@/pages/resources/APIDocsPage'
 import { BlockExplorerPage } from '@/pages/resources/BlockExplorerPage'
 import { PressKitPage } from '@/pages/resources/PressKitPage'
 import { ChangelogPage } from '@/pages/resources/ChangelogPage'
+import { RequestAccessPage } from '@/pages/stakeholders/RequestAccessPage'
+import { RecyclerOnboardingPage } from '@/pages/stakeholders/RecyclerOnboardingPage'
+import { RegulatorPortalPage } from '@/pages/stakeholders/RegulatorPortalPage'
+import { NGOPartnershipsPage } from '@/pages/stakeholders/NGOPartnershipsPage'
+import { BoardPage } from '@/pages/stakeholders/BoardPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
@@ -71,6 +76,13 @@ export default function App() {
       <Route path="/block-explorer" element={<BlockExplorerPage />} />
       <Route path="/press-kit"      element={<PressKitPage />} />
       <Route path="/changelog"      element={<ChangelogPage />} />
+
+      {/* Stakeholders pages — public */}
+      <Route path="/stakeholders/request-access"      element={<RequestAccessPage />} />
+      <Route path="/stakeholders/recycler-onboarding" element={<RecyclerOnboardingPage />} />
+      <Route path="/stakeholders/regulator-portal"    element={<RegulatorPortalPage />} />
+      <Route path="/stakeholders/ngo-partnerships"    element={<NGOPartnershipsPage />} />
+      <Route path="/stakeholders/board"               element={<BoardPage />} />
 
       {/* Legal pages — public */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />

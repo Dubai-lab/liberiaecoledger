@@ -15,11 +15,11 @@ const cols = [
   {
     title: 'Stakeholders',
     links: [
-      { label: 'Request access',      href: '/login' },
-      { label: 'Recycler onboarding', href: '/login' },
-      { label: 'Regulator portal',    href: '/login' },
-      { label: 'NGO partnerships',    href: '/login' },
-      { label: 'Board of directors',  href: '/#about' },
+      { label: 'Request access',      href: '/stakeholders/request-access' },
+      { label: 'Recycler onboarding', href: '/stakeholders/recycler-onboarding' },
+      { label: 'Regulator portal',    href: '/stakeholders/regulator-portal' },
+      { label: 'NGO partnerships',    href: '/stakeholders/ngo-partnerships' },
+      { label: 'Board of directors',  href: '/stakeholders/board' },
     ],
   },
   {
