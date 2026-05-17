@@ -1,39 +1,33 @@
-import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import logoCompactDark from '@/brands/logo-compact-dark.png'
 import logoCompactLight from '@/brands/logo-compact-light.png'
 
-// ─── Real data hook ───────────────────────────────────────────────────────────
+const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  as string
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+
+// ─── Real data hook — calls public-stats edge function (bypasses RLS) ─────────
 
 interface LandingStats {
-  devices:       number
-  recyclers:     number
+  devices:         number
+  recyclers:       number
   lifecycleEvents: number
-  creditsIssued: number
-  disposedCount: number
+  creditsIssued:   number
+  disposedCount:   number
 }
 
 function useLandingStats() {
-  const [stats, setStats] = useState<LandingStats>({ devices: 0, recyclers: 0, lifecycleEvents: 0, creditsIssued: 0, disposedCount: 0 })
+  const [stats, setStats] = useState<LandingStats>({
+    devices: 0, recyclers: 0, lifecycleEvents: 0, creditsIssued: 0, disposedCount: 0,
+  })
 
   useEffect(() => {
-    Promise.all([
-      supabase.from('devices').select('*', { count: 'exact', head: true }),
-      supabase.from('recycler_facilities').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('device_lifecycle').select('*', { count: 'exact', head: true }),
-      supabase.from('eco_credits').select('amount').in('type', ['earned', 'bonus']),
-      supabase.from('device_lifecycle').select('*', { count: 'exact', head: true }).eq('event_type', 'disposed'),
-    ]).then(([devRes, recRes, lcRes, credRes, dispRes]) => {
-      const totalCredits = (credRes.data ?? []).reduce((s: number, r: any) => s + (r.amount ?? 0), 0)
-      setStats({
-        devices:         devRes.count  ?? 0,
-        recyclers:       recRes.count  ?? 0,
-        lifecycleEvents: lcRes.count   ?? 0,
-        creditsIssued:   totalCredits,
-        disposedCount:   dispRes.count ?? 0,
-      })
+    fetch(`${SUPABASE_URL}/functions/v1/public-stats`, {
+      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` },
     })
+      .then(r => r.json())
+      .then(data => setStats(data))
+      .catch(() => {})
   }, [])
 
   return stats
@@ -135,66 +129,101 @@ function LandingNav() {
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
 function DeviceLifecycleDiagram({ deviceCount }: { deviceCount: number }) {
-  const states = [
-    { label: 'Sold',        angle: -60,  color: '#e8f5ec', text: '#2d6a3f' },
-    { label: 'In use',      angle: 0,    color: '#fdf3dc', text: '#b87a00' },
-    { label: 'Transferred', angle: 60,   color: '#e8eef5', text: '#1a4a7a' },
-    { label: 'Recycled',    angle: 120,  color: '#fde8e8', text: '#c0392b' },
+  // Cards positioned around a 280px circle, matching the reference design
+  // Angles measured clockwise from top: 1=top-left, 2=top-right, 3=right, 4=bottom, 5=left
+  const steps = [
+    { num: 1, title: 'Sold',        sub: 'POINT OF SALE',    angle: -135 },
+    { num: 2, title: 'In use',      sub: 'OWNER TRACKED',    angle: -45  },
+    { num: 3, title: 'Transferred', sub: 'ON-CHAIN HANDOFF', angle: 45   },
+    { num: 4, title: 'Recycled',    sub: 'VERIFIED DISPOSAL',angle: 135  },
+    { num: 5, title: 'Rewarded',    sub: 'ECOCREDITS PAID',  angle: 180  },
   ]
 
-  return (
-    <div className="relative w-72 h-72 flex-shrink-0">
-      <div className="absolute inset-0 rounded-full border border-dashed border-[#d8d5ce]" />
-      <div className="absolute inset-8 rounded-full border border-dashed border-[#e8e5de]" />
+  const cx = 180, cy = 180, r = 130
 
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="bg-[#0f0f0e] rounded-2xl px-4 py-3 text-center shadow-xl">
-          <p className="text-[10px] font-semibold tracking-widest text-[#6b6b68] mb-0.5">CHAIN ID</p>
-          <p className="text-2xl font-bold text-white tabular-nums">#{fmt(deviceCount) || '—'}</p>
-          <p className="text-[10px] text-[#9b9b98] mt-0.5">devices on chain</p>
-        </div>
+  function pos(angle: number) {
+    const rad = (angle * Math.PI) / 180
+    return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) }
+  }
+
+  // Build curved arrow paths between consecutive steps (clockwise)
+  function arcPath(from: number, to: number) {
+    const p1 = pos(steps[from].angle)
+    const p2 = pos(steps[to].angle)
+    const mx = (p1.x + p2.x) / 2
+    const my = (p1.y + p2.y) / 2
+    const dx = p2.x - p1.x
+    const dy = p2.y - p1.y
+    const nx = -dy * 0.25
+    const ny =  dx * 0.25
+    return `M ${p1.x} ${p1.y} Q ${mx + nx} ${my + ny} ${p2.x} ${p2.y}`
+  }
+
+  return (
+    <div className="relative flex-shrink-0" style={{ width: 360, height: 360, background: '#f0ede6', borderRadius: 24 }}>
+      {/* SVG arrows */}
+      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 360 360">
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#2d6a3f" opacity="0.5" />
+          </marker>
+        </defs>
+        {[0,1,2,3,4].map(i => (
+          <path
+            key={i}
+            d={arcPath(i, (i + 1) % 5)}
+            fill="none"
+            stroke="#2d6a3f"
+            strokeWidth="1.5"
+            strokeDasharray="5,4"
+            strokeLinecap="round"
+            markerEnd="url(#arrowhead)"
+            opacity="0.55"
+          />
+        ))}
+      </svg>
+
+      {/* Center badge */}
+      <div
+        className="absolute flex flex-col items-center justify-center text-center"
+        style={{
+          width: 96, height: 96,
+          borderRadius: '50%',
+          background: '#0f0f0e',
+          left: cx - 48, top: cy - 48,
+        }}
+      >
+        <p className="text-[8px] font-semibold tracking-widest text-[#6b6b68] uppercase leading-none mb-0.5">TOKEN</p>
+        <p className="text-base font-bold text-white leading-none">#{deviceCount > 0 ? deviceCount.toLocaleString() : '—'}</p>
+        <p className="text-[7px] text-[#6b6b68] mt-0.5 leading-none">0xa31f…b042</p>
       </div>
 
-      {states.map((s) => {
-        const rad  = (s.angle * Math.PI) / 180
-        const r    = 112
-        const x    = 50 + (r / 1.44) * Math.sin(rad)
-        const y    = 50 - (r / 1.44) * Math.cos(rad)
+      {/* Step cards */}
+      {steps.map(s => {
+        const { x, y } = pos(s.angle)
         return (
           <div
-            key={s.label}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${x}%`, top: `${y}%` }}
+            key={s.num}
+            className="absolute bg-white rounded-xl shadow-sm border border-[#e8e5de] px-3 py-2.5"
+            style={{
+              transform: 'translate(-50%, -50%)',
+              left: x, top: y,
+              minWidth: 100,
+            }}
           >
-            <span
-              className="text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap"
-              style={{ background: s.color, color: s.text }}
-            >
-              {s.label}
-            </span>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <span
+                className="w-4 h-4 rounded-full bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
+                style={{ fontSize: 8, color: 'white', fontWeight: 700 }}
+              >
+                {s.num}
+              </span>
+              <p className="text-xs font-bold text-[#0f0f0e] leading-none">{s.title}</p>
+            </div>
+            <p className="text-[9px] font-semibold tracking-widest text-[#9b9b98] leading-none pl-5">{s.sub}</p>
           </div>
         )
       })}
-
-      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-        <defs>
-          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M0,0 L0,6 L6,3 z" fill="#d8d5ce" />
-          </marker>
-        </defs>
-        {[[-30,30],[30,90],[90,150],[150,210]].map(([a1,a2],i) => {
-          const r=0.38, cx=0.5, cy=0.5
-          const x1=cx+r*Math.sin(a1*Math.PI/180)*100
-          const y1=cy-r*Math.cos(a1*Math.PI/180)*100
-          const x2=cx+r*Math.sin(a2*Math.PI/180)*100
-          const y2=cy-r*Math.cos(a2*Math.PI/180)*100
-          return (
-            <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke="#d8d5ce" strokeWidth="0.5" strokeDasharray="2,2"
-              markerEnd="url(#arr)" />
-          )
-        })}
-      </svg>
     </div>
   )
 }
