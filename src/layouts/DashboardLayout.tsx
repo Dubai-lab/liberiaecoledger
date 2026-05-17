@@ -33,6 +33,7 @@ const NAV: Record<UserRole, NavItem[]> = {
     { label: 'Hub Overview',     path: '/recycler',                      icon: <LayoutDashboard className="w-4 h-4" /> },
     { label: 'Intake Queue',     path: '/recycler/intake',               icon: <ClipboardList className="w-4 h-4" /> },
     { label: 'Log Disposal',     path: '/recycler/disposal',             icon: <Trash2 className="w-4 h-4" /> },
+    { label: 'Devices Received', path: '/recycler/received',             icon: <Recycle className="w-4 h-4" /> },
     { label: 'Facility Profile', path: '/recycler/facility',             icon: <MapPin className="w-4 h-4" /> },
     { label: 'Notifications',    path: '/recycler/notifications',        icon: <Bell className="w-4 h-4" /> },
   ],
