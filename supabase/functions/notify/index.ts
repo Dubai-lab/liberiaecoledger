@@ -215,17 +215,24 @@ serve(async (req) => {
         if (device) { brand = device.brand; model = device.model; co2 = device.co2_kg_avoided }
       }
 
+      const source: string = record.source ?? ''
+      const notifBodies: Record<string, string> = {
+        registration: `${brand}${model ? ' ' + model : ''} has been registered on EcoLedger. New balance: ${balance} EC.`,
+        transfer:     `You transferred ${brand}${model ? ' ' + model : ''} to a new owner. New balance: ${balance} EC.`,
+        disposal:     `${brand}${model ? ' ' + model : ''} has been responsibly recycled.${co2 ? ` ${co2} kg of CO₂ avoided.` : ''} New balance: ${balance} EC.`,
+      }
+      const notifBody = notifBodies[source] ?? `New balance: ${balance} EC.`
+
       if (owner?.email) {
         await sendEmail({
           to: owner.email,
-          ...tplEcoCreditsEarned({ name: displayName(owner), brand, model, credits: record.amount, balance, co2 }),
+          ...tplEcoCreditsEarned({ name: displayName(owner), brand, model, credits: record.amount, balance, co2, source }),
         })
       }
-      const co2Line = co2 ? ` ${co2} kg of CO₂ avoided.` : ''
       await saveNotification(
         record.user_id,
         `You earned ${record.amount} EcoCredits!`,
-        `${brand}${model ? ' ' + model : ''} has been responsibly recycled.${co2Line} New balance: ${balance} EC.`,
+        notifBody,
         'success',
         `${APP_URL}/consumer/credits`,
       )

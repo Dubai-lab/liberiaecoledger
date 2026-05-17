@@ -116,12 +116,19 @@ export function tplTransferDeclined(o: { senderName: string; recipientName: stri
   }
 }
 
-export function tplEcoCreditsEarned(o: { name: string; brand: string; model: string; credits: number; balance: number; co2?: number }) {
+export function tplEcoCreditsEarned(o: { name: string; brand: string; model: string; credits: number; balance: number; co2?: number; source?: string }) {
+  const sourceMessages: Record<string, { intro: string; label: string }> = {
+    registration: { intro: `Hi ${o.name}, your device has been registered on EcoLedger and you've been rewarded.`, label: 'Device registered' },
+    transfer:     { intro: `Hi ${o.name}, you transferred your device to a new owner and you've been rewarded.`,   label: 'Device transferred' },
+    disposal:     { intro: `Hi ${o.name}, your device has been responsibly recycled and you've been rewarded.`,    label: 'Device recycled' },
+  }
+  const msg = sourceMessages[o.source ?? ''] ?? { intro: `Hi ${o.name}, you earned EcoCredits on EcoLedger.`, label: 'Device' }
+
   return {
     subject: `You earned ${o.credits} EcoCredits!`,
     html: base(`
       <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">EcoCredits Earned</h1>
-      <p style="margin:0 0 20px;font-size:14px;color:#6b7280;line-height:1.6;">Hi ${o.name}, your device has been responsibly recycled and you've been rewarded.</p>
+      <p style="margin:0 0 20px;font-size:14px;color:#6b7280;line-height:1.6;">${msg.intro}</p>
       <div style="background:#0f0f0e;border-radius:16px;padding:24px;margin-bottom:24px;text-align:center;">
         <p style="margin:0 0 4px;font-size:11px;color:#6b6b68;letter-spacing:1px;text-transform:uppercase;">Credits Earned</p>
         <p style="margin:0 0 4px;font-size:36px;font-weight:700;color:#ffffff;">+${o.credits}</p>
@@ -129,7 +136,7 @@ export function tplEcoCreditsEarned(o: { name: string; brand: string; model: str
         <p style="margin:0;font-size:12px;color:#6b6b68;">New balance: <strong style="color:#ffffff;">${o.balance} EC</strong></p>
       </div>
       ${infoTable([
-        { label: 'Device recycled', value: `${o.brand} ${o.model}` },
+        { label: msg.label, value: `${o.brand} ${o.model}` },
         ...(o.co2 ? [{ label: 'CO₂ avoided', value: `${o.co2} kg` }] : []),
       ])}
       ${btn(`${APP_URL}/consumer/credits`, 'Cash Out Credits')}
