@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -473,7 +474,7 @@ export function DevicesReceivedPage() {
                 </th>
                 {[
                   'Device', 'Token ID', 'From Owner', 'Disposed',
-                  'Mass', 'Hazard', 'Type', 'EC Paid', 'On-Chain',
+                  'Mass', 'Hazard', 'Type', 'EC Paid', 'On-Chain', '',
                 ].map(h => (
                   <th
                     key={h}
@@ -487,7 +488,7 @@ export function DevicesReceivedPage() {
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-16 text-center text-sm text-muted-foreground">
+                  <td colSpan={11} className="px-4 py-16 text-center text-sm text-muted-foreground">
                     {all.length === 0
                       ? 'No disposals logged yet. Use Log Disposal to record your first device.'
                       : 'No results match your current filters.'}
@@ -593,6 +594,16 @@ export function DevicesReceivedPage() {
                           Pending sync
                         </span>
                       )}
+                    </td>
+
+                    {/* View link */}
+                    <td className="px-4 py-3.5">
+                      <Link
+                        to={`/recycler/received/${d.id}`}
+                        className="text-sm font-medium text-eco-700 hover:underline underline-offset-2 whitespace-nowrap"
+                      >
+                        View
+                      </Link>
                     </td>
                   </tr>
                 )
