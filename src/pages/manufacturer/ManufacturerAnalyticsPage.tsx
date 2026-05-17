@@ -217,7 +217,12 @@ export function ManufacturerAnalyticsPage() {
           </div>
           <button
             type="button"
-            onClick={() => window.print()}
+            onClick={() => {
+              const win = window.open('/manufacturer/epr', '_blank')
+              if (!win) {
+                import('sonner').then(({ toast }) => toast.info('Go to EPR Reports to download the CSR report.'))
+              }
+            }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-white"
             style={{ background: '#0f1410' }}
           >
