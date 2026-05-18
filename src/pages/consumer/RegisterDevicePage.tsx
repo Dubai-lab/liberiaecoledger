@@ -287,7 +287,7 @@ export function RegisterDevicePage() {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${['Smartphone', 'Tablet'].includes(form.category) ? 'grid-cols-2' : 'grid-cols-1'}`}>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Serial Number</label>
               <input
@@ -297,15 +297,17 @@ export function RegisterDevicePage() {
                 className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors font-mono"
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">IMEI</label>
-              <input
-                value={form.imei}
-                onChange={set('imei')}
-                placeholder="For phones"
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors font-mono"
-              />
-            </div>
+            {['Smartphone', 'Tablet'].includes(form.category) && (
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">IMEI</label>
+                <input
+                  value={form.imei}
+                  onChange={set('imei')}
+                  placeholder="15-digit IMEI number"
+                  className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors font-mono"
+                />
+              </div>
+            )}
           </div>
         </section>
 
