@@ -113,17 +113,17 @@ export function SetupAccountPage() {
           .gt('expires_at', new Date().toISOString())
       }
 
-      // Refresh React state so the route guard sees full_name before navigation
-      await refetch()
-
-      toast.success('Account set up successfully! Welcome to EcoLedger.')
-      navigate('/role-select', { replace: true })
-
-      // Fire password update after navigation — best-effort, profile is already saved
+      // Fire password update before refetch so USER_UPDATED doesn't race with navigation
       supabase.auth.updateUser({
         password,
         data: { full_name: fullName.trim() },
       }).catch(() => {})
+
+      toast.success('Account set up successfully! Welcome to EcoLedger.')
+
+      // Refresh state — the useEffect watching profile.full_name handles navigation
+      // after React re-renders App.tsx with needsSetup=false (avoids stale-state redirect loop)
+      await refetch()
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Setup failed. Please try again.')
     } finally {
