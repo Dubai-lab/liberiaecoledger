@@ -113,17 +113,14 @@ export function SetupAccountPage() {
           .gt('expires_at', new Date().toISOString())
       }
 
-      // Fire password update before refetch so USER_UPDATED doesn't race with navigation
-      supabase.auth.updateUser({
+      toast.success('Account set up successfully! Welcome to EcoLedger.')
+
+      // updateUser fires USER_UPDATED → the shared AuthContext refreshes all state at once,
+      // so the route guard in App.tsx sees needsSetup=false before navigation happens.
+      await supabase.auth.updateUser({
         password,
         data: { full_name: fullName.trim() },
       }).catch(() => {})
-
-      toast.success('Account set up successfully! Welcome to EcoLedger.')
-
-      // Refresh state — the useEffect watching profile.full_name handles navigation
-      // after React re-renders App.tsx with needsSetup=false (avoids stale-state redirect loop)
-      await refetch()
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Setup failed. Please try again.')
     } finally {
