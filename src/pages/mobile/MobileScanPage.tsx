@@ -9,6 +9,7 @@ interface ScanResult {
   brand: string
   model: string
   imei: string | null
+  serialNumber: string | null
 }
 
 export function MobileScanPage() {
@@ -138,7 +139,7 @@ export function MobileScanPage() {
 
     if (data && data.length > 0) {
       const d = data[0]
-      setResult({ deviceId: d.id, brand: d.brand, model: d.model, imei: d.imei })
+      setResult({ deviceId: d.id, brand: d.brand, model: d.model, imei: d.imei, serialNumber: d.serial_number })
     } else {
       setError('No device found. Check the code and try again.')
     }
@@ -223,7 +224,11 @@ export function MobileScanPage() {
             <div>
               <p className="text-sm font-bold text-[#0f0f0e]">{result.brand} {result.model}</p>
               <p className="text-xs text-[#9b9b98]">
-                {result.imei ? `IMEI ${result.imei.slice(0, 6)}…${result.imei.slice(-4)}` : 'Device found on chain'}
+                {result.imei
+                  ? `IMEI ${result.imei.slice(0, 6)}…${result.imei.slice(-4)}`
+                  : result.serialNumber
+                  ? `S/N ${result.serialNumber}`
+                  : 'Device found on chain'}
               </p>
             </div>
           </div>
