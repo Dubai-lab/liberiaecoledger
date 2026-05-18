@@ -79,7 +79,16 @@ async function saveNotification(
   await supabase.from('notifications').insert({ user_id: userId, title, body, type, is_read: false, link })
 }
 
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: CORS })
+  }
+
   try {
     const payload = await req.json()
     const { type, table, record, old_record } = payload
