@@ -63,26 +63,24 @@ export function VerifiedRecordsPage() {
       supabase
         .from('transfers')
         .select(`*, device:devices(brand, model, serial_number)`)
-        .eq('status', 'confirmed')
+        .in('status', ['confirmed', 'accepted', 'completed'])
         .order('created_at', { ascending: false }),
       supabase
         .from('eco_credits')
         .select('amount')
         .eq('type', 'earned'),
-      supabase
-        .from('devices')
-        .select('co2_kg_avoided')
-        .eq('status', 'disposed'),
-    ]).then(([dispRes, transRes, credRes, co2Res]) => {
+    ]).then(([dispRes, transRes, credRes]) => {
       const d = (dispRes.data as DisposalRow[]) ?? []
       const t = (transRes.data as TransferRow[]) ?? []
       setDisposals(d)
       setTransfers(t)
+      // CO₂ derived from disposal mass (co2_kg_avoided on devices is always 0)
+      const co2Kg = d.reduce((s, r) => s + ((r.final_mass_kg ?? 0) * 1.5), 0)
       setStats({
         verifiedDisposals: d.length,
         confirmedTransfers: t.length,
         totalEcoCredits: (credRes.data ?? []).reduce((s, c) => s + (c.amount ?? 0), 0),
-        totalCo2Avoided: (co2Res.data ?? []).reduce((s, d) => s + (d.co2_kg_avoided ?? 0), 0),
+        totalCo2Avoided: co2Kg,
       })
       setLoading(false)
     })
@@ -196,7 +194,7 @@ export function VerifiedRecordsPage() {
                       href={`https://amoy.polygonscan.com/tx/${d.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-eco-700 transition-colors flex-shrink-0 hidden sm:flex"
+                      className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-eco-700 transition-colors flex-shrink-0 max-sm:hidden"
                     >
                       {shortHash(d.tx_hash)}
                       <ExternalLink className="w-3 h-3" />
@@ -240,7 +238,7 @@ export function VerifiedRecordsPage() {
                       href={`https://amoy.polygonscan.com/tx/${t.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-eco-700 transition-colors flex-shrink-0 hidden sm:flex"
+                      className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-eco-700 transition-colors flex-shrink-0 max-sm:hidden"
                     >
                       {shortHash(t.tx_hash)}
                       <ExternalLink className="w-3 h-3" />
