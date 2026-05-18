@@ -66,7 +66,7 @@ export function tplInvitation(o: { email: string; role: string; organization: st
         <li>Enter your email address and the access code above</li>
         <li>Set your password and complete account setup</li>
       </ol>
-      ${btn(`${APP_URL}/login/institutional`, 'Accept Invitation →')}
+      ${btn(`${APP_URL}/login/institutional`, 'Accept Invitation')}
       <p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">This code is personal — do not share it. It expires in ${o.expiryDays} day${o.expiryDays !== 1 ? 's' : ''}. If you believe you received this in error, you can safely ignore it.</p>
     `),
   }

@@ -113,7 +113,9 @@ export function SetupAccountPage() {
           .gt('expires_at', new Date().toISOString())
       }
 
-      // Navigate first so the TOKEN_REFRESHED event from updateUser fires on role-select, not here
+      // Refresh React state so the route guard sees full_name before navigation
+      await refetch()
+
       toast.success('Account set up successfully! Welcome to EcoLedger.')
       navigate('/role-select', { replace: true })
 

@@ -108,7 +108,7 @@ export function RegisterDevicePage() {
       if (error) throw error
 
       // Write the registration event to the immutable lifecycle log
-      await supabase.from('device_lifecycle').insert({
+      const { error: lifecycleError } = await supabase.from('device_lifecycle').insert({
         device_id: device.id,
         event_type: 'registered',
         actor_id: profile.id,
@@ -121,11 +121,12 @@ export function RegisterDevicePage() {
           serial_number: form.serial_number || null,
         },
       })
+      if (lifecycleError) console.error('[RegisterDevice] device_lifecycle insert failed:', lifecycleError)
 
       if (receipt_url) setIpfsUrl(receipt_url)
 
       // Award 10 EcoCredits in Supabase
-      await supabase.from('eco_credits').insert({
+      const { error: creditError } = await supabase.from('eco_credits').insert({
         user_id: profile.id,
         amount: 10,
         type: 'earned',
@@ -134,7 +135,13 @@ export function RegisterDevicePage() {
         description: `Registered ${form.brand} ${form.model} on EcoLedger`,
       })
 
-      toast.success('Device registered — 10 EcoCredits earned!')
+      if (creditError) {
+        console.error('[RegisterDevice] eco_credits insert failed:', creditError)
+        toast.success('Device registered successfully!')
+        toast.error(`EcoCredits could not be awarded: ${creditError.message}`)
+      } else {
+        toast.success('Device registered — 10 EcoCredits earned!')
+      }
       setRegisteredDevice({ id: device.id, brand: form.brand, model: form.model })
 
       // Anchor on-chain via relay (non-fatal — DB record already saved)
