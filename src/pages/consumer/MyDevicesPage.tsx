@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -23,7 +23,7 @@ const STATUS_LABEL: Record<string, string> = {
   in_use:             'In Use',
   awaiting_transfer:  'Awaiting Transfer',
   pending_intake:     'Pending Recycler Acceptance',
-  ready_for_disposal: 'Ready for Disposal',
+  ready_for_disposal: 'Pending Recycler Acceptance',
   disposed:           'Disposed',
   flagged:            'Flagged',
 }
@@ -149,7 +149,7 @@ export function MyDevicesPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
 
-      {/* ── Welcome banner ── */}
+      {/* â”€â”€ Welcome banner â”€â”€ */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs text-muted-foreground tracking-widest uppercase mb-0.5">Consumer</p>
@@ -168,7 +168,7 @@ export function MyDevicesPage() {
         </Link>
       </div>
 
-      {/* ── Stats row ── */}
+      {/* â”€â”€ Stats row â”€â”€ */}
       <div className="grid grid-cols-3 gap-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}
           className="bg-white border border-border rounded-xl p-4">
@@ -203,7 +203,7 @@ export function MyDevicesPage() {
         </motion.div>
       </div>
 
-      {/* ── Quick actions ── */}
+      {/* â”€â”€ Quick actions â”€â”€ */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: 'Transfer Device',  desc: 'Send to another user',          path: '/consumer/transfer',      icon: <Send className="w-4 h-4" /> },
@@ -222,7 +222,7 @@ export function MyDevicesPage() {
         ))}
       </div>
 
-      {/* ── Incoming transfers ── */}
+      {/* â”€â”€ Incoming transfers â”€â”€ */}
       <AnimatePresence>
         {incoming.length > 0 && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
@@ -245,11 +245,11 @@ export function MyDevicesPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{t.device.brand} {t.device.model}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {t.device.category}{t.device.serial_number && ` · SN: ${t.device.serial_number}`}
+                        {t.device.category}{t.device.serial_number && ` Â· SN: ${t.device.serial_number}`}
                       </p>
                       <p className="text-xs text-blue-700 mt-1">
-                        From <strong>{t.senderName}</strong> · {REASON_LABEL[t.reason]}
-                        {t.sale_price_lrd ? ` · LRD ${t.sale_price_lrd.toLocaleString()}` : ''}
+                        From <strong>{t.senderName}</strong> Â· {REASON_LABEL[t.reason]}
+                        {t.sale_price_lrd ? ` Â· LRD ${t.sale_price_lrd.toLocaleString()}` : ''}
                       </p>
                       {t.condition_notes && (
                         <p className="text-xs text-muted-foreground mt-0.5 italic">"{t.condition_notes}"</p>
@@ -274,7 +274,7 @@ export function MyDevicesPage() {
         )}
       </AnimatePresence>
 
-      {/* ── Device list ── */}
+      {/* â”€â”€ Device list â”€â”€ */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold">My Devices</h2>
@@ -285,7 +285,7 @@ export function MyDevicesPage() {
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Search…"
+                placeholder="Searchâ€¦"
                 className="pl-8 pr-3 py-1.5 text-xs border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
               />
             </div>
@@ -303,7 +303,7 @@ export function MyDevicesPage() {
             </p>
             {!query && (
               <Link to="/consumer/register" className="text-xs font-medium hover:underline" style={{ color: '#2f6b3a' }}>
-                Register a device →
+                Register a device â†’
               </Link>
             )}
           </div>
@@ -327,8 +327,8 @@ export function MyDevicesPage() {
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
                       {device.category}
-                      {device.serial_number && ` · SN: ${device.serial_number}`}
-                      {device.imei && ` · IMEI: ${device.imei}`}
+                      {device.serial_number && ` Â· SN: ${device.serial_number}`}
+                      {device.imei && ` Â· IMEI: ${device.imei}`}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -51,7 +51,7 @@ export function MobileDisposePage() {
     setSubmitting(true)
     try {
       // Mark device as ready for disposal
-      await supabase.from('devices').update({ status: 'pending_intake' }).eq('id', device.id)
+      await supabase.from('devices').update({ status: 'ready_for_disposal' }).eq('id', device.id)
 
       // Log lifecycle event
       await supabase.from('device_lifecycle').insert({
@@ -199,7 +199,7 @@ export function MobileDisposePage() {
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
-          placeholder="Device condition, preferred pickup time, address…"
+          placeholder="Device condition, preferred pickup time, addressâ€¦"
           rows={3}
           className="w-full bg-white rounded-2xl px-4 py-3 text-sm text-[#0f0f0e] placeholder:text-[#b0afa8] focus:outline-none resize-none"
           style={{ border: '2px solid transparent' }}
@@ -227,7 +227,7 @@ export function MobileDisposePage() {
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2"
         style={{ background: '#0f0f0e' }}
       >
-        {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Mark for Recycling'}
+        {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submittingâ€¦</> : 'Mark for Recycling'}
       </button>
     </div>
   )

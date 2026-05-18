@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+﻿import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -23,7 +23,7 @@ const STATUS_LABEL: Record<string, string> = {
   in_use:             'In Use',
   awaiting_transfer:  'Awaiting Transfer',
   pending_intake:     'Pending Recycler Acceptance',
-  ready_for_disposal: 'Ready for Disposal',
+  ready_for_disposal: 'Pending Recycler Acceptance',
   disposed:           'Disposed',
   flagged:            'Flagged',
 }
@@ -89,7 +89,7 @@ export function DeviceDetailPage() {
     setActing(true)
     const { error } = await supabase
       .from('devices')
-      .update({ status: 'pending_intake' })
+      .update({ status: 'ready_for_disposal' })
       .eq('id', device.id)
     if (error) { toast.error(error.message) }
     else {
@@ -149,12 +149,12 @@ export function DeviceDetailPage() {
             { label: 'Brand', value: device.brand },
             { label: 'Model', value: device.model },
             { label: 'Category', value: device.category },
-            { label: 'Year', value: device.manufacture_year?.toString() ?? '—' },
-            { label: 'Serial Number', value: device.serial_number ?? '—' },
-            { label: 'IMEI', value: device.imei ?? '—' },
+            { label: 'Year', value: device.manufacture_year?.toString() ?? 'â€”' },
+            { label: 'Serial Number', value: device.serial_number ?? 'â€”' },
+            { label: 'IMEI', value: device.imei ?? 'â€”' },
             { label: 'Hazard Class', value: HAZARD_LABEL[device.hazard_class] ?? device.hazard_class },
-            { label: 'Retailer', value: device.retailer_name ?? '—' },
-            { label: 'Purchase Price', value: device.purchase_price_lrd ? `LRD ${device.purchase_price_lrd.toLocaleString()}` : '—' },
+            { label: 'Retailer', value: device.retailer_name ?? 'â€”' },
+            { label: 'Purchase Price', value: device.purchase_price_lrd ? `LRD ${device.purchase_price_lrd.toLocaleString()}` : 'â€”' },
           ].map(row => (
             <div key={row.label}>
               <p className="text-xs text-muted-foreground mb-0.5">{row.label}</p>
@@ -192,7 +192,7 @@ export function DeviceDetailPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-medium capitalize">{evt.event_type}</p>
                       {evt.actor_name && <span className="text-xs text-muted-foreground">by {evt.actor_name}</span>}
-                      {evt.location && <span className="text-xs text-muted-foreground">· {evt.location}</span>}
+                      {evt.location && <span className="text-xs text-muted-foreground">Â· {evt.location}</span>}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {new Date(evt.created_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
@@ -238,7 +238,7 @@ export function DeviceDetailPage() {
       {device.receipt_ipfs_hash && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.11 }} className="bg-white rounded-xl border border-border p-6">
           <h2 className="text-sm font-semibold mb-3">Purchase Receipt (IPFS)</h2>
-          <p className="text-xs text-muted-foreground mb-2">Your receipt is permanently stored on IPFS — it cannot be altered or deleted.</p>
+          <p className="text-xs text-muted-foreground mb-2">Your receipt is permanently stored on IPFS â€” it cannot be altered or deleted.</p>
           <div className="flex items-center justify-between bg-muted rounded-lg px-3 py-2.5">
             <span className="text-xs font-mono text-muted-foreground truncate">{device.receipt_ipfs_hash}</span>
             <a

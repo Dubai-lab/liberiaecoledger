@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Recycle, ClipboardList, Trash2, Leaf, TrendingUp, Loader2 } from 'lucide-react'
@@ -29,7 +29,7 @@ export function HubOverviewPage() {
     Promise.all([
       supabase.from('recycler_facilities').select('*').eq('owner_id', profile.id).maybeSingle(),
       supabase.from('disposals').select('id, eco_credits_awarded, status, created_at').eq('recycler_id', profile.id),
-      supabase.from('devices').select('id').eq('status', 'pending_intake'),
+      supabase.from('devices').select('id').eq('status', 'ready_for_disposal'),
     ]).then(([facilityRes, disposalsRes, pendingRes]) => {
       setFacility(facilityRes.data ?? null)
 
@@ -62,7 +62,7 @@ export function HubOverviewPage() {
         <h1 className="text-2xl font-semibold">Hub Overview</h1>
         {facility && (
           <p className="text-sm text-muted-foreground mt-1">
-            {facility.name} · {facility.location_city}, {facility.location_county}
+            {facility.name} Â· {facility.location_city}, {facility.location_county}
             {facility.is_basel_certified && (
               <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full bg-eco-50 text-eco-700 font-medium border border-eco-200">
                 Basel Certified

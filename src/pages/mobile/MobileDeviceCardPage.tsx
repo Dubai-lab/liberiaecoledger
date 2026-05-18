@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Loader2 } from 'lucide-react'
@@ -39,7 +39,7 @@ const HAZARD_LABEL: Record<string, string> = {
 function eventLabel(e: LifecycleEvent) {
   const byActor = e.actor_name ? `by ${e.actor_name}` : ''
   const loc = e.location ?? ''
-  const actorAndLoc = [byActor, loc].filter(Boolean).join(' · ')
+  const actorAndLoc = [byActor, loc].filter(Boolean).join(' Â· ')
 
   switch (e.event_type) {
     case 'registered':  return { title: 'Registered', sub: actorAndLoc }
@@ -54,7 +54,7 @@ function statusColor(status: string) {
   if (status === 'disposed') return { bg: '#fde8e8', text: '#c0392b', label: 'DISPOSED' }
   if (status === 'awaiting_transfer') return { bg: '#fdf3dc', text: '#b87a00', label: 'AWAITING TRANSFER' }
   if (status === 'pending_intake')     return { bg: '#fde8d0', text: '#b85c00', label: 'PENDING ACCEPTANCE' }
-  if (status === 'ready_for_disposal') return { bg: '#fde8d0', text: '#b85c00', label: 'READY FOR DISPOSAL' }
+  if (status === 'ready_for_disposal') return { bg: '#fde8d0', text: '#b85c00', label: 'PENDING ACCEPTANCE' }
   return { bg: '#f0ede6', text: '#9b9b98', label: status.toUpperCase() }
 }
 
