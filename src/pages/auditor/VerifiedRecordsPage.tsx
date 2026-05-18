@@ -58,7 +58,7 @@ export function VerifiedRecordsPage() {
       supabase
         .from('disposals')
         .select(`*, device:devices(brand, model, serial_number), facility:recycler_facilities(name, location_city)`)
-        .eq('status', 'confirmed')
+        .neq('status', 'rejected')
         .order('created_at', { ascending: false }),
       supabase
         .from('transfers')
