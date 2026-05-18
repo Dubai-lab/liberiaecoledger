@@ -133,7 +133,7 @@ export function useAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         setState({ isLoading: false, isAuthenticated: false, profile: null, activeRole: null })
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      } else if (event === 'SIGNED_IN') {
         loadProfile()
       }
     })
