@@ -1,0 +1,2 @@
+DEDICATION
+To my family, whose unwavering support and encouragement carried me through every challenge of this academic journey. To the people of Liberia, whose resilience in the face of environmental and developmental challenges inspired the creation of this work. May this platform serve as a small but meaningful contribution toward a cleaner, more accountable future for our communities and our land.
