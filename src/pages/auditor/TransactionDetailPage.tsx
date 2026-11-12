@@ -107,7 +107,7 @@ export function TransactionDetailPage() {
           type="submit"
           disabled={loading || !query.trim()}
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-50 transition-colors"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           Lookup

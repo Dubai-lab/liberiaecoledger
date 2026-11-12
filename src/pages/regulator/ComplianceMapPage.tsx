@@ -95,10 +95,10 @@ function getDotColor(county: CountyData, view: string): DotColor {
 }
 
 const DOT_STYLE: Record<DotColor, { bg: string; ring: string; label: string }> = {
-  green:  { bg: '#2d6a3f', ring: 'rgba(45,106,63,0.25)',  label: 'Compliant' },
+  green:  { bg: '#083D24', ring: 'rgba(45,106,63,0.25)',  label: 'Compliant' },
   orange: { bg: '#b87a00', ring: 'rgba(184,122,0,0.25)',  label: 'Needs attention' },
   red:    { bg: '#c0392b', ring: 'rgba(192,57,43,0.25)',  label: 'Critical' },
-  gray:   { bg: '#9b9b98', ring: 'rgba(155,155,152,0.2)', label: 'No data' },
+  gray:   { bg: '#566D62', ring: 'rgba(155,155,152,0.2)', label: 'No data' },
 }
 
 function severityBadge(c: CountyData) {
@@ -107,10 +107,10 @@ function severityBadge(c: CountyData) {
   if (open.some(f => f.severity === 'high'))     return { label: 'HIGH RISK', bg: '#fde8e8', text: '#c0392b' }
   if (open.some(f => f.severity === 'medium'))   return { label: 'WARNING',   bg: '#fdf3dc', text: '#b87a00' }
   if (c.facilities.some(f => f.is_basel_certified && f.is_active))
-    return { label: 'CERTIFIED', bg: '#e8f5ec', text: '#2d6a3f' }
+    return { label: 'CERTIFIED', bg: '#E6EEE7', text: '#083D24' }
   if (c.facilities.some(f => f.is_active))
     return { label: 'ACTIVE', bg: '#e8f0fe', text: '#1a56db' }
-  return { label: 'NO FACILITY', bg: '#f0ede6', text: '#9b9b98' }
+  return { label: 'NO FACILITY', bg: '#F4F7F2', text: '#566D62' }
 }
 
 export function ComplianceMapPage() {
@@ -152,14 +152,14 @@ export function ComplianceMapPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f5f5f2' }}>
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
       </div>
     )
   }
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: '#f5f5f2' }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: '#F4F7F2' }}>
 
       {/* ── Left filter panel ─────────────────────────────────────── */}
       <aside className="w-72 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-y-auto">
@@ -185,12 +185,12 @@ export function ComplianceMapPage() {
                   <span
                     className="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 flex items-center justify-center"
                     style={{
-                      borderColor: view === v.id ? '#0f1410' : '#d1d5db',
+                      borderColor: view === v.id ? '#063921' : '#d1d5db',
                       background: 'white',
                     }}
                   >
                     {view === v.id && (
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#0f1410' }} />
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#063921' }} />
                     )}
                   </span>
                   <span className={view === v.id ? 'font-semibold text-gray-900' : 'text-gray-500'}>
@@ -212,7 +212,7 @@ export function ComplianceMapPage() {
                   onClick={() => setPeriod(p)}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
                   style={{
-                    background: period === p ? '#0f1410' : '#f3f4f6',
+                    background: period === p ? '#063921' : '#f3f4f6',
                     color: period === p ? 'white' : '#6b7280',
                   }}
                 >
@@ -236,8 +236,8 @@ export function ComplianceMapPage() {
                   <span
                     className="w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all"
                     style={{
-                      borderColor: categories.includes(cat.id) ? '#0f1410' : '#d1d5db',
-                      background: categories.includes(cat.id) ? '#0f1410' : 'white',
+                      borderColor: categories.includes(cat.id) ? '#063921' : '#d1d5db',
+                      background: categories.includes(cat.id) ? '#063921' : 'white',
                     }}
                   >
                     {categories.includes(cat.id) && (
@@ -307,12 +307,12 @@ export function ComplianceMapPage() {
       <div className="flex-1 relative overflow-hidden">
 
         {/* Map background */}
-        <div className="absolute inset-0" style={{ background: '#e8e5de' }}>
+        <div className="absolute inset-0" style={{ background: '#D7E0D5' }}>
           {/* Subtle grid pattern */}
           <svg className="absolute inset-0 w-full h-full opacity-20">
             <defs>
               <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#9b9b98" strokeWidth="0.5" />
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#566D62" strokeWidth="0.5" />
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#grid)" />
@@ -326,8 +326,8 @@ export function ComplianceMapPage() {
           >
             <polygon
               points="10,22 18,15 35,12 50,5 70,10 85,15 90,30 88,45 82,55 78,65 72,78 65,88 55,92 45,90 35,85 25,80 18,72 12,60 8,48 6,35"
-              fill="#dbd8d0"
-              stroke="#c8c5bd"
+              fill="#D7E0D5"
+              stroke="#C5D2C7"
               strokeWidth="0.5"
             />
           </svg>
@@ -383,7 +383,7 @@ export function ComplianceMapPage() {
                 className="mt-1 px-1.5 py-0.5 rounded text-[9px] font-semibold whitespace-nowrap pointer-events-none"
                 style={{
                   background: 'rgba(255,255,255,0.85)',
-                  color: '#0f1410',
+                  color: '#063921',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
                 }}
               >
@@ -404,7 +404,7 @@ export function ComplianceMapPage() {
             <div
               ref={popupRef}
               className="absolute top-5 right-5 w-80 bg-white rounded-2xl shadow-2xl z-30 overflow-hidden"
-              style={{ border: '1px solid #e8e5de' }}
+              style={{ border: '1px solid #D7E0D5' }}
             >
               {/* Badge */}
               <div className="px-5 pt-5 pb-3">
@@ -460,7 +460,7 @@ export function ComplianceMapPage() {
                   type="button"
                   onClick={() => navigate('/regulator/flags')}
                   className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                  style={{ background: '#0f1410' }}
+                  style={{ background: '#063921' }}
                 >
                   View Flags
                 </button>

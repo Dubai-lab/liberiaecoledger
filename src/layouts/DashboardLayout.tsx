@@ -1,16 +1,15 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
-import logoCompactDark from '@/brands/logo-compact-dark.png'
-import logoCompactLight from '@/brands/logo-compact-light.png'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Cpu, Send, Leaf, Bell, Factory, BookOpen,
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
-  ChevronRight, Menu, X, LogOut, Gift, Building2,
+  ChevronRight, Menu, X, LogOut, Gift, Building2, Coins,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 type NavItem = { label: string; path: string; icon: React.ReactNode }
 
@@ -59,6 +58,7 @@ const NAV: Record<UserRole, NavItem[]> = {
     { label: 'Invitations',       path: '/admin/invitations',            icon: <MailPlus className="w-4 h-4" /> },
     { label: 'Recyclers',         path: '/admin/recyclers',              icon: <Recycle className="w-4 h-4" /> },
     { label: 'Rewards',           path: '/admin/rewards',                icon: <Gift className="w-4 h-4" /> },
+    { label: 'Rates & Prices',    path: '/admin/rates',                  icon: <Coins className="w-4 h-4" /> },
     { label: 'Smart Contracts',   path: '/admin/contracts',              icon: <Code2 className="w-4 h-4" /> },
     { label: 'System Settings',   path: '/admin/settings',               icon: <Settings className="w-4 h-4" /> },
     { label: 'Notifications',     path: '/admin/notifications',          icon: <Bell className="w-4 h-4" /> },
@@ -90,7 +90,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#f5f5f2]">
+    <div className="min-h-screen flex bg-brand-tint">
       {/* ── Mobile overlay ── */}
       <AnimatePresence>
         {mobileOpen && (
@@ -108,13 +108,13 @@ export function DashboardLayout() {
       <aside
         className={[
           'fixed top-0 left-0 h-full z-50 flex flex-col transition-transform duration-300',
-          'w-60 bg-[#0f1410] lg:translate-x-0',
+          'w-60 bg-brand-deep lg:translate-x-0',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         ].join(' ')}
       >
         {/* Logo */}
         <div className="px-5 py-4 border-b border-white/10 flex items-center gap-3">
-          <img src={logoCompactDark} alt="EcoLedger" className="h-8 w-auto object-contain flex-shrink-0" />
+          <EcoLedgerLogo tone="dark" />
           <button
             type="button"
             aria-label="Close menu"
@@ -128,7 +128,7 @@ export function DashboardLayout() {
         {/* Role badge */}
         <div className="px-5 py-3 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#2f6b3a]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#8FD3A8]" />
             <span className="text-xs text-white/50 tracking-widest uppercase">{ROLE_LABEL[role]}</span>
           </div>
         </div>
@@ -143,7 +143,7 @@ export function DashboardLayout() {
               className={({ isActive }) => [
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
                 isActive
-                  ? 'bg-[#2f6b3a]/20 text-[#6dba7f]'
+                  ? 'bg-white/10 text-white font-medium shadow-[inset_3px_0_0_#8FD3A8]'
                   : 'text-white/50 hover:text-white/80 hover:bg-white/5',
               ].join(' ')}
               onClick={() => setMobileOpen(false)}
@@ -162,7 +162,7 @@ export function DashboardLayout() {
             onClick={() => { navigate('/account'); setMobileOpen(false) }}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
           >
-            <div className="w-7 h-7 rounded-full bg-[#2f6b3a] flex items-center justify-center flex-shrink-0">
+            <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-semibold text-white">{initials}</span>
             </div>
             <div className="min-w-0 flex-1">
@@ -194,10 +194,10 @@ export function DashboardLayout() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <img src={logoCompactLight} alt="EcoLedger" className="h-7 w-auto object-contain" />
+          <EcoLedgerLogo />
           <div className="ml-auto flex items-center gap-2">
             <span className="text-xs text-muted-foreground hidden sm:block">{ROLE_LABEL[role]}</span>
-            <div className="w-6 h-6 rounded-full bg-[#2f6b3a] flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full bg-brand flex items-center justify-center">
               <span className="text-[10px] font-bold text-white">{initials}</span>
             </div>
           </div>

@@ -87,39 +87,39 @@ export function MobileDisposePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f0ede6' }}>
-        <Loader2 className="w-6 h-6 animate-spin text-[#9b9b98]" />
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
+        <Loader2 className="w-6 h-6 animate-spin text-brand-muted" />
       </div>
     )
   }
 
   if (!device) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#f0ede6' }}>
-        <p className="text-sm text-[#9b9b98]">Device not found.</p>
-        <button type="button" onClick={() => navigate(-1)} className="mt-4 text-sm font-semibold underline text-[#0f0f0e]">Go back</button>
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#F4F7F2' }}>
+        <p className="text-sm text-brand-muted">Device not found.</p>
+        <button type="button" onClick={() => navigate(-1)} className="mt-4 text-sm font-semibold underline text-brand-ink">Go back</button>
       </div>
     )
   }
 
   if (done) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#f0ede6' }}>
-        <div className="w-16 h-16 rounded-full bg-[#e8f5ec] flex items-center justify-center mb-4">
-          <CheckCircle className="w-8 h-8 text-[#2d6a3f]" />
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#F4F7F2' }}>
+        <div className="w-16 h-16 rounded-full bg-brand-tint flex items-center justify-center mb-4">
+          <CheckCircle className="w-8 h-8 text-brand" />
         </div>
-        <h1 className="text-xl font-bold text-[#0f0f0e] mb-2">Marked for Recycling</h1>
-        <p className="text-sm text-[#9b9b98] mb-1">
+        <h1 className="text-xl font-bold text-brand-ink mb-2">Marked for Recycling</h1>
+        <p className="text-sm text-brand-muted mb-1">
           {device.brand} {device.model} is now ready for disposal.
         </p>
-        <p className="text-xs text-[#b0afa8] mb-8">
+        <p className="text-xs text-brand-sage mb-8">
           A certified recycler will process your device and you'll earn EcoCredits once disposal is confirmed.
         </p>
         <button
           type="button"
           onClick={() => navigate('/mobile/devices')}
           className="w-full py-4 rounded-2xl text-white text-sm font-bold"
-          style={{ background: '#0f0f0e' }}
+          style={{ background: '#083D24' }}
         >
           Back to My Devices
         </button>
@@ -128,35 +128,35 @@ export function MobileDisposePage() {
   }
 
   return (
-    <div className="px-5 pt-6 pb-8" style={{ background: '#f0ede6', minHeight: '100vh' }}>
+    <div className="px-5 pt-6 pb-8" style={{ background: '#F4F7F2', minHeight: '100vh' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center flex-shrink-0"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth={2}>
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <div>
-          <p className="text-base font-semibold text-[#0f0f0e]">Dispose Device</p>
-          <p className="text-xs text-[#9b9b98]">Mark for recycling</p>
+          <p className="text-base font-semibold text-brand-ink">Dispose Device</p>
+          <p className="text-xs text-brand-muted">Mark for recycling</p>
         </div>
       </div>
 
       {/* Device summary */}
       <div className="bg-white rounded-2xl p-4 mb-5">
-        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-2">Device</p>
-        <p className="text-base font-bold text-[#0f0f0e]">{device.brand} {device.model}</p>
-        {device.category && <p className="text-xs text-[#9b9b98]">{device.category}</p>}
+        <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-2">Device</p>
+        <p className="text-base font-bold text-brand-ink">{device.brand} {device.model}</p>
+        {device.category && <p className="text-xs text-brand-muted">{device.category}</p>}
       </div>
 
       {/* Info card */}
-      <div className="rounded-2xl p-4 mb-5" style={{ background: '#e8f5ec' }}>
-        <p className="text-xs font-semibold text-[#2d6a3f] mb-1">How it works</p>
-        <p className="text-xs text-[#4a7a5a] leading-relaxed">
+      <div className="rounded-2xl p-4 mb-5" style={{ background: '#E6EEE7' }}>
+        <p className="text-xs font-semibold text-brand mb-1">How it works</p>
+        <p className="text-xs text-brand-secondary leading-relaxed">
           Marking your device for disposal makes it visible to certified recyclers. Once a recycler processes it, you'll earn EcoCredits based on the materials recovered.
         </p>
       </div>
@@ -164,7 +164,7 @@ export function MobileDisposePage() {
       {/* Recycler facility selection */}
       {facilities.length > 0 && (
         <div className="mb-5">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">Preferred Recycler (optional)</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-3">Preferred Recycler (optional)</p>
           <div className="space-y-2">
             {facilities.map(f => (
               <button
@@ -172,17 +172,17 @@ export function MobileDisposePage() {
                 type="button"
                 onClick={() => setSelectedFacility(selectedFacility === f.name ? '' : f.name)}
                 className={`w-full bg-white rounded-2xl p-4 text-left border-2 transition-all ${
-                  selectedFacility === f.name ? 'border-[#0f0f0e]' : 'border-transparent'
+                  selectedFacility === f.name ? 'border-[#083D24]' : 'border-transparent'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-semibold text-[#0f0f0e]">{f.name}</p>
-                    <p className="text-xs text-[#9b9b98]">{f.location_city}, {f.location_county}</p>
+                    <p className="text-sm font-semibold text-brand-ink">{f.name}</p>
+                    <p className="text-xs text-brand-muted">{f.location_city}, {f.location_county}</p>
                   </div>
                   {f.accepts_free_pickup && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold flex-shrink-0"
-                      style={{ background: '#e8f5ec', color: '#2d6a3f' }}>
+                      style={{ background: '#E6EEE7', color: '#083D24' }}>
                       Free pickup
                     </span>
                   )}
@@ -195,15 +195,15 @@ export function MobileDisposePage() {
 
       {/* Notes */}
       <div className="mb-6">
-        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-2">Notes (optional)</p>
+        <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-2">Notes (optional)</p>
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
           placeholder="Device condition, preferred pickup time, addressâ€¦"
           rows={3}
-          className="w-full bg-white rounded-2xl px-4 py-3 text-sm text-[#0f0f0e] placeholder:text-[#b0afa8] focus:outline-none resize-none"
+          className="w-full bg-white rounded-2xl px-4 py-3 text-sm text-brand-ink placeholder:text-brand-sage focus:outline-none resize-none"
           style={{ border: '2px solid transparent' }}
-          onFocus={e => { e.target.style.borderColor = '#0f0f0e' }}
+          onFocus={e => { e.target.style.borderColor = '#083D24' }}
           onBlur={e => { e.target.style.borderColor = 'transparent' }}
         />
       </div>
@@ -215,7 +215,7 @@ export function MobileDisposePage() {
             <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
           </svg>
         </div>
-        <p className="text-xs text-[#9b9b98] leading-relaxed">
+        <p className="text-xs text-brand-muted leading-relaxed">
           Once submitted, this device will be locked from transfer. Please back up any data before proceeding.
         </p>
       </div>
@@ -225,7 +225,7 @@ export function MobileDisposePage() {
         onClick={handleSubmit}
         disabled={submitting}
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2"
-        style={{ background: '#0f0f0e' }}
+        style={{ background: '#083D24' }}
       >
         {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submittingâ€¦</> : 'Mark for Recycling'}
       </button>

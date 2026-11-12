@@ -109,7 +109,7 @@ function scoreLabel(score: number) {
 }
 
 function barColor(pct: number) {
-  if (pct >= 85) return '#2f6b3a'
+  if (pct >= 85) return '#1E5A3C'
   if (pct >= 60) return '#d97706'
   return '#dc2626'
 }
@@ -153,7 +153,7 @@ p{margin:4px 0}
 table{width:100%;border-collapse:collapse;margin:8px 0 12px}
 th{background:#f0f0ee;text-align:left;padding:6px 8px;border:1px solid #bbb;font-size:11px}
 td{padding:6px 8px;border:1px solid #ddd;font-size:11px;vertical-align:top}
-tr:nth-child(even) td{background:#fafaf8}
+tr:nth-child(even) td{background:#F4F7F2}
 .header-block{border:2px solid #111;padding:18px 20px;margin-bottom:24px}
 .header-block .sub{font-size:11px;color:#555;margin-top:3px}
 .score-wrap{text-align:center;margin:14px 0}
@@ -170,7 +170,7 @@ tr:nth-child(even) td{background:#fafaf8}
 </head>
 <body>
 <div class="no-print">
-  <button onclick="window.print()" style="padding:8px 20px;background:#0f1410;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">
+  <button onclick="window.print()" style="padding:8px 20px;background:#063921;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">
     ⬇ Print / Save as PDF
   </button>
 </div>
@@ -810,7 +810,7 @@ export function EPRReportsPage() {
             type="button"
             onClick={() => openPrintWindow('Q3 EPR-104 · EcoLedger', genEPR104('Q3', 'Jan–Mar 2026', rd))}
             className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
-            style={{ background: '#0f1410' }}
+            style={{ background: '#063921' }}
           >
             <Download className="w-3.5 h-3.5" />
             Download Q3 report (PDF)
@@ -823,7 +823,7 @@ export function EPRReportsPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         className="rounded-2xl p-8"
-        style={{ background: '#0f1410' }}
+        style={{ background: '#063921' }}
       >
         <p className="text-[10px] text-white/40 tracking-widest uppercase mb-6">EPR Compliance Score</p>
         <div className="flex flex-wrap gap-8 items-center">
@@ -1014,7 +1014,7 @@ export function EPRReportsPage() {
                       type="button"
                       onClick={r.onDownload}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                      style={{ background: '#0f1410' }}
+                      style={{ background: '#063921' }}
                     >
                       <Download className="w-3 h-3" />
                       Download

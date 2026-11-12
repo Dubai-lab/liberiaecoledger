@@ -122,7 +122,7 @@ export function UsersPage() {
               className="flex items-center gap-4 p-4 bg-white border border-border rounded-xl"
             >
               {/* Avatar */}
-              <div className="w-9 h-9 rounded-full bg-[#2f6b3a] flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-brand-secondary flex items-center justify-center flex-shrink-0">
                 <span className="text-xs font-bold text-white">
                   {(user.full_name ?? user.email ?? 'U').slice(0, 2).toUpperCase()}
                 </span>

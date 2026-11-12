@@ -24,7 +24,7 @@ const TIER_BENEFITS: Record<string, string> = {
 
 const STATUS_META = {
   pending:   { icon: <Clock className="w-3 h-3" />,        color: '#b87a00', bg: '#fdf3dc', label: 'Pending' },
-  fulfilled: { icon: <CheckCircle className="w-3 h-3" />,  color: '#2d6a3f', bg: '#e8f5ec', label: 'Fulfilled' },
+  fulfilled: { icon: <CheckCircle className="w-3 h-3" />,  color: '#083D24', bg: '#E6EEE7', label: 'Fulfilled' },
   failed:    { icon: <XCircle className="w-3 h-3" />,      color: '#c0392b', bg: '#fde8e8', label: 'Failed' },
 }
 
@@ -167,7 +167,7 @@ export function EcoCreditsPage() {
   }
 
   return (
-    <div className="min-h-screen p-6" style={{ background: '#f5f5f2' }}>
+    <div className="min-h-screen p-6" style={{ background: '#F4F7F2' }}>
       <p className="text-xs text-gray-400 mb-5">
         <span>Consumer</span> <span className="mx-1">/</span>
         <span className="text-gray-700 font-medium">Rewards</span>
@@ -179,7 +179,7 @@ export function EcoCreditsPage() {
         <div className="flex-[3] space-y-5 min-w-0">
 
           {/* Hero balance card */}
-          <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#0f1410' }}>
+          <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#063921' }}>
             <div className="absolute right-0 top-0 w-56 h-56 rounded-full opacity-10 translate-x-16 -translate-y-16"
               style={{ background: 'radial-gradient(circle, #ffffff 0%, transparent 70%)' }} />
 
@@ -200,7 +200,7 @@ export function EcoCreditsPage() {
                 </div>
                 <div className="flex gap-8 mt-5 mb-6">
                   {[
-                    { label: 'EARNED YTD', value: `+${fmt(ytdEarned)}`, color: '#6dba7f' },
+                    { label: 'EARNED YTD', value: `+${fmt(ytdEarned)}`, color: '#8FD3A8' },
                     { label: 'REDEEMED',   value: `-${fmt(redeemed)}`,  color: '#f87171' },
                     { label: 'BALANCE',    value: fmt(balance),         color: 'white' },
                   ].map(stat => (
@@ -214,7 +214,7 @@ export function EcoCreditsPage() {
                   <button
                     type="button"
                     onClick={() => setTab('catalogue')}
-                    className="px-5 py-2.5 rounded-xl text-sm font-semibold text-[#0f1410] bg-white hover:bg-white/90 transition-colors"
+                    className="px-5 py-2.5 rounded-xl text-sm font-semibold text-brand-deep bg-white hover:bg-white/90 transition-colors"
                   >
                     Redeem rewards
                   </button>
@@ -242,8 +242,8 @@ export function EcoCreditsPage() {
                 onClick={() => setTab(t.id as typeof tab)}
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
                 style={{
-                  background: tab === t.id ? '#0f1410' : 'transparent',
-                  color: tab === t.id ? 'white' : '#9b9b98',
+                  background: tab === t.id ? '#063921' : 'transparent',
+                  color: tab === t.id ? 'white' : '#566D62',
                 }}
               >
                 {t.label}
@@ -281,7 +281,7 @@ export function EcoCreditsPage() {
                         style={{ opacity: canAfford ? 1 : 0.6 }}
                       >
                         {/* Image */}
-                        <div className="aspect-video relative overflow-hidden" style={{ background: '#f0ede6' }}>
+                        <div className="aspect-video relative overflow-hidden" style={{ background: '#F4F7F2' }}>
                           {item.image_url ? (
                             <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
                           ) : (
@@ -289,7 +289,7 @@ export function EcoCreditsPage() {
                               <svg className="absolute inset-0 w-full h-full opacity-40">
                                 <defs>
                                   <pattern id={`sp-${item.id}`} patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(45)">
-                                    <line x1="0" y1="0" x2="0" y2="12" stroke="#c8c5bd" strokeWidth="6" />
+                                    <line x1="0" y1="0" x2="0" y2="12" stroke="#C5D2C7" strokeWidth="6" />
                                   </pattern>
                                 </defs>
                                 <rect width="100%" height="100%" fill={`url(#sp-${item.id})`} />
@@ -313,7 +313,7 @@ export function EcoCreditsPage() {
                                 {item.cost_ec} <span className="font-normal text-gray-400">EC</span>
                               </span>
                               {item.stock !== null && (
-                                <p className="text-[10px] mt-0.5" style={{ color: item.stock <= 3 ? '#c0392b' : '#9b9b98' }}>
+                                <p className="text-[10px] mt-0.5" style={{ color: item.stock <= 3 ? '#c0392b' : '#566D62' }}>
                                   {item.stock === 0 ? 'Out of stock' : `${item.stock} left`}
                                 </p>
                               )}
@@ -323,7 +323,7 @@ export function EcoCreditsPage() {
                               disabled={!!redeeming || !canAfford}
                               onClick={() => handleRedeem(item)}
                               className="text-xs font-semibold hover:underline transition-opacity disabled:opacity-40 disabled:no-underline"
-                              style={{ color: canAfford ? '#2d6a3f' : '#9b9b98' }}
+                              style={{ color: canAfford ? '#083D24' : '#566D62' }}
                             >
                               {redeeming === item.id
                                 ? <Loader2 className="w-3 h-3 animate-spin" />
@@ -407,13 +407,13 @@ export function EcoCreditsPage() {
                 </span>
               )}
             </div>
-            <div className="h-2 rounded-full overflow-hidden mb-3" style={{ background: '#f0ede6' }}>
+            <div className="h-2 rounded-full overflow-hidden mb-3" style={{ background: '#F4F7F2' }}>
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${tierPct}%` }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
                 className="h-full rounded-full"
-                style={{ background: '#2d6a3f' }}
+                style={{ background: '#083D24' }}
               />
             </div>
             <div className="flex justify-between mb-4">
@@ -422,8 +422,8 @@ export function EcoCreditsPage() {
                 const isPast   = TIERS.indexOf(t) < TIERS.indexOf(currentTier)
                 return (
                   <div key={t.id} className="flex flex-col items-center gap-1">
-                    <span className="w-2 h-2 rounded-full" style={{ background: isActive || isPast ? '#2d6a3f' : '#e8e5de' }} />
-                    <span className="text-[9px] tracking-widest font-bold" style={{ color: isActive ? '#0f1410' : '#9b9b98' }}>
+                    <span className="w-2 h-2 rounded-full" style={{ background: isActive || isPast ? '#083D24' : '#D7E0D5' }} />
+                    <span className="text-[9px] tracking-widest font-bold" style={{ color: isActive ? '#063921' : '#566D62' }}>
                       {isActive && '● '}{t.label}
                     </span>
                   </div>
@@ -462,7 +462,7 @@ export function EcoCreditsPage() {
                       <p className="text-xs text-gray-400">{timeAgo(c.created_at)}</p>
                     </div>
                     <span className="text-sm font-bold flex-shrink-0 font-mono"
-                      style={{ color: c.type === 'redeemed' ? '#c0392b' : '#2d6a3f' }}>
+                      style={{ color: c.type === 'redeemed' ? '#c0392b' : '#083D24' }}>
                       {c.type === 'redeemed' ? '− ' : '+ '}{fmt(c.amount)} EC
                     </span>
                   </motion.div>
@@ -472,7 +472,7 @@ export function EcoCreditsPage() {
           </div>
 
           {/* Info */}
-          <div className="rounded-xl p-4 text-xs text-gray-500 leading-relaxed" style={{ background: '#f0ede6' }}>
+          <div className="rounded-xl p-4 text-xs text-gray-500 leading-relaxed" style={{ background: '#F4F7F2' }}>
             <span className="font-semibold text-gray-900">1 EcoCredit = LRD {LRD_PER_CREDIT}.</span>{' '}
             Credits are earned when devices you own are properly recycled at a verified EcoLedger facility.
             Cash-out requires smart contract deployment — coming soon.

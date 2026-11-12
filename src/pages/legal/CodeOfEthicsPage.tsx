@@ -3,10 +3,10 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 
 function Pillar({ num, title, body }: { num: string; title: string; body: string }) {
   return (
-    <div className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-      <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] mb-2">{num}</p>
-      <h3 className="text-base font-bold text-[#0f0f0e] mb-3">{title}</h3>
-      <p className="text-sm text-[#6b6b68] leading-relaxed">{body}</p>
+    <div className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
+      <p className="text-[10px] font-bold tracking-widest text-brand-muted mb-2">{num}</p>
+      <h3 className="text-base font-bold text-brand-ink mb-3">{title}</h3>
+      <p className="text-sm text-brand-muted leading-relaxed">{body}</p>
     </div>
   )
 }
@@ -14,8 +14,8 @@ function Pillar({ num, title, body }: { num: string; title: string; body: string
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-[#0f0f0e] mb-4 pb-2 border-b border-[#e8e5de]">{title}</h2>
-      <div className="space-y-3 text-sm text-[#6b6b68] leading-relaxed">{children}</div>
+      <h2 className="text-lg font-bold text-brand-ink mb-4 pb-2 border-b border-brand-line">{title}</h2>
+      <div className="space-y-3 text-sm text-brand-muted leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -25,19 +25,19 @@ export function CodeOfEthicsPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#0f0f0e] pt-24 pb-12 px-6">
+      <div className="bg-brand-deep pt-32 pb-12 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-2">Legal</p>
-          <h1 className="text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-2">Legal</p>
+          <h1 className="text-4xl font-bold text-white mb-3 font-display font-bold">
             Code of Ethics
           </h1>
-          <p className="text-sm text-[#9b9b98]">Environmental accountability extends to how we operate our own platform.</p>
+          <p className="text-sm text-white/70">Environmental accountability extends to how we operate our own platform.</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
 
-        <p className="text-base text-[#6b6b68] leading-relaxed mb-10">
+        <p className="text-base text-brand-muted leading-relaxed mb-10">
           EcoLedger was built to hold others accountable for the environmental impact of electronics. We hold ourselves to the same standard. This Code of Ethics defines the principles by which we operate, build, and partner.
         </p>
 
@@ -51,9 +51,9 @@ export function CodeOfEthicsPage() {
         </div>
 
         <Section title="Stakeholder Ethics">
-          <p><strong className="text-[#0f0f0e]">Our partners:</strong> We only onboard recyclers who hold valid EPA Liberia licences. We do not grant platform access to informal collectors or unverified operators regardless of volume commitments.</p>
-          <p><strong className="text-[#0f0f0e]">Our funders:</strong> We do not accept funding from entities whose business model conflicts with our environmental mission — including manufacturers with a track record of regulatory violations in other markets.</p>
-          <p><strong className="text-[#0f0f0e]">Our team:</strong> All team members and contractors are required to uphold this Code of Ethics. Violations — including accepting bribes, falsifying records, or leaking data — are grounds for immediate termination and, where applicable, referral to law enforcement.</p>
+          <p><strong className="text-brand-ink">Our partners:</strong> We only onboard recyclers who hold valid EPA Liberia licences. We do not grant platform access to informal collectors or unverified operators regardless of volume commitments.</p>
+          <p><strong className="text-brand-ink">Our funders:</strong> We do not accept funding from entities whose business model conflicts with our environmental mission — including manufacturers with a track record of regulatory violations in other markets.</p>
+          <p><strong className="text-brand-ink">Our team:</strong> All team members and contractors are required to uphold this Code of Ethics. Violations — including accepting bribes, falsifying records, or leaking data — are grounds for immediate termination and, where applicable, referral to law enforcement.</p>
         </Section>
 
         <Section title="Conflict of Interest">
@@ -71,7 +71,7 @@ export function CodeOfEthicsPage() {
         </Section>
 
         <Section title="Reporting a Concern">
-          <p>If you believe EcoLedger Foundation or any of its team members is acting in breach of this Code, you may report it confidentially to <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. Reports are reviewed by the Board of Directors. Retaliation against anyone who reports in good faith is prohibited.</p>
+          <p>If you believe EcoLedger Foundation or any of its team members is acting in breach of this Code, you may report it confidentially to <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>. Reports are reviewed by the Board of Directors. Retaliation against anyone who reports in good faith is prohibited.</p>
         </Section>
 
       </div>

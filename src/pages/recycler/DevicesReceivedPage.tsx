@@ -74,7 +74,7 @@ const DISPOSAL_LABEL: Record<string, string> = {
 }
 
 const DISPOSAL_COLOR: Record<string, string> = {
-  recycle:       '#2f6b3a',
+  recycle:       '#1E5A3C',
   refurbish:     '#2563eb',
   salvage_parts: '#d97706',
   hazardous:     '#dc2626',
@@ -306,7 +306,7 @@ export function DevicesReceivedPage() {
           <button
             type="button"
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg text-white transition-colors"
-            style={{ background: '#0f1410' }}
+            style={{ background: '#063921' }}
           >
             <Recycle className="w-3.5 h-3.5" /> Compliance brief
           </button>
@@ -641,7 +641,7 @@ export function DevicesReceivedPage() {
                     onClick={() => setPage(pg)}
                     className={`w-7 h-7 text-xs rounded-md transition-colors ${
                       pg === page
-                        ? 'bg-[#0f1410] text-white font-medium'
+                        ? 'bg-brand-deep text-white font-medium'
                         : 'border border-border hover:bg-muted/30 text-foreground'
                     }`}
                   >
@@ -711,7 +711,7 @@ export function DevicesReceivedPage() {
                   ]}
                   cursor={{ fill: 'rgba(0,0,0,.03)' }}
                 />
-                <Bar dataKey="count" fill="#2f6b3a" radius={[4, 4, 0, 0]} name="count" />
+                <Bar dataKey="count" fill="#1E5A3C" radius={[4, 4, 0, 0]} name="count" />
               </BarChart>
             </ResponsiveContainer>
           )}

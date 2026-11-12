@@ -169,7 +169,7 @@ export function AdminOverviewPage() {
                     <p className="text-[10px] font-mono text-muted-foreground">{f.license_number}</p>
                   </div>
                   <Link to="/admin/recyclers"
-                    className="text-xs font-medium px-2.5 py-1 rounded-lg bg-[#0f1410] text-white hover:opacity-90 transition-opacity flex-shrink-0">
+                    className="text-xs font-medium px-2.5 py-1 rounded-lg bg-brand-deep text-white hover:opacity-90 transition-opacity flex-shrink-0">
                     Review
                   </Link>
                 </div>
@@ -188,7 +188,7 @@ export function AdminOverviewPage() {
           <div className="divide-y divide-border">
             {data.recentUsers.map(u => (
               <div key={u.id} className="px-5 py-3.5 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#2f6b3a] flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-brand-secondary flex items-center justify-center flex-shrink-0">
                   <span className="text-xs font-bold text-white">
                     {(u.full_name ?? u.email ?? 'U').slice(0, 2).toUpperCase()}
                   </span>

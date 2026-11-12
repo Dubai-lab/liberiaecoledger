@@ -4,8 +4,8 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-[#0f0f0e] mb-4 pb-2 border-b border-[#e8e5de]">{title}</h2>
-      <div className="space-y-3 text-sm text-[#6b6b68] leading-relaxed">{children}</div>
+      <h2 className="text-lg font-bold text-brand-ink mb-4 pb-2 border-b border-brand-line">{title}</h2>
+      <div className="space-y-3 text-sm text-brand-muted leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -13,10 +13,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Right({ title, body }: { title: string; body: string }) {
   return (
     <div className="flex gap-4">
-      <div className="w-2 h-2 rounded-full bg-[#2d6a3f] mt-1.5 flex-shrink-0" />
+      <div className="w-2 h-2 rounded-full bg-brand mt-1.5 flex-shrink-0" />
       <div>
-        <p className="text-sm font-bold text-[#0f0f0e] mb-1">{title}</p>
-        <p className="text-sm text-[#6b6b68] leading-relaxed">{body}</p>
+        <p className="text-sm font-bold text-brand-ink mb-1">{title}</p>
+        <p className="text-sm text-brand-muted leading-relaxed">{body}</p>
       </div>
     </div>
   )
@@ -27,40 +27,40 @@ export function GDPRCompliancePage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Legal</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Legal</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             GDPR Compliance
           </h1>
-          <p className="text-sm text-[#9b9b98]">Last updated: May 2026 · General Data Protection Regulation (EU) 2016/679</p>
+          <p className="text-sm text-brand-muted">Last updated: May 2026 · General Data Protection Regulation (EU) 2016/679</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
 
-        <div className="bg-[#fafaf8] border border-[#e8e5de] rounded-2xl p-6 mb-10">
-          <p className="text-sm text-[#6b6b68] leading-relaxed">
+        <div className="bg-brand-tint border border-brand-line rounded-2xl p-6 mb-10">
+          <p className="text-sm text-brand-muted leading-relaxed">
             Although EcoLedger Foundation is headquartered in Liberia, we process personal data of individuals who may be located in the European Economic Area (EEA), and we partner with EU-based service providers (Supabase, Vercel). We therefore align our data practices with the General Data Protection Regulation (GDPR) as a matter of best practice and to respect the rights of all users regardless of location.
           </p>
         </div>
 
         <Section title="1. Data Controller">
           <p>EcoLedger Foundation is the data controller for all personal data processed through the Platform. Contact details:</p>
-          <div className="bg-[#fafaf8] rounded-xl p-4 border border-[#e8e5de] mt-2">
-            <p><strong className="text-[#0f0f0e]">Organisation:</strong> EcoLedger Foundation</p>
-            <p><strong className="text-[#0f0f0e]">Address:</strong> Monrovia, Liberia, West Africa</p>
-            <p><strong className="text-[#0f0f0e]">Data contact:</strong> <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a></p>
+          <div className="bg-brand-tint rounded-xl p-4 border border-brand-line mt-2">
+            <p><strong className="text-brand-ink">Organisation:</strong> EcoLedger Foundation</p>
+            <p><strong className="text-brand-ink">Address:</strong> Monrovia, Liberia, West Africa</p>
+            <p><strong className="text-brand-ink">Data contact:</strong> <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a></p>
           </div>
         </Section>
 
         <Section title="2. Legal Basis for Processing">
           <p>We process personal data under the following GDPR legal bases:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
-            <li><strong className="text-[#0f0f0e]">Contract performance (Art. 6(1)(b)):</strong> Processing your name and email is necessary to create and maintain your account and deliver the Platform service.</li>
-            <li><strong className="text-[#0f0f0e]">Legal obligation (Art. 6(1)(c)):</strong> Certain device lifecycle records are required to be maintained for regulatory compliance with Liberian environmental law.</li>
-            <li><strong className="text-[#0f0f0e]">Legitimate interests (Art. 6(1)(f)):</strong> Security monitoring, fraud prevention, and platform integrity checks are carried out under our legitimate interest.</li>
-            <li><strong className="text-[#0f0f0e]">Consent (Art. 6(1)(a)):</strong> Where we send optional communications beyond transactional emails, we obtain explicit consent.</li>
+            <li><strong className="text-brand-ink">Contract performance (Art. 6(1)(b)):</strong> Processing your name and email is necessary to create and maintain your account and deliver the Platform service.</li>
+            <li><strong className="text-brand-ink">Legal obligation (Art. 6(1)(c)):</strong> Certain device lifecycle records are required to be maintained for regulatory compliance with Liberian environmental law.</li>
+            <li><strong className="text-brand-ink">Legitimate interests (Art. 6(1)(f)):</strong> Security monitoring, fraud prevention, and platform integrity checks are carried out under our legitimate interest.</li>
+            <li><strong className="text-brand-ink">Consent (Art. 6(1)(a)):</strong> Where we send optional communications beyond transactional emails, we obtain explicit consent.</li>
           </ul>
         </Section>
 
@@ -74,7 +74,7 @@ export function GDPRCompliancePage() {
             <Right title="Right to object (Art. 21)" body="You may object to processing based on our legitimate interest. We will cease processing unless we can demonstrate compelling legitimate grounds that override your interests." />
             <Right title="Rights related to automated decision-making (Art. 22)" body="EcoLedger does not make automated decisions with legal or similarly significant effects. Role assignments are made manually by authorised administrators." />
           </div>
-          <p className="mt-4">To exercise any of these rights, submit a request to <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. We will acknowledge your request within 5 business days and respond substantively within 30 days.</p>
+          <p className="mt-4">To exercise any of these rights, submit a request to <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>. We will acknowledge your request within 5 business days and respond substantively within 30 days.</p>
         </Section>
 
         <Section title="4. Data Transfers Outside the EEA">
@@ -87,7 +87,7 @@ export function GDPRCompliancePage() {
         </Section>
 
         <Section title="6. Supervisory Authority">
-          <p>If you are located in the EEA and believe we have not addressed your data protection concern adequately, you have the right to lodge a complaint with your local supervisory authority. A list of EU data protection authorities is available at <span className="text-[#2d6a3f]">edpb.europa.eu/about-edpb/board/members</span>.</p>
+          <p>If you are located in the EEA and believe we have not addressed your data protection concern adequately, you have the right to lodge a complaint with your local supervisory authority. A list of EU data protection authorities is available at <span className="text-brand">edpb.europa.eu/about-edpb/board/members</span>.</p>
         </Section>
 
         <Section title="7. Changes to This Notice">

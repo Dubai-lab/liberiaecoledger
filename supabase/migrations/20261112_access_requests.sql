@@ -1,6 +1,6 @@
 -- ============================================================
 -- ACCESS REQUESTS
--- Public "Request access" form submissions. Admins review them
+-- Public "Request access" form submissions from stakeholders (consumers sign up directly at /signup). Admins review them
 -- under Admin → Invitations; approving one creates an invitation
 -- (which emails the access code → magic link → /setup-account).
 -- ============================================================
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS access_requests (
   phone          TEXT CHECK (phone IS NULL OR char_length(phone) <= 40),
   organization   TEXT CHECK (organization IS NULL OR char_length(organization) <= 160),
   job_title      TEXT CHECK (job_title IS NULL OR char_length(job_title) <= 120),
-  requested_role TEXT NOT NULL CHECK (requested_role IN ('consumer','manufacturer','recycler','regulator','auditor','other')),
+  requested_role TEXT NOT NULL CHECK (requested_role IN ('manufacturer','recycler','regulator','auditor','other')),
   message        TEXT CHECK (message IS NULL OR char_length(message) <= 2000),
   status         TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
   reviewed_by    UUID REFERENCES profiles(id),

@@ -27,7 +27,7 @@ createRoot(document.getElementById('root')!).render(
       config={{
         appearance: {
           theme: 'light',
-          accentColor: '#15803d',
+          accentColor: '#083D24',
           logo: 'https://liberiaecoledger.com/app-icon-192.png',
         },
         loginMethods: ['email', 'wallet'],

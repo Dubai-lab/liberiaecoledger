@@ -45,8 +45,8 @@ export function ManufacturerDashboardPage() {
   useEffect(() => { load() }, [load])
 
   const STAT_CARDS = [
-    { label: 'Total Registered', value: stats.total, icon: <Cpu className="w-5 h-5" />, color: '#0f1410' },
-    { label: 'Active in Field', value: stats.in_use, icon: <Factory className="w-5 h-5" />, color: '#2f6b3a' },
+    { label: 'Total Registered', value: stats.total, icon: <Cpu className="w-5 h-5" />, color: '#063921' },
+    { label: 'Active in Field', value: stats.in_use, icon: <Factory className="w-5 h-5" />, color: '#1E5A3C' },
     { label: 'Awaiting Disposal', value: stats.awaiting_disposal, icon: <AlertTriangle className="w-5 h-5" />, color: '#b45309' },
     { label: 'Disposed / Recycled', value: stats.disposed, icon: <Recycle className="w-5 h-5" />, color: '#1d4ed8' },
   ]
@@ -73,7 +73,7 @@ export function ManufacturerDashboardPage() {
         <Link
           to="/manufacturer/register"
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <Plus className="w-4 h-4" />
           Register Device
@@ -107,7 +107,7 @@ export function ManufacturerDashboardPage() {
           <h2 className="text-sm font-semibold mb-4">Registration Progress</h2>
           <div className="space-y-2">
             {[
-              { label: 'Active in Field', value: stats.in_use, total: stats.total, color: '#2f6b3a' },
+              { label: 'Active in Field', value: stats.in_use, total: stats.total, color: '#1E5A3C' },
               { label: 'Awaiting Disposal', value: stats.awaiting_disposal, total: stats.total, color: '#b45309' },
               { label: 'Disposed / Recycled', value: stats.disposed, total: stats.total, color: '#1d4ed8' },
             ].map(bar => (
@@ -148,7 +148,7 @@ export function ManufacturerDashboardPage() {
             <Link
               to="/manufacturer/register"
               className="mt-4 px-4 py-2 rounded-lg text-xs font-medium text-white"
-              style={{ background: '#0f1410' }}
+              style={{ background: '#063921' }}
             >
               Register First Device
             </Link>

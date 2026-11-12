@@ -14,15 +14,11 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'admin',        label: 'Platform Admin' },
 ]
 
-// Roles an access request can be approved as (consumers may request access too)
-const APPROVE_ROLE_OPTIONS: { value: UserRole; label: string }[] = [
-  ...ROLE_OPTIONS.filter(r => r.value !== 'admin'),
-  { value: 'consumer', label: 'Consumer' },
-  { value: 'admin',    label: 'Platform Admin' },
-]
+// Roles an access request can be approved as (consumers self-register at /signup)
+const APPROVE_ROLE_OPTIONS = ROLE_OPTIONS
 
 const REQUESTED_ROLE_LABEL: Record<string, string> = {
-  consumer: 'Consumer', manufacturer: 'Manufacturer', recycler: 'Recycler',
+  manufacturer: 'Manufacturer', recycler: 'Recycler',
   regulator: 'Regulator', auditor: 'Auditor / NGO', other: 'Other',
 }
 
@@ -227,7 +223,7 @@ export function InvitationsPage() {
           type="button"
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors hover:opacity-90 flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <Plus className="w-4 h-4" />
           New Invitation
@@ -309,7 +305,7 @@ export function InvitationsPage() {
                 type="submit"
                 disabled={submitting}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-50 transition-colors"
-                style={{ background: '#0f1410' }}
+                style={{ background: '#063921' }}
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating…</> : 'Create & Copy Code'}
               </button>
@@ -417,7 +413,7 @@ export function InvitationsPage() {
                           disabled={busy}
                           onClick={() => startApprove(req)}
                           className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                          style={{ background: '#0f1410' }}
+                          style={{ background: '#063921' }}
                         >
                           <UserCheck className="w-3.5 h-3.5" /> Approve
                         </button>
@@ -479,7 +475,7 @@ export function InvitationsPage() {
                           disabled={busy || !approveForm.organization.trim()}
                           onClick={() => handleApprove(req)}
                           className="flex items-center gap-1.5 px-4 py-1.5 text-xs rounded-lg text-white disabled:opacity-50"
-                          style={{ background: '#0f1410' }}
+                          style={{ background: '#063921' }}
                         >
                           {busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…</> : 'Approve & Send Invitation'}
                         </button>

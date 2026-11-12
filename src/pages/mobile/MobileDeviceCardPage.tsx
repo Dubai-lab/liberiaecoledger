@@ -50,12 +50,12 @@ function eventLabel(e: LifecycleEvent) {
 }
 
 function statusColor(status: string) {
-  if (status === 'in_use')   return { bg: '#e8f5ec', text: '#2d6a3f', label: 'IN USE' }
+  if (status === 'in_use')   return { bg: '#E6EEE7', text: '#083D24', label: 'IN USE' }
   if (status === 'disposed') return { bg: '#fde8e8', text: '#c0392b', label: 'DISPOSED' }
   if (status === 'awaiting_transfer') return { bg: '#fdf3dc', text: '#b87a00', label: 'AWAITING TRANSFER' }
   if (status === 'pending_intake')     return { bg: '#fde8d0', text: '#b85c00', label: 'PENDING ACCEPTANCE' }
   if (status === 'ready_for_disposal') return { bg: '#fde8d0', text: '#b85c00', label: 'PENDING ACCEPTANCE' }
-  return { bg: '#f0ede6', text: '#9b9b98', label: status.toUpperCase() }
+  return { bg: '#F4F7F2', text: '#566D62', label: status.toUpperCase() }
 }
 
 function fmt(n: number) { return new Intl.NumberFormat().format(n) }
@@ -64,8 +64,8 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
   if (!value && value !== 0) return null
   return (
     <div>
-      <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-0.5">{label}</p>
-      <p className="text-sm font-semibold text-[#0f0f0e]">{value}</p>
+      <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-0.5">{label}</p>
+      <p className="text-sm font-semibold text-brand-ink">{value}</p>
     </div>
   )
 }
@@ -95,17 +95,17 @@ export function MobileDeviceCardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f0ede6' }}>
-        <Loader2 className="w-6 h-6 animate-spin text-[#9b9b98]" />
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
+        <Loader2 className="w-6 h-6 animate-spin text-brand-muted" />
       </div>
     )
   }
 
   if (fetchError || !device) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#f0ede6' }}>
-        <p className="text-sm text-[#9b9b98]">{fetchError ? 'Could not load device.' : 'Device not found.'}</p>
-        <button type="button" onClick={() => navigate(-1)} className="mt-4 text-sm font-semibold underline text-[#0f0f0e]">Go back</button>
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#F4F7F2' }}>
+        <p className="text-sm text-brand-muted">{fetchError ? 'Could not load device.' : 'Device not found.'}</p>
+        <button type="button" onClick={() => navigate(-1)} className="mt-4 text-sm font-semibold underline text-brand-ink">Go back</button>
       </div>
     )
   }
@@ -113,27 +113,27 @@ export function MobileDeviceCardPage() {
   const { bg, text, label } = statusColor(device.status)
 
   return (
-    <div className="px-5 pt-6 pb-8" style={{ background: '#f0ede6', minHeight: '100vh' }}>
+    <div className="px-5 pt-6 pb-8" style={{ background: '#F4F7F2', minHeight: '100vh' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
         <button
           type="button"
           aria-label="Go back"
           onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center flex-shrink-0"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth={2}>
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <div>
-          <p className="text-base font-semibold text-[#0f0f0e]">Device Record</p>
-          <p className="text-xs text-[#9b9b98]">#{device.id.slice(-6).toUpperCase()}</p>
+          <p className="text-base font-semibold text-brand-ink">Device Record</p>
+          <p className="text-xs text-brand-muted">#{device.id.slice(-6).toUpperCase()}</p>
         </div>
       </div>
 
       {/* Device photo */}
-      <div className="rounded-2xl overflow-hidden mb-4" style={{ background: '#e8e5de', minHeight: 180 }}>
+      <div className="rounded-2xl overflow-hidden mb-4" style={{ background: '#D7E0D5', minHeight: 180 }}>
         {device.receipt_url ? (
           <img src={device.receipt_url} alt={device.model} className="w-full object-cover" style={{ maxHeight: 220 }} />
         ) : (
@@ -141,12 +141,12 @@ export function MobileDeviceCardPage() {
             <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="stripe" patternUnits="userSpaceOnUse" width="16" height="16" patternTransform="rotate(45)">
-                  <line x1="0" y1="0" x2="0" y2="16" stroke="#d8d5ce" strokeWidth="8" />
+                  <line x1="0" y1="0" x2="0" y2="16" stroke="#D7E0D5" strokeWidth="8" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#stripe)" />
             </svg>
-            <p className="text-[10px] tracking-widest text-[#b0afa8] uppercase relative z-10">No Photo</p>
+            <p className="text-[10px] tracking-widest text-brand-sage uppercase relative z-10">No Photo</p>
           </div>
         )}
       </div>
@@ -156,22 +156,22 @@ export function MobileDeviceCardPage() {
         <span className="text-[11px] font-bold tracking-widest px-3 py-1 rounded-full" style={{ background: bg, color: text }}>
           {label}
         </span>
-        <span className="text-[11px] font-bold tracking-widest px-3 py-1 rounded-full border border-[#d8d5ce] text-[#9b9b98]">
+        <span className="text-[11px] font-bold tracking-widest px-3 py-1 rounded-full border border-brand-line text-brand-muted">
           ERC-721
         </span>
       </div>
 
       {/* Device name */}
-      <h1 className="text-2xl font-bold text-[#0f0f0e] mb-0.5">
+      <h1 className="text-2xl font-bold text-brand-ink mb-0.5">
         {device.brand} {device.model}
       </h1>
       {device.category && (
-        <p className="text-sm text-[#9b9b98] mb-5">{device.category}</p>
+        <p className="text-sm text-brand-muted mb-5">{device.category}</p>
       )}
 
       {/* Device Information */}
       <div className="bg-white rounded-2xl p-4 mb-4">
-        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-4">Device Information</p>
+        <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-4">Device Information</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-4">
           <InfoRow label="Brand" value={device.brand} />
           <InfoRow label="Model" value={device.model} />
@@ -197,17 +197,17 @@ export function MobileDeviceCardPage() {
       {/* Lifecycle */}
       {lifecycle.length > 0 && (
         <div className="bg-white rounded-2xl p-4 mb-5">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-4">Lifecycle History</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-4">Lifecycle History</p>
           <div className="space-y-4">
             {lifecycle.map(e => {
               const { title, sub } = eventLabel(e)
               return (
                 <div key={e.id} className="flex gap-3">
-                  <div className="w-2 h-2 rounded-full bg-[#2d6a3f] mt-1.5 flex-shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-brand mt-1.5 flex-shrink-0" />
                   <div>
-                    <p className="text-sm font-semibold text-[#0f0f0e]">{title}</p>
-                    {sub && <p className="text-xs text-[#9b9b98]">{sub}</p>}
-                    <p className="text-xs text-[#b0afa8]">
+                    <p className="text-sm font-semibold text-brand-ink">{title}</p>
+                    {sub && <p className="text-xs text-brand-muted">{sub}</p>}
+                    <p className="text-xs text-brand-sage">
                       {new Date(e.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </p>
                   </div>
@@ -225,14 +225,14 @@ export function MobileDeviceCardPage() {
             type="button"
             onClick={() => navigate(`/mobile/transfer?device=${device.id}`)}
             className="flex-[3] py-4 rounded-2xl text-white text-sm font-bold"
-            style={{ background: '#0f0f0e' }}
+            style={{ background: '#083D24' }}
           >
             Transfer
           </button>
           <button
             type="button"
             onClick={() => navigate(`/mobile/dispose/${device.id}`)}
-            className="flex-[2] py-4 rounded-2xl text-sm font-semibold border border-[#d8d5ce] text-[#0f0f0e]"
+            className="flex-[2] py-4 rounded-2xl text-sm font-semibold border border-brand-line text-brand-ink"
             style={{ background: 'white' }}
           >
             Dispose

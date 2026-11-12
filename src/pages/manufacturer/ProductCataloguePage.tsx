@@ -58,7 +58,7 @@ export function ProductCataloguePage() {
         <Link
           to="/manufacturer/register"
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <Plus className="w-4 h-4" />
           Register Device
@@ -110,7 +110,7 @@ export function ProductCataloguePage() {
             <Link
               to="/manufacturer/register"
               className="mt-4 px-4 py-2 rounded-lg text-xs font-medium text-white"
-              style={{ background: '#0f1410' }}
+              style={{ background: '#063921' }}
             >
               Register your first device
             </Link>

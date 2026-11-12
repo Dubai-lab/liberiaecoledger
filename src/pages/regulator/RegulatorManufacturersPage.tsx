@@ -42,7 +42,7 @@ const STATUS_STYLE: Record<string, { badge: string; label: string }> = {
 }
 
 function scoreColor(score: number) {
-  if (score >= 70) return { ring: '#2f6b3a', text: '#2f6b3a', bg: '#f0faf2' }
+  if (score >= 70) return { ring: '#1E5A3C', text: '#1E5A3C', bg: '#f0faf2' }
   if (score >= 40) return { ring: '#d97706', text: '#d97706', bg: '#fffbeb' }
   return { ring: '#dc2626', text: '#dc2626', bg: '#fef2f2' }
 }
@@ -251,7 +251,7 @@ export function RegulatorManufacturersPage() {
           <button
             type="button"
             className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-white rounded-lg transition-colors"
-            style={{ background: '#0f1410' }}
+            style={{ background: '#063921' }}
           >
             Generate AG brief →
           </button>
@@ -373,14 +373,14 @@ export function RegulatorManufacturersPage() {
                 </tr>
               ) : filtered.map(r => {
                 const { badge, label } = STATUS_STYLE[r.status]
-                const barColor = r.takeBackRate >= EPR_GOAL_PCT ? '#2f6b3a' : r.takeBackRate >= 20 ? '#d97706' : '#dc2626'
+                const barColor = r.takeBackRate >= EPR_GOAL_PCT ? '#1E5A3C' : r.takeBackRate >= 20 ? '#d97706' : '#dc2626'
                 const barPct = Math.min(100, (r.takeBackRate / EPR_GOAL_PCT) * 100)
                 return (
                   <tr key={r.id} className="border-b border-border/50 hover:bg-muted/10 transition-colors">
                     {/* Producer */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-[#0f1410] flex items-center justify-center flex-shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-brand-deep flex items-center justify-center flex-shrink-0">
                           <span className="text-[10px] font-bold text-white">
                             {r.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()}
                           </span>
@@ -498,7 +498,7 @@ export function RegulatorManufacturersPage() {
                 </span>
               )}
             />
-            <ReferenceLine y={EPR_GOAL_PCT} stroke="#2f6b3a" strokeDasharray="4 4" strokeOpacity={0.5} />
+            <ReferenceLine y={EPR_GOAL_PCT} stroke="#1E5A3C" strokeDasharray="4 4" strokeOpacity={0.5} />
             <Line
               type="monotone"
               dataKey="rate"
@@ -510,7 +510,7 @@ export function RegulatorManufacturersPage() {
             <Line
               type="monotone"
               dataKey="goal"
-              stroke="#2f6b3a"
+              stroke="#1E5A3C"
               strokeWidth={1.5}
               strokeDasharray="4 4"
               dot={false}
@@ -537,7 +537,7 @@ export function RegulatorManufacturersPage() {
           <div className="divide-y divide-border">
             {all.filter(r => r.status === 'non_compliant').map(r => (
               <div key={r.id} className="flex items-center gap-4 px-5 py-4">
-                <div className="w-9 h-9 rounded-xl bg-[#0f1410] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-brand-deep flex items-center justify-center flex-shrink-0">
                   <span className="text-[10px] font-bold text-white">
                     {r.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()}
                   </span>

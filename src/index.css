@@ -4,25 +4,26 @@
 
 @layer base {
   :root {
-    --background: 60 9% 98%;
-    --foreground: 140 10% 8%;
+    /* Design system (Design/design.md) expressed as theme tokens */
+    --background: 96 24% 96%;          /* #F4F7F2 soft tint */
+    --foreground: 165 49% 12%;         /* #102F27 primary text */
     --card: 0 0% 100%;
-    --card-foreground: 140 10% 8%;
+    --card-foreground: 165 49% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 140 10% 8%;
-    --primary: 142 76% 29%;
+    --popover-foreground: 165 49% 12%;
+    --primary: 152 77% 14%;            /* #083D24 forest green */
     --primary-foreground: 0 0% 100%;
-    --secondary: 140 10% 94%;
-    --secondary-foreground: 140 10% 15%;
-    --muted: 140 6% 94%;
-    --muted-foreground: 140 5% 45%;
-    --accent: 140 10% 94%;
-    --accent-foreground: 142 76% 29%;
-    --destructive: 0 84% 60%;
+    --secondary: 96 24% 96%;
+    --secondary-foreground: 165 49% 12%;
+    --muted: 96 24% 96%;
+    --muted-foreground: 151 12% 38%;   /* #566D62 muted text */
+    --accent: 96 24% 96%;
+    --accent-foreground: 152 77% 14%;
+    --destructive: 0 72% 46%;
     --destructive-foreground: 0 0% 100%;
-    --border: 140 8% 90%;
-    --input: 140 8% 90%;
-    --ring: 142 76% 29%;
+    --border: 109 15% 86%;             /* #D7E0D5 light sage */
+    --input: 109 15% 86%;
+    --ring: 152 77% 14%;
     --radius: 0.625rem;
   }
 
@@ -37,6 +38,11 @@
 
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Design system: Poppins for display typography, Inter (font-sans) for everything else */
+  h1, h2, h3, h4 {
+    @apply font-display;
   }
 
   /* Scrollbar */

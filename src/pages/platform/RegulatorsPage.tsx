@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { FeatureIcon } from '@/components/landing/FeatureIcon'
 
 const features = [
   {
@@ -51,21 +52,21 @@ export function RegulatorsPage() {
       <LandingNav alwaysOpaque />
 
       {/* Hero */}
-      <div className="bg-[#0f0f0e] pt-24 pb-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-3">Platform · Regulators</p>
-          <h1 className="text-5xl font-bold text-white leading-tight mb-5" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-deep pt-32 pb-16 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-3">Platform · Regulators</p>
+          <h1 className="text-5xl font-bold text-white leading-tight mb-5 font-display font-bold">
             National compliance visibility.<br />
-            <span className="text-[#6dba7f]">Finally.</span>
+            <span className="text-[#8FD3A8]">Finally.</span>
           </h1>
-          <p className="text-lg text-[#9b9b98] leading-relaxed max-w-2xl mb-8">
+          <p className="text-lg text-white/70 leading-relaxed max-w-2xl mb-8">
             EcoLedger gives EPA Liberia and government regulators a real-time view of every device on the registry — where it is, who owns it, where it was recycled, and whether that recycler was certified.
           </p>
           <div className="flex flex-wrap gap-4">
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="px-6 py-3 bg-white text-[#0f0f0e] text-sm font-semibold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+              className="px-6 py-3 bg-white text-brand text-sm font-semibold rounded-xl hover:bg-brand-tint transition-colors"
             >
               Request regulator access
             </button>
@@ -77,32 +78,32 @@ export function RegulatorsPage() {
       </div>
 
       {/* Authority callout */}
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] py-6 px-6">
-        <div className="max-w-4xl mx-auto flex flex-wrap gap-8">
+      <div className="bg-brand-tint border-b border-brand-line py-6 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto flex flex-wrap gap-8">
           {[
             { value: 'Read + write', label: 'Regulators have full data access' },
             { value: 'Immutable',    label: 'Chain data cannot be altered by any party' },
             { value: 'Court-ready',  label: 'On-chain tx hashes as admissible evidence' },
           ].map(s => (
             <div key={s.label}>
-              <p className="text-lg font-bold text-[#0f0f0e]">{s.value}</p>
-              <p className="text-xs text-[#9b9b98] mt-0.5">{s.label}</p>
+              <p className="text-lg font-bold text-brand-ink">{s.value}</p>
+              <p className="text-xs text-brand-muted mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Features */}
-      <div className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-3">Capabilities</p>
-          <h2 className="text-3xl font-bold text-[#0f0f0e] mb-12 max-w-xl">Everything a national regulator needs to enforce e-waste law.</h2>
+      <div className="py-20 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-3">Capabilities</p>
+          <h2 className="text-3xl font-bold text-brand-ink mb-12 max-w-xl">Everything a national regulator needs to enforce e-waste law.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map(f => (
-              <div key={f.title} className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-                <p className="text-2xl mb-3">{f.icon}</p>
-                <p className="font-bold text-[#0f0f0e] mb-2">{f.title}</p>
-                <p className="text-sm text-[#9b9b98] leading-relaxed">{f.body}</p>
+              <div key={f.title} className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
+                <FeatureIcon emoji={f.icon} />
+                <p className="font-bold text-brand-ink mb-2">{f.title}</p>
+                <p className="text-sm text-brand-muted leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
@@ -110,17 +111,17 @@ export function RegulatorsPage() {
       </div>
 
       {/* Enforcement tools */}
-      <div id="tools" className="py-20 px-6 bg-[#fafaf8] border-t border-[#e8e5de] scroll-mt-20">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-3">Enforcement Toolkit</p>
-          <h2 className="text-3xl font-bold text-[#0f0f0e] mb-10">Purpose-built tools for regulatory action.</h2>
+      <div id="tools" className="py-20 px-5 md:px-8 lg:px-12 bg-brand-tint border-t border-brand-line scroll-mt-20">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-3">Enforcement Toolkit</p>
+          <h2 className="text-3xl font-bold text-brand-ink mb-10">Purpose-built tools for regulatory action.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {tools.map(t => (
-              <div key={t.label} className="bg-white rounded-2xl p-5 border border-[#e8e5de] flex gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#2d6a3f] mt-2 flex-shrink-0" />
+              <div key={t.label} className="bg-white rounded-2xl p-5 border border-brand-line flex gap-3">
+                <div className="w-2 h-2 rounded-full bg-brand mt-2 flex-shrink-0" />
                 <div>
-                  <p className="font-bold text-[#0f0f0e] mb-1 text-sm">{t.label}</p>
-                  <p className="text-xs text-[#9b9b98] leading-relaxed">{t.desc}</p>
+                  <p className="font-bold text-brand-ink mb-1 text-sm">{t.label}</p>
+                  <p className="text-xs text-brand-muted leading-relaxed">{t.desc}</p>
                 </div>
               </div>
             ))}
@@ -129,24 +130,24 @@ export function RegulatorsPage() {
       </div>
 
       {/* Access note */}
-      <div className="py-12 px-6 border-t border-[#e8e5de]">
-        <div className="max-w-4xl mx-auto bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-          <p className="text-sm font-bold text-[#0f0f0e] mb-2">Access is by institutional verification only.</p>
-          <p className="text-sm text-[#9b9b98] leading-relaxed">Regulator accounts are granted to verified EPA Liberia officers, Ministry of Mines & Energy officials, and designated county environmental officers. Government email address and institutional letter of authorisation required.</p>
+      <div className="py-12 px-5 md:px-8 lg:px-12 border-t border-brand-line">
+        <div className="max-w-content mx-auto bg-brand-tint rounded-2xl p-6 border border-brand-line">
+          <p className="text-sm font-bold text-brand-ink mb-2">Access is by institutional verification only.</p>
+          <p className="text-sm text-brand-muted leading-relaxed">Regulator accounts are granted to verified EPA Liberia officers, Ministry of Mines & Energy officials, and designated county environmental officers. Government email address and institutional letter of authorisation required.</p>
         </div>
       </div>
 
       {/* CTA */}
-      <div className="py-20 px-6 bg-[#0f0f0e]">
-        <div className="max-w-4xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="py-20 px-5 md:px-8 lg:px-12 bg-brand">
+        <div className="max-w-content mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="text-3xl font-bold text-white mb-2">Ready to enforce with data?</h2>
-            <p className="text-[#9b9b98] max-w-md">Contact us to begin the institutional onboarding process for your regulatory body.</p>
+            <p className="text-white/70 max-w-md">Contact us to begin the institutional onboarding process for your regulatory body.</p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="flex-shrink-0 px-8 py-4 bg-white text-[#0f0f0e] text-sm font-bold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+            className="flex-shrink-0 px-8 py-4 bg-white text-brand text-sm font-bold rounded-xl hover:bg-brand-tint transition-colors"
           >
             Request regulator access
           </button>

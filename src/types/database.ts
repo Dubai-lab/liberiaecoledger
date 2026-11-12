@@ -8,83 +8,108 @@ export type HazardClass = 'li_ion_battery' | 'toner' | 'mercury_ccfl' | 'mixed' 
 
 export type TransactionType = 'registration' | 'transfer' | 'disposal' | 'reward'
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       profiles: {
         Row: Profile
         Insert: Omit<Profile, 'created_at' | 'updated_at'>
         Update: Partial<Omit<Profile, 'id'>>
+        Relationships: []
       }
       user_roles: {
         Row: UserRoleRecord
         Insert: Omit<UserRoleRecord, 'created_at'>
         Update: Partial<UserRoleRecord>
+        Relationships: []
       }
       devices: {
         Row: Device
         Insert: Omit<Device, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<Device, 'id'>>
+        Relationships: []
       }
       device_lifecycle: {
         Row: DeviceLifecycleEvent
         Insert: Omit<DeviceLifecycleEvent, 'id' | 'created_at'>
         Update: never
+        Relationships: []
       }
       transfers: {
         Row: Transfer
         Insert: Omit<Transfer, 'id' | 'created_at'>
         Update: Partial<Omit<Transfer, 'id'>>
+        Relationships: []
       }
       disposals: {
         Row: Disposal
         Insert: Omit<Disposal, 'id' | 'created_at'>
         Update: Partial<Omit<Disposal, 'id'>>
+        Relationships: []
       }
       eco_credits: {
         Row: EcoCredit
         Insert: Omit<EcoCredit, 'id' | 'created_at'>
         Update: Partial<Omit<EcoCredit, 'id'>>
+        Relationships: []
       }
       recycler_facilities: {
         Row: RecyclerFacility
         Insert: Omit<RecyclerFacility, 'id' | 'created_at'>
         Update: Partial<Omit<RecyclerFacility, 'id'>>
+        Relationships: []
       }
       compliance_flags: {
         Row: ComplianceFlag
         Insert: Omit<ComplianceFlag, 'id' | 'created_at'>
         Update: Partial<Omit<ComplianceFlag, 'id'>>
+        Relationships: []
       }
       notifications: {
         Row: Notification
         Insert: Omit<Notification, 'id' | 'created_at'>
         Update: Partial<Omit<Notification, 'id'>>
+        Relationships: []
       }
       invitations: {
         Row: Invitation
         Insert: Omit<Invitation, 'id' | 'created_at' | 'accepted_at'> & { accepted_at?: string | null }
         Update: Partial<Omit<Invitation, 'id'>>
+        Relationships: []
+      }
+      platform_rates: {
+        Row: PlatformRate
+        Insert: PlatformRate
+        Update: Partial<Pick<PlatformRate, 'value'>>
+        Relationships: []
+      }
+      platform_rate_history: {
+        Row: PlatformRateHistory
+        Insert: Omit<PlatformRateHistory, 'id' | 'changed_at'>
+        Update: Partial<PlatformRateHistory>
+        Relationships: []
       }
       access_requests: {
         Row: AccessRequest
         Insert: Pick<AccessRequest, 'full_name' | 'email' | 'requested_role'> &
           Partial<Pick<AccessRequest, 'phone' | 'organization' | 'job_title' | 'message'>>
         Update: Partial<Omit<AccessRequest, 'id'>>
+        Relationships: []
       }
     }
-    Views: Record<string, never>
-    Functions: Record<string, never>
+    Views: { [_ in never]: never }
+    Functions: { [_ in never]: never }
     Enums: {
       user_role: UserRole
       device_status: DeviceStatus
       disposal_type: DisposalType
       hazard_class: HazardClass
     }
+    CompositeTypes: { [_ in never]: never }
   }
 }
 
-export interface Profile {
+export type Profile = {
   id: string
   supabase_uid: string
   privy_id: string | null
@@ -101,7 +126,7 @@ export interface Profile {
   updated_at: string
 }
 
-export interface UserRoleRecord {
+export type UserRoleRecord = {
   id: string
   user_id: string
   role: UserRole
@@ -112,7 +137,7 @@ export interface UserRoleRecord {
   created_at: string
 }
 
-export interface Device {
+export type Device = {
   id: string
   token_id: string | null
   imei: string | null
@@ -144,7 +169,7 @@ export interface Device {
   updated_at: string
 }
 
-export interface DeviceLifecycleEvent {
+export type DeviceLifecycleEvent = {
   id: string
   device_id: string
   event_type: 'manufactured' | 'registered' | 'transferred' | 'disposed' | 'flagged'
@@ -157,7 +182,7 @@ export interface DeviceLifecycleEvent {
   created_at: string
 }
 
-export interface Transfer {
+export type Transfer = {
   id: string
   device_id: string
   from_user_id: string
@@ -171,7 +196,7 @@ export interface Transfer {
   created_at: string
 }
 
-export interface Disposal {
+export type Disposal = {
   id: string
   device_id: string
   recycler_id: string
@@ -189,7 +214,7 @@ export interface Disposal {
   created_at: string
 }
 
-export interface EcoCredit {
+export type EcoCredit = {
   id: string
   user_id: string
   amount: number
@@ -201,7 +226,7 @@ export interface EcoCredit {
   created_at: string
 }
 
-export interface RewardCatalogueItem {
+export type RewardCatalogueItem = {
   id: string
   title: string
   partner: string
@@ -214,7 +239,7 @@ export interface RewardCatalogueItem {
   created_at: string
 }
 
-export interface Redemption {
+export type Redemption = {
   id: string
   user_id: string
   catalogue_item_id: string
@@ -228,7 +253,7 @@ export interface Redemption {
   created_at: string
 }
 
-export interface RecyclerFacility {
+export type RecyclerFacility = {
   id: string
   owner_id: string
   name: string
@@ -245,7 +270,7 @@ export interface RecyclerFacility {
   created_at: string
 }
 
-export interface ComplianceFlag {
+export type ComplianceFlag = {
   id: string
   flag_type: 'unauthorized_export' | 'informal_collector' | 'unverified_disposal' | 'missing_owner'
   device_id: string | null
@@ -260,7 +285,7 @@ export interface ComplianceFlag {
   created_at: string
 }
 
-export interface Notification {
+export type Notification = {
   id: string
   user_id: string
   title: string
@@ -271,7 +296,7 @@ export interface Notification {
   created_at: string
 }
 
-export interface Invitation {
+export type Invitation = {
   id: string
   email: string
   role: UserRole
@@ -283,10 +308,10 @@ export interface Invitation {
   created_at: string
 }
 
-export type AccessRequestRole = Exclude<UserRole, 'admin'> | 'other'
+export type AccessRequestRole = Exclude<UserRole, 'admin' | 'consumer'> | 'other'
 export type AccessRequestStatus = 'pending' | 'approved' | 'rejected'
 
-export interface AccessRequest {
+export type AccessRequest = {
   id: string
   full_name: string
   email: string
@@ -301,3 +326,25 @@ export interface AccessRequest {
   invitation_id: string | null
   created_at: string
 }
+
+export type PlatformRate = {
+  key: string
+  category: 'credit' | 'material' | 'conversion'
+  label: string
+  unit: string
+  value: number
+  sort_order: number
+  updated_by: string | null
+  updated_at: string
+}
+
+export type PlatformRateHistory = {
+  id: string
+  key: string
+  old_value: number | null
+  new_value: number
+  changed_by: string | null
+  changed_at: string
+}
+
+export type ImeiVerifyStatus = 'invalid' | 'not_found' | 'available' | 'ambiguous' | 'already_registered' | 'owned_by_you'

@@ -79,33 +79,33 @@ export function RecyclerOnboardingPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#0f0f0e] pt-24 pb-14 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-2">Stakeholders</p>
-          <h1 className="text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-deep pt-32 pb-14 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-2">Stakeholders</p>
+          <h1 className="text-4xl font-bold text-white mb-3 font-display font-bold">
             Recycler Onboarding
           </h1>
-          <p className="text-[#9b9b98] text-base max-w-2xl leading-relaxed">
+          <p className="text-white/70 text-base max-w-2xl leading-relaxed">
             From application to your first verified disposal in under 4 days. Here's exactly what the process looks like.
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-14 space-y-16">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-14 space-y-16">
 
         {/* Checklist */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">What you'll need</p>
-          <div className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">What you'll need</p>
+          <div className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {checklist.map(item => (
                 <div key={item} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-[#e8f5ec] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-brand-tint flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="#2d6a3f" strokeWidth={2.5}>
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   </div>
-                  <p className="text-sm text-[#6b6b68] leading-relaxed">{item}</p>
+                  <p className="text-sm text-brand-muted leading-relaxed">{item}</p>
                 </div>
               ))}
             </div>
@@ -114,27 +114,27 @@ export function RecyclerOnboardingPage() {
 
         {/* Steps */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">The onboarding process</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">The onboarding process</p>
           <div className="space-y-0">
             {steps.map((s, i) => (
               <div key={s.n} className="flex gap-6">
                 <div className="flex flex-col items-center flex-shrink-0 w-8">
-                  <div className="w-8 h-8 rounded-full bg-[#0f0f0e] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                     {s.n}
                   </div>
-                  {i < steps.length - 1 && <div className="w-px flex-1 bg-[#e8e5de] my-1" />}
+                  {i < steps.length - 1 && <div className="w-px flex-1 bg-brand-line my-1" />}
                 </div>
                 <div className="pb-8 flex-1">
                   <div className="flex items-center gap-3 mb-2 flex-wrap">
-                    <p className="font-bold text-[#0f0f0e]">{s.title}</p>
-                    <span className="text-[10px] font-semibold tracking-widest text-[#9b9b98] border border-[#e8e5de] rounded-full px-2.5 py-0.5">{s.duration}</span>
+                    <p className="font-bold text-brand-ink">{s.title}</p>
+                    <span className="text-[10px] font-semibold tracking-widest text-brand-muted border border-brand-line rounded-full px-2.5 py-0.5">{s.duration}</span>
                   </div>
-                  <p className="text-sm text-[#6b6b68] leading-relaxed mb-3">{s.body}</p>
+                  <p className="text-sm text-brand-muted leading-relaxed mb-3">{s.body}</p>
                   {s.action && s.href && (
                     <button
                       type="button"
                       onClick={() => navigate(s.href!)}
-                      className="text-xs font-semibold text-[#2d6a3f] hover:underline"
+                      className="text-xs font-semibold text-brand hover:underline"
                     >
                       → {s.action}
                     </button>
@@ -147,12 +147,12 @@ export function RecyclerOnboardingPage() {
 
         {/* Benefits */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Why join the network</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Why join the network</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {benefits.map(b => (
-              <div key={b.title} className="bg-[#fafaf8] rounded-2xl p-5 border border-[#e8e5de]">
-                <p className="font-bold text-[#0f0f0e] mb-2">{b.title}</p>
-                <p className="text-sm text-[#9b9b98] leading-relaxed">{b.body}</p>
+              <div key={b.title} className="bg-brand-tint rounded-2xl p-5 border border-brand-line">
+                <p className="font-bold text-brand-ink mb-2">{b.title}</p>
+                <p className="text-sm text-brand-muted leading-relaxed">{b.body}</p>
               </div>
             ))}
           </div>
@@ -161,16 +161,16 @@ export function RecyclerOnboardingPage() {
       </div>
 
       {/* CTA */}
-      <div className="bg-[#0f0f0e] py-16 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="bg-brand-deep py-16 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Ready to get verified?</h2>
-            <p className="text-[#9b9b98] max-w-md text-sm">The application takes 10 minutes. Onboarding takes under 4 days. Your facility can be live before the end of the week.</p>
+            <p className="text-white/70 max-w-md text-sm">The application takes 10 minutes. Onboarding takes under 4 days. Your facility can be live before the end of the week.</p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/stakeholders/request-access')}
-            className="flex-shrink-0 px-8 py-4 bg-white text-[#0f0f0e] text-sm font-bold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+            className="flex-shrink-0 px-8 py-4 bg-white text-brand text-sm font-bold rounded-xl hover:bg-brand-tint transition-colors"
           >
             Start your application →
           </button>

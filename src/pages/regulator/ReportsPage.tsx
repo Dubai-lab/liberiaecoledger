@@ -24,7 +24,7 @@ interface ReportData {
   hazardBreakdown: CategoryPie[]
 }
 
-const ECO_COLORS = ['#2f6b3a', '#4a9c5d', '#6bb87e', '#9dd4aa', '#c8ebd1', '#e2f5e8']
+const ECO_COLORS = ['#1E5A3C', '#4a9c5d', '#6bb87e', '#9dd4aa', '#c8ebd1', '#e2f5e8']
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
@@ -163,7 +163,7 @@ export function ReportsPage() {
             />
             <Legend wrapperStyle={{ fontSize: 11 }} />
             <Bar dataKey="registered" name="Registered" fill="#1d4ed8" radius={[3, 3, 0, 0]} />
-            <Bar dataKey="disposed"   name="Disposed"   fill="#2f6b3a" radius={[3, 3, 0, 0]} />
+            <Bar dataKey="disposed"   name="Disposed"   fill="#1E5A3C" radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </motion.div>

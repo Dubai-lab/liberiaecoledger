@@ -5,6 +5,7 @@ import { ChevronLeft, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
+import { usePlatformRates } from '@/lib/rates'
 import { toast } from 'sonner'
 import type { Device } from '@/types/database'
 
@@ -17,6 +18,8 @@ const REASONS = [
 
 export function TransferDevicePage() {
   const { profile } = useAuth()
+  const { values: rates } = usePlatformRates()
+  const transferCredits = Math.round(rates.credits_transfer ?? 0)
   const navigate = useNavigate()
   const [devices, setDevices] = useState<Device[]>([])
   const [loading, setLoading] = useState(false)
@@ -92,17 +95,17 @@ export function TransferDevicePage() {
         },
       })
 
-      // Award 5 EcoCredits to sender
-      await supabase.from('eco_credits').insert({
+      // Award the admin-set transfer rate to the sender
+      if (transferCredits > 0) await supabase.from('eco_credits').insert({
         user_id: profile.id,
-        amount: 5,
+        amount: transferCredits,
         type: 'earned',
         source: 'transfer',
         device_id: deviceId,
         description: `Transferred ${selectedDevice?.brand ?? ''} ${selectedDevice?.model ?? ''} to new owner`,
       })
 
-      toast.success('Transfer initiated — 5 EcoCredits earned!')
+      toast.success(transferCredits > 0 ? `Transfer initiated — ${transferCredits} EcoCredits earned!` : 'Transfer initiated')
 
       // Anchor on-chain via relay (non-fatal)
       if (profile.wallet_address) {
@@ -239,7 +242,7 @@ export function TransferDevicePage() {
           type="submit"
           disabled={loading || !deviceId || !recipientEmail}
           className="w-full py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          style={{ background: '#0f1410', color: '#fafaf7' }}
+          style={{ background: '#063921', color: '#FFFFFF' }}
         >
           {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Initiating…</> : 'Initiate Transfer'}
         </button>

@@ -62,7 +62,7 @@ const SEVERITY_STYLE: Record<string, { bg: string; text: string }> = {
 const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
   open:          { bg: '#fde8e8', text: '#c0392b' },
   investigating: { bg: '#fdf3dc', text: '#b87a00' },
-  resolved:      { bg: '#e8f5ec', text: '#2d6a3f' },
+  resolved:      { bg: '#E6EEE7', text: '#083D24' },
   dismissed:     { bg: '#f3f4f6', text: '#6b7280' },
 }
 
@@ -160,7 +160,7 @@ export function FlagCaseDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f5f5f2' }}>
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
       </div>
     )
@@ -168,7 +168,7 @@ export function FlagCaseDetailPage() {
 
   if (!flag) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: '#f5f5f2' }}>
+      <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
         <p className="text-sm text-gray-500">Flag not found.</p>
         <button type="button" onClick={() => navigate('/regulator/flags')} className="mt-3 text-sm font-medium underline">
           Back to Flagged Cases
@@ -183,7 +183,7 @@ export function FlagCaseDetailPage() {
   const cid      = caseId(flag)
 
   return (
-    <div className="min-h-screen" style={{ background: '#f5f5f2' }}>
+    <div className="min-h-screen" style={{ background: '#F4F7F2' }}>
 
       {/* ── Top bar ───────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
@@ -329,7 +329,7 @@ export function FlagCaseDetailPage() {
                         {ev.metadata?.reason ? ` · reason: ${ev.metadata.reason}` : ''}
                       </p>
                       {txHash ? (
-                        <p className="text-xs font-mono mt-1" style={{ color: '#2d6a3f' }}>
+                        <p className="text-xs font-mono mt-1" style={{ color: '#083D24' }}>
                           {txHash.slice(0, 10)}…{txHash.slice(-6)}
                         </p>
                       ) : (
@@ -362,7 +362,7 @@ export function FlagCaseDetailPage() {
                 disabled={updating}
                 onClick={() => updateStatus('resolved')}
                 className="px-4 py-2 text-xs font-semibold rounded-lg border transition-colors disabled:opacity-50"
-                style={{ borderColor: '#2d6a3f', color: '#2d6a3f', background: '#e8f5ec' }}
+                style={{ borderColor: '#083D24', color: '#083D24', background: '#E6EEE7' }}
               >
                 Mark Resolved
               </button>
@@ -406,12 +406,12 @@ export function FlagCaseDetailPage() {
                     <div
                       key={label}
                       className="aspect-video rounded-xl flex items-center justify-center relative overflow-hidden"
-                      style={{ background: '#f0ede6' }}
+                      style={{ background: '#F4F7F2' }}
                     >
                       <svg className="absolute inset-0 w-full h-full opacity-30">
                         <defs>
                           <pattern id={`stripe-${label}`} patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(45)">
-                            <line x1="0" y1="0" x2="0" y2="12" stroke="#c8c5bd" strokeWidth="6" />
+                            <line x1="0" y1="0" x2="0" y2="12" stroke="#C5D2C7" strokeWidth="6" />
                           </pattern>
                         </defs>
                         <rect width="100%" height="100%" fill={`url(#stripe-${label})`} />
@@ -438,7 +438,7 @@ export function FlagCaseDetailPage() {
                   <div key={s.id} className="flex items-center gap-3 px-5 py-3.5">
                     <div
                       className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white"
-                      style={{ background: ['#2d6a3f', '#1a56db', '#b87a00', '#6b21a8', '#c0392b'][i % 5] }}
+                      style={{ background: ['#083D24', '#1a56db', '#b87a00', '#6b21a8', '#c0392b'][i % 5] }}
                     >
                       {initials(s.full_name, s.email)}
                     </div>
@@ -450,7 +450,7 @@ export function FlagCaseDetailPage() {
                     </div>
                     <span
                       className="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full flex-shrink-0"
-                      style={{ background: '#e8f5ec', color: '#2d6a3f' }}
+                      style={{ background: '#E6EEE7', color: '#083D24' }}
                     >
                       LOOPED IN
                     </span>
