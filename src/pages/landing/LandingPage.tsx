@@ -5,7 +5,7 @@ import {
   ArrowRight, Smartphone, Recycle, TreePine, Leaf, ShieldCheck,
   SearchX, FlaskConical, Scale, ScanLine, ArrowLeftRight, BadgeCheck, Coins,
   User, Factory, Landmark, SearchCheck, Lock, Eye, KeyRound, ShieldHalf,
-  Globe2, FileText, Cookie, HeartHandshake, Code2, Database, Play, ScrollText, Blocks,
+  Globe2, FileText, Cookie, HeartHandshake, Play, ScrollText, Blocks,
 } from 'lucide-react'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
@@ -14,7 +14,7 @@ import { usePlatformRates } from '@/lib/rates'
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  as string
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-// ─── Real data hook — calls public-stats edge function (bypasses RLS) ─────────
+// ─── Live platform statistics ───────────────────────────────────────────────
 
 interface LandingStats {
   devices:         number
@@ -263,32 +263,30 @@ function ProblemSection() {
 // ─── How it works ─────────────────────────────────────────────────────────────
 
 function HowItWorksSection() {
-  const [view, setView] = useState<'on-chain' | 'off-chain'>('on-chain')
-
   const steps = [
     {
       num: 'STEP 01', Icon: ScanLine,
       title: 'Register at point of sale',
       body: 'A manufacturer or retailer mints an on-chain record for the device — brand, model, IMEI, hazard class. A smart contract entry creates an immutable genesis event.',
-      code: 'registerDevice(bytes32 deviceId, address owner)',
+      outcome: 'Device record created',
     },
     {
       num: 'STEP 02', Icon: ArrowLeftRight,
       title: 'Track through ownership',
       body: 'Every transfer is signed by both parties and recorded on-chain. The ownership history is public, tamper-proof, and traceable to any auditor.',
-      code: 'transferDevice(bytes32 deviceId, address from, address to)',
+      outcome: 'Ownership updated',
     },
     {
       num: 'STEP 03', Icon: BadgeCheck,
       title: 'Verify disposal',
       body: 'Certified recyclers log weight, hazard class, and materials recovered. EPA licence is checked on-chain before the disposal event is confirmed.',
-      code: 'disposeDevice(bytes32 deviceId, address recycler, uint256 credits)',
+      outcome: 'Disposal confirmed',
     },
     {
       num: 'STEP 04', Icon: Coins,
       title: 'Reward & audit',
       body: 'Device owners earn EcoCredits automatically for responsible disposal, redeemable for mobile money via Orange Money and MTN MoMo. Every credit is an on-chain event.',
-      code: 'ecoToken.mint(address owner, uint256 amount)',
+      outcome: 'EcoCredits issued',
     },
   ]
 
@@ -302,25 +300,10 @@ function HowItWorksSection() {
               Five smart contracts. One verifiable trail. Every stakeholder reading from the same ledger.
             </SectionHeading>
           </div>
-          <div className="flex items-center gap-1 bg-brand-tint border border-brand-line rounded-lg p-1 self-start lg:self-auto flex-shrink-0">
-            {(['on-chain', 'off-chain'] as const).map(v => (
-              <button
-                key={v}
-                type="button"
-                onClick={() => setView(v)}
-                className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-md text-xs font-semibold transition-all ${
-                  view === v ? 'bg-brand text-white shadow-sm' : 'text-brand-muted hover:text-brand-ink'
-                }`}
-              >
-                {v === 'on-chain' ? <Code2 className="w-3.5 h-3.5" /> : <Database className="w-3.5 h-3.5" />}
-                {v.toUpperCase().replace('-', ' ')}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {steps.map((s, i) => (
+          {steps.map(s => (
             <div key={s.num} className="bg-white rounded-2xl p-6 border border-brand-line flex flex-col hover:shadow-[0_12px_32px_-16px_rgba(16,47,39,0.25)] transition-shadow">
               <div className="flex items-center justify-between mb-5">
                 <IconBadge><s.Icon className="w-5 h-5" strokeWidth={1.75} /></IconBadge>
@@ -328,16 +311,10 @@ function HowItWorksSection() {
               </div>
               <h3 className="font-display text-lg font-semibold text-brand-ink mb-2 leading-snug">{s.title}</h3>
               <p className="text-sm text-brand-muted leading-relaxed mb-5 flex-1">{s.body}</p>
-              {view === 'on-chain' && (
-                <div className="bg-brand-deep rounded-xl px-3 py-2.5">
-                  <p className="text-[11px] font-mono text-[#8FD3A8] break-all leading-relaxed">{s.code}</p>
-                </div>
-              )}
-              {view === 'off-chain' && (
-                <div className="bg-brand-tint rounded-xl px-3 py-2.5 border border-brand-line">
-                  <p className="text-[11px] text-brand-muted">DB record · Supabase · Step {i + 1} of 4</p>
-                </div>
-              )}
+              <div className="flex items-center gap-2 bg-brand-tint rounded-xl px-3 py-2.5 border border-brand-line">
+                <BadgeCheck className="w-4 h-4 text-brand flex-shrink-0" strokeWidth={1.9} />
+                <p className="text-xs font-medium text-brand-ink">{s.outcome} · on the public ledger</p>
+              </div>
             </div>
           ))}
         </div>
@@ -481,7 +458,7 @@ function TrustSection() {
     },
     {
       title: 'Privacy-aware', Icon: ShieldHalf,
-      body: 'Personal identity stays off-chain in Supabase with strict RLS policies. Only your wallet address appears on-chain — your name and contact details are never published.',
+      body: 'Personal identity stays off-chain in a secured, access-controlled database. Only your wallet address appears on-chain — your name and contact details are never published.',
     },
   ]
 
@@ -685,7 +662,7 @@ function AboutSection() {
           {[
             { label: 'Founded', value: '2025' },
             { label: 'Chain', value: 'Sepolia (EVM)' },
-            { label: 'Stack', value: 'React · Supabase · Hardhat' },
+            { label: 'Platform', value: 'Web & mobile' },
             { label: 'Country', value: 'Liberia, West Africa' },
             { label: 'Contact', value: 'support@liberiaecoledger.com' },
           ].map(f => (

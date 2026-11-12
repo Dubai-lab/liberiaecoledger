@@ -85,9 +85,9 @@ export function LandingFooter() {
 
         <div className="border-t border-white/15 mt-12 pt-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <p className="text-xs text-white/75">© 2026 EcoLedger Foundation · Liberia, West Africa · Built for the SDGs</p>
-          <p className="text-xs text-white/60 md:border-l md:border-white/15 md:pl-6">
-            Sepolia Testnet · EcoToken 0xffEA…1B4 · EcoLedger 0xb4Fa…2E
-          </p>
+          <Link to="/block-explorer#ledger" className="text-xs text-white/60 hover:text-white md:border-l md:border-white/15 md:pl-6 transition-colors">
+            Live on Ethereum Sepolia · View the public ledger →
+          </Link>
         </div>
       </div>
     </footer>

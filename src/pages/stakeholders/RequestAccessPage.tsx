@@ -56,7 +56,11 @@ export function RequestAccessPage() {
       setSubmitted(true)
       setForm(EMPTY_FORM)
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Could not submit your request. Please try again.')
+      const msg = err instanceof Error ? err.message : ''
+      // One email = one identity: the database explains why an email can't be used again
+      toast.error(/duplicate key|uq_access_requests_pending_email/i.test(msg)
+        ? 'An access request for this email is already being reviewed.'
+        : msg || 'Could not submit your request. Please try again.', { duration: 8000 })
     } finally {
       setSubmitting(false)
     }

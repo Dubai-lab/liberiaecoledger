@@ -85,6 +85,11 @@ const CORS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Every response carries CORS headers so the browser can read delivery failures
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS, 'Content-Type': 'application/json' } })
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: CORS })
@@ -94,16 +99,42 @@ serve(async (req) => {
     const payload = await req.json()
     const { type, table, record, old_record } = payload
 
-    // ── Invitation created ────────────────────────────────────────────────────
-    if (table === 'invitations' && type === 'INSERT') {
-      const tpl = tplInvitation({
-        email:      record.email,
-        role:       record.role,
-        organization: record.organization ?? '',
-        token:      record.token,
-        expiryDays: record.expiry_days ?? 7,
+    // ── SMTP self-test (service role only; emails the platform's own mailbox) ──
+    if (type === 'SMTP_TEST') {
+      const bearer = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '')
+      if (!bearer || bearer !== Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')) return json({ ok: false, error: 'Forbidden' }, 403)
+      const to = Deno.env.get('SMTP_USER')!
+      await sendEmail({
+        to,
+        subject: 'EcoLedger SMTP test',
+        html: `<p>This is an automated delivery test from the EcoLedger notify function (${new Date().toISOString()}).</p>`,
       })
-      await sendEmail({ to: record.email, ...tpl })
+      return json({ ok: true, sent: [to] })
+    }
+
+    // ── Invitation created / resent ───────────────────────────────────────────
+    // Only the access code is trusted from the caller: the invitation is re-read
+    // so this endpoint can't be used to email arbitrary addresses.
+    if (table === 'invitations' && (type === 'INSERT' || type === 'RESEND')) {
+      const { data: inv } = await supabase
+        .from('invitations')
+        .select('email, role, organization, token, expires_at, accepted_at')
+        .eq('token', String(record?.token ?? ''))
+        .maybeSingle()
+      if (!inv) return json({ ok: false, error: 'Invitation not found' }, 404)
+      if (inv.accepted_at) return json({ ok: false, error: 'Invitation already accepted' }, 409)
+      const msLeft = new Date(inv.expires_at).getTime() - Date.now()
+      if (msLeft <= 0) return json({ ok: false, error: 'Invitation has expired' }, 410)
+
+      const tpl = tplInvitation({
+        email:        inv.email,
+        role:         inv.role,
+        organization: inv.organization ?? '',
+        token:        inv.token,
+        expiryDays:   Math.max(1, Math.ceil(msLeft / 86_400_000)),
+      })
+      await sendEmail({ to: inv.email, ...tpl })
+      return json({ ok: true, sent: [inv.email] })
     }
 
     // ── Access request submitted (public form) → alert admins ─────────────────
@@ -526,9 +557,9 @@ serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({ ok: true }), { headers: { 'Content-Type': 'application/json' } })
+    return json({ ok: true })
   } catch (err) {
     console.error('notify error:', err)
-    return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { 'Content-Type': 'application/json' } })
+    return json({ ok: false, error: err instanceof Error ? err.message : String(err) }, 502)
   }
 })

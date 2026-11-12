@@ -97,7 +97,18 @@ export function useConsumerSignup({ redirectPath, onAccountExists }: Options) {
       setForm(EMPTY)
       startVerify(email)
     } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Could not create your account')
+      const msg = err instanceof Error ? err.message : ''
+      // The database refuses sign-ups for an email that has a stakeholder request under review
+      if (/database error saving new user|EMAIL_HAS_PENDING_ACCESS_REQUEST/i.test(msg)) {
+        toast.error('This email has a stakeholder access request under review', {
+          description: 'Each email can only be used once. Wait for the admin to respond, or sign up with a different email.',
+        })
+      } else if (/already registered|already exists/i.test(msg)) {
+        toast.error('An account with this email already exists. Please sign in.')
+        onAccountExists?.(email)
+      } else {
+        toast.error(msg || 'Could not create your account')
+      }
     } finally {
       setBusy(false)
     }

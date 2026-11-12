@@ -119,7 +119,7 @@ export function DashboardLayout() {
             type="button"
             aria-label="Close menu"
             onClick={() => setMobileOpen(false)}
-            className="ml-auto lg:hidden text-white/40 hover:text-white/70 transition-colors"
+            className="ml-auto lg:hidden text-white hover:text-white/50 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -129,12 +129,12 @@ export function DashboardLayout() {
         <div className="px-5 py-3 border-b border-white/10">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-[#8FD3A8]" />
-            <span className="text-xs text-white/50 tracking-widest uppercase">{ROLE_LABEL[role]}</span>
+            <span className="text-xs text-white tracking-widest uppercase">{ROLE_LABEL[role]}</span>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5">
+        <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {navItems.map(item => (
             <NavLink
               key={item.path}
@@ -144,7 +144,7 @@ export function DashboardLayout() {
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all',
                 isActive
                   ? 'bg-white/10 text-white font-medium shadow-[inset_3px_0_0_#8FD3A8]'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5',
+                  : 'text-white hover:text-white/50 hover:bg-white/5',
               ].join(' ')}
               onClick={() => setMobileOpen(false)}
             >
@@ -160,21 +160,21 @@ export function DashboardLayout() {
           <button
             type="button"
             onClick={() => { navigate('/account'); setMobileOpen(false) }}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 hover:opacity-60 transition-all text-left"
           >
             <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-semibold text-white">{initials}</span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-white/80 truncate">{displayName}</p>
-              <p className="text-[10px] text-white/40 truncate">{profile?.organization ?? 'EcoLedger'}</p>
+              <p className="text-xs font-medium text-white truncate">{displayName}</p>
+              <p className="text-[10px] text-white/80 truncate">{profile?.organization ?? 'EcoLedger'}</p>
             </div>
-            <Settings className="w-3.5 h-3.5 text-white/30 hover:text-white/70 flex-shrink-0" />
+            <Settings className="w-3.5 h-3.5 text-white flex-shrink-0" />
           </button>
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-colors text-xs"
+            className="w-full flex items-center gap-2 px-3 py-2 mt-1 rounded-lg text-white hover:text-white/50 hover:bg-white/5 transition-colors text-xs"
           >
             <LogOut className="w-3.5 h-3.5" />
             Sign out

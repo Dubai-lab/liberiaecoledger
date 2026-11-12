@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Copy, Trash2, Loader2, CheckCircle, Clock, X, UserCheck, UserX, Mail, Phone, Building2, Briefcase, Inbox } from 'lucide-react'
+import { Plus, Copy, Trash2, Loader2, Send, CheckCircle, Clock, X, UserCheck, UserX, Mail, Phone, Building2, Briefcase, Inbox } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
@@ -90,16 +90,33 @@ export function InvitationsPage() {
       .single()
     if (error) throw error
 
-    // Send invitation email automatically via notify edge function
-    await supabase.functions.invoke('notify', {
-      body: {
-        type: 'INSERT',
-        table: 'invitations',
-        record: { email, role: o.role, organization, token, expiry_days: o.expiryDays },
-      },
-    })
+    const emailError = await sendInvitationEmail(token, 'INSERT')
+    return { id: (data as { id: string }).id, token, emailError }
+  }
 
-    return { id: (data as { id: string }).id, token }
+  /** Asks the notify function to email the invitation. Returns an error message, or null when delivered. */
+  const sendInvitationEmail = async (token: string, type: 'INSERT' | 'RESEND'): Promise<string | null> => {
+    const { data, error } = await supabase.functions.invoke('notify', {
+      body: { type, table: 'invitations', record: { token } },
+    })
+    if (!error && (data as { ok?: boolean } | null)?.ok !== false) return null
+    // FunctionsHttpError carries the function's JSON body in error.context
+    let detail = (data as { error?: string } | null)?.error ?? error?.message ?? 'Unknown error'
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const body = await (error as any)?.context?.json?.()
+      if (body?.error) detail = body.error
+    } catch { /* body not JSON */ }
+    return detail
+  }
+
+  const [resendingToken, setResendingToken] = useState<string | null>(null)
+  const resendInvitation = async (inv: Invitation) => {
+    setResendingToken(inv.token)
+    const err = await sendInvitationEmail(inv.token, 'RESEND')
+    setResendingToken(null)
+    if (err) toast.error(`Email to ${inv.email} failed`, { description: `${err} — share the access code ${inv.token} manually.`, duration: 10000 })
+    else toast.success(`Invitation re-sent to ${inv.email}`)
   }
 
   const startApprove = (req: AccessRequest) => {
@@ -115,7 +132,7 @@ export function InvitationsPage() {
     if (!approveForm.organization.trim()) { toast.error('Organization is required'); return }
     setBusyRequestId(req.id)
     try {
-      const { id: invitationId, token } = await createInvitation({
+      const { id: invitationId, token, emailError } = await createInvitation({
         email: req.email,
         role: approveForm.role,
         organization: approveForm.organization,
@@ -133,10 +150,17 @@ export function InvitationsPage() {
         .eq('id', req.id)
       if (error) throw error
 
-      toast.success(`Access approved for ${req.full_name}`, {
-        duration: 8000,
-        description: `An invitation with access code ${token} has been emailed to ${req.email}.`,
-      })
+      if (emailError) {
+        toast.warning(`Access approved for ${req.full_name}, but the email failed`, {
+          duration: 12000,
+          description: `${emailError}. Share access code ${token} with ${req.email} manually, or use Resend below.`,
+        })
+      } else {
+        toast.success(`Access approved for ${req.full_name}`, {
+          duration: 8000,
+          description: `An invitation with access code ${token} has been emailed to ${req.email}.`,
+        })
+      }
       setApprovingId(null)
       loadRequests()
       loadInvitations()
@@ -167,17 +191,24 @@ export function InvitationsPage() {
     setSubmitting(true)
 
     try {
-      const { token } = await createInvitation({
+      const { token, emailError } = await createInvitation({
         email: form.email,
         role: form.role,
         organization: form.organization,
         expiryDays: Number(form.expiryDays),
       })
 
-      toast.success(
-        `Invitation sent to ${form.email}`,
-        { duration: 8000, description: `Access code ${token} has been emailed. The copy button is available as a backup.` }
-      )
+      if (emailError) {
+        toast.warning(`Invitation created, but the email to ${form.email} failed`, {
+          duration: 12000,
+          description: `${emailError}. Copy access code ${token} and share it manually, or use Resend.`,
+        })
+      } else {
+        toast.success(`Invitation sent to ${form.email}`, {
+          duration: 8000,
+          description: `Access code ${token} has been emailed. The copy button is available as a backup.`,
+        })
+      }
 
       setForm({ email: '', role: 'regulator', organization: '', expiryDays: '7' })
       setShowForm(false)
@@ -565,6 +596,16 @@ export function InvitationsPage() {
                       className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     >
                       <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Resend invitation email"
+                      title="Resend email"
+                      disabled={resendingToken === inv.token}
+                      onClick={() => resendInvitation(inv)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                    >
+                      {resendingToken === inv.token ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                     </button>
                     <button
                       type="button"
