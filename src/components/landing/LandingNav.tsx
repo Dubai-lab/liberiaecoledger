@@ -65,7 +65,7 @@ export function LandingNav({ alwaysOpaque = false }: Props) {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/stakeholders/request-access')}
             className="text-sm font-semibold px-4 py-2 rounded-lg bg-[#0f0f0e] text-white hover:bg-[#2a2a28] transition-colors"
           >
             Get access
@@ -86,7 +86,7 @@ export function LandingNav({ alwaysOpaque = false }: Props) {
           ))}
           <div className="pt-3 border-t border-[#e8e5de] flex gap-3">
             <button type="button" onClick={() => navigate('/login')} className="flex-1 py-2 text-sm border border-[#e8e5de] rounded-lg">Sign in</button>
-            <button type="button" onClick={() => navigate('/login')} className="flex-1 py-2 text-sm bg-[#0f0f0e] text-white rounded-lg font-semibold">Get access</button>
+            <button type="button" onClick={() => navigate('/stakeholders/request-access')} className="flex-1 py-2 text-sm bg-[#0f0f0e] text-white rounded-lg font-semibold">Get access</button>
           </div>
         </div>
       )}

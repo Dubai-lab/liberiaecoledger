@@ -35,6 +35,32 @@ function infoTable(rows: { label: string; value: string }[]): string {
   </table>`
 }
 
+function esc(v: unknown): string {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+}
+
+// ─── Access request (public form → admins) ───────────────────────────────────
+
+export function tplAccessRequestAlert(o: { fullName: string; email: string; phone?: string | null; organization?: string | null; jobTitle?: string | null; role: string; message?: string | null }) {
+  return {
+    subject: `New access request — ${o.fullName.slice(0, 80)} (${o.role})`,
+    html: base(`
+      <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0f0f0e;">New Access Request</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;line-height:1.6;">Someone has requested access to EcoLedger and is waiting for your review.</p>
+      ${infoTable([
+        { label: 'Name', value: esc(o.fullName) },
+        { label: 'Email', value: esc(o.email) },
+        { label: 'Phone', value: esc(o.phone || '—') },
+        { label: 'Organisation', value: esc(o.organization || '—') },
+        { label: 'Job title', value: esc(o.jobTitle || '—') },
+        { label: 'Requested role', value: esc(o.role) },
+      ])}
+      ${o.message ? `<p style="margin:0 0 24px;font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;">${esc(o.message)}</p>` : ''}
+      ${btn(`${APP_URL}/admin/invitations`, 'Review Request')}
+    `),
+  }
+}
+
 // ─── Invitation ──────────────────────────────────────────────────────────────
 
 export function tplInvitation(o: { email: string; role: string; organization: string; token: string; expiryDays: number }) {

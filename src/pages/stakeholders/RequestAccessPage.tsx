@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
 
@@ -11,23 +14,53 @@ const roles = [
   { value: 'other',        label: 'Other — Investor, press, academic, or partner' },
 ]
 
+const EMPTY_FORM = { name: '', email: '', phone: '', org: '', jobTitle: '', role: '', message: '' }
+
 export function RequestAccessPage() {
-  const [form, setForm] = useState({ name: '', email: '', org: '', role: '', message: '' })
+  const [form, setForm] = useState(EMPTY_FORM)
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }))
+  const set = (k: keyof typeof EMPTY_FORM, v: string) => setForm(f => ({ ...f, [k]: v }))
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const ready = form.name.trim().length >= 2 && form.email.trim() !== '' && form.role !== ''
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const subject = encodeURIComponent(`EcoLedger Access Request — ${form.role} — ${form.org}`)
-    const body = encodeURIComponent(
-      `Name: ${form.name}\nEmail: ${form.email}\nOrganisation: ${form.org}\nRole: ${form.role}\n\nMessage:\n${form.message}`
-    )
-    window.location.href = `mailto:support@liberiaecoledger.com?subject=${subject}&body=${body}`
-    setSubmitted(true)
-  }
+    if (!ready || submitting) return
+    setSubmitting(true)
 
-  const ready = form.name && form.email && form.role
+    // Generate the id client-side: anonymous visitors can insert but not read rows back.
+    const id = crypto.randomUUID()
+    const trimOrNull = (v: string) => v.trim() || null
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from('access_requests') as any).insert({
+        id,
+        full_name:      form.name.trim(),
+        email:          form.email.toLowerCase().trim(),
+        phone:          trimOrNull(form.phone),
+        organization:   trimOrNull(form.org),
+        job_title:      trimOrNull(form.jobTitle),
+        requested_role: form.role,
+        message:        trimOrNull(form.message),
+      })
+      if (error) throw error
+
+      // Alert admins (email + in-app notification). Non-blocking: the request is already saved.
+      supabase.functions
+        .invoke('notify', { body: { type: 'INSERT', table: 'access_requests', record: { id } } })
+        .catch(() => {})
+
+      setSubmitted(true)
+      setForm(EMPTY_FORM)
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Could not submit your request. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -54,8 +87,8 @@ export function RequestAccessPage() {
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
-            <p className="font-bold text-[#1a4a25] text-lg mb-2">Request sent!</p>
-            <p className="text-sm text-[#2d6a3f]">Your email client has opened with your request pre-filled. Send it to complete your application. We'll be in touch within 2 business days.</p>
+            <p className="font-bold text-[#1a4a25] text-lg mb-2">Request received!</p>
+            <p className="text-sm text-[#2d6a3f]">Our team will review your details. Once approved, you'll receive an email with your access code and a link to set up your password. We'll be in touch within 2 business days.</p>
             <button
               type="button"
               onClick={() => setSubmitted(false)}
@@ -75,6 +108,8 @@ export function RequestAccessPage() {
                   value={form.name}
                   onChange={e => set('name', e.target.value)}
                   placeholder="George Emmanuel"
+                  autoComplete="name"
+                  maxLength={120}
                   required
                   className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white"
                 />
@@ -86,7 +121,36 @@ export function RequestAccessPage() {
                   value={form.email}
                   onChange={e => set('email', e.target.value)}
                   placeholder="you@organisation.com"
+                  autoComplete="email"
+                  maxLength={254}
                   required
+                  className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs font-semibold text-[#0f0f0e] mb-1.5">Phone / contact number</label>
+                <input
+                  type="tel"
+                  autoComplete="tel"
+                  value={form.phone}
+                  onChange={e => set('phone', e.target.value)}
+                  placeholder="+231 77 000 0000"
+                  maxLength={40}
+                  className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#0f0f0e] mb-1.5">Job title / position</label>
+                <input
+                  type="text"
+                  autoComplete="organization-title"
+                  value={form.jobTitle}
+                  onChange={e => set('jobTitle', e.target.value)}
+                  placeholder="Compliance Officer, Director…"
+                  maxLength={120}
                   className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white"
                 />
               </div>
@@ -99,6 +163,7 @@ export function RequestAccessPage() {
                 value={form.org}
                 onChange={e => set('org', e.target.value)}
                 placeholder="EPA Liberia, Samsung West Africa, EcoRecycle Ltd…"
+                maxLength={160}
                 className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white"
               />
             </div>
@@ -125,21 +190,22 @@ export function RequestAccessPage() {
                 onChange={e => set('message', e.target.value)}
                 placeholder="What do you need the platform for? Any relevant context about your organisation or licence status helps us onboard you faster."
                 rows={4}
+                maxLength={2000}
                 className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#2d6a3f]/20 focus:border-[#2d6a3f] transition-colors bg-white resize-none"
               />
             </div>
 
             <button
               type="submit"
-              disabled={!ready}
-              className="w-full py-4 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={!ready || submitting}
+              className="w-full py-4 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{ background: '#0f0f0e' }}
             >
-              Send access request →
+              {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Send access request →'}
             </button>
 
             <p className="text-xs text-center text-[#9b9b98]">
-              This opens your email client pre-filled. Clicking send delivers your request to our team.
+              Your request goes straight to the EcoLedger admin team for review.
             </p>
           </form>
         )}

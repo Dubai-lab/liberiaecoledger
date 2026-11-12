@@ -66,6 +66,12 @@ export interface Database {
         Insert: Omit<Invitation, 'id' | 'created_at' | 'accepted_at'> & { accepted_at?: string | null }
         Update: Partial<Omit<Invitation, 'id'>>
       }
+      access_requests: {
+        Row: AccessRequest
+        Insert: Pick<AccessRequest, 'full_name' | 'email' | 'requested_role'> &
+          Partial<Pick<AccessRequest, 'phone' | 'organization' | 'job_title' | 'message'>>
+        Update: Partial<Omit<AccessRequest, 'id'>>
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -274,5 +280,24 @@ export interface Invitation {
   token: string
   expires_at: string
   accepted_at: string | null
+  created_at: string
+}
+
+export type AccessRequestRole = Exclude<UserRole, 'admin'> | 'other'
+export type AccessRequestStatus = 'pending' | 'approved' | 'rejected'
+
+export interface AccessRequest {
+  id: string
+  full_name: string
+  email: string
+  phone: string | null
+  organization: string | null
+  job_title: string | null
+  requested_role: AccessRequestRole
+  message: string | null
+  status: AccessRequestStatus
+  reviewed_by: string | null
+  reviewed_at: string | null
+  invitation_id: string | null
   created_at: string
 }

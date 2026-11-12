@@ -244,12 +244,12 @@ export function LoginPage() {
           {/* Register link */}
           <p className="text-xs text-center text-muted-foreground mt-6">
             Not on the platform yet?{' '}
-            <a
-              href="mailto:support@liberiaecoledger.com"
+            <Link
+              to="/stakeholders/request-access"
               className="text-eco-700 hover:underline"
             >
               Request stakeholder access
-            </a>
+            </Link>
           </p>
         </motion.div>
       </div>

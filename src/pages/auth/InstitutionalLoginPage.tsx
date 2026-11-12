@@ -171,9 +171,9 @@ export function InstitutionalLoginPage() {
               />
               <p className="text-xs text-muted-foreground">
                 Don't have a code?{' '}
-                <a href="mailto:support@liberiaecoledger.com" className="text-eco-700 hover:underline">
-                  Request one from support
-                </a>
+                <Link to="/stakeholders/request-access" className="text-eco-700 hover:underline">
+                  Request access
+                </Link>
               </p>
             </div>
 

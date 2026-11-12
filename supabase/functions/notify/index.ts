@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { sendEmail } from '../_shared/email.ts'
 import {
   tplInvitation,
+  tplAccessRequestAlert,
   tplDeviceRegistered,
   tplTransferRequest,
   tplTransferSent,
@@ -103,6 +104,39 @@ serve(async (req) => {
         expiryDays: record.expiry_days ?? 7,
       })
       await sendEmail({ to: record.email, ...tpl })
+    }
+
+    // ── Access request submitted (public form) → alert admins ─────────────────
+    // Only the request id is trusted from the caller; details are re-read with
+    // the service role so the alert can't be spoofed with arbitrary content.
+    if (table === 'access_requests' && type === 'INSERT' && record?.id) {
+      const { data: req } = await supabase
+        .from('access_requests')
+        .select('full_name, email, phone, organization, job_title, requested_role, message, status')
+        .eq('id', record.id)
+        .maybeSingle()
+      if (req && req.status === 'pending') {
+        const tpl = tplAccessRequestAlert({
+          fullName: req.full_name,
+          email: req.email,
+          phone: req.phone,
+          organization: req.organization,
+          jobTitle: req.job_title,
+          role: req.requested_role,
+          message: req.message,
+        })
+        const admins = await getAdmins()
+        for (const admin of admins) {
+          if (admin.email) await sendEmail({ to: admin.email, ...tpl })
+          await saveNotification(
+            admin.id,
+            `New Access Request — ${req.full_name}`,
+            `${req.full_name} (${req.email}) requested ${req.requested_role} access${req.organization ? ` for ${req.organization}` : ''}.`,
+            'action_required',
+            `${APP_URL}/admin/invitations`,
+          )
+        }
+      }
     }
 
     // ── Device registered ─────────────────────────────────────────────────────
