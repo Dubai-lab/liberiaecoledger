@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ChevronLeft, Upload, Loader2, Download, CheckCircle, ShieldCheck, ShieldAlert, Search, Smartphone, Laptop,
+  ChevronLeft, Upload, Loader2, Download, CheckCircle, ShieldCheck, ShieldAlert, Search, Smartphone, Laptop, Tv,
 } from 'lucide-react'
 import QRCode from 'react-qr-code'
 import { supabase } from '@/lib/supabase'
@@ -61,9 +61,24 @@ const STATUS_MESSAGE: Record<Exclude<ImeiVerifyStatus, 'available'>, string> = {
 const inputCls =
   'w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors'
 
+// Everything except phones and laptops (those come from the manufacturer registry).
+// Must match the list accepted by register_consumer_device() in 20261115_consumer_general_ewaste.sql.
+const OTHER_CATEGORIES = [
+  'Tablet', 'Desktop Computer', 'Television', 'Refrigerator', 'Washing Machine', 'Air Conditioner', 'Microwave',
+  'Printer', 'Monitor', 'Audio Equipment', 'Gaming Console', 'Camera', 'Power Tool', 'Battery / Power Bank',
+  'Networking Equipment', 'Other',
+]
+
 export function RegisterDevicePage() {
   const { profile } = useAuth()
   const navigate = useNavigate()
+
+  // Phones & laptops come from the manufacturer registry; all other e-waste is registered by its owner
+  const [mode, setMode] = useState<'registry' | 'other'>('registry')
+  const [other, setOther] = useState({ category: '', brand: '', model: '', serial_number: '', manufacture_year: '', hazard_class: 'none' })
+  const setO = (k: keyof typeof other) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setOther(o => ({ ...o, [k]: e.target.value }))
+  const otherValid = !!(other.category && other.brand.trim() && other.model.trim())
 
   const [imei, setImei] = useState('') // IMEI, or a laptop serial number
   const [verifying, setVerifying] = useState(false)
@@ -80,6 +95,51 @@ export function RegisterDevicePage() {
   const imeiValid = looksNumeric ? isValidImei(digits) : imei.trim().length >= 4
   const setP = (k: keyof typeof purchase) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setPurchase(p => ({ ...p, [k]: e.target.value }))
+
+  const uploadReceipt = async (label: string) => {
+    if (!receiptFile || !profile) return { receipt_url: null as string | null, receipt_ipfs_hash: null as string | null }
+    const result = await uploadToIPFS(receiptFile, {
+      name: `receipt-${label}-${Date.now()}`,
+      keyvalues: { owner: profile.id, device: label },
+    })
+    return { receipt_url: result.url, receipt_ipfs_hash: result.ipfsHash }
+  }
+
+  const handleRegisterOther = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!profile || !otherValid) return
+    setLoading(true)
+    try {
+      const { receipt_url, receipt_ipfs_hash } = await uploadReceipt(`${other.brand}-${other.model}`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase.rpc as any)('register_consumer_device', {
+        p_category:           other.category,
+        p_brand:              other.brand.trim(),
+        p_model:              other.model.trim(),
+        p_serial_number:      other.serial_number.trim() || null,
+        p_manufacture_year:   other.manufacture_year ? Number(other.manufacture_year) : null,
+        p_hazard_class:       other.hazard_class,
+        p_purchase_date:      purchase.purchase_date || null,
+        p_purchase_price_lrd: purchase.purchase_price_lrd ? Number(purchase.purchase_price_lrd) : null,
+        p_retailer_name:      purchase.retailer_name.trim() || null,
+        p_receipt_url:        receipt_url,
+        p_receipt_ipfs_hash:  receipt_ipfs_hash,
+      })
+      if (error) {
+        if (/register_consumer_device/i.test(error.message)) {
+          throw new Error('Registering other electronics is not enabled yet — the database update (20261115 migration) still needs to be applied.')
+        }
+        throw error
+      }
+      const row = (Array.isArray(data) ? data[0] : data) as { device_id: string; credits: number }
+      toast.success(row.credits > 0 ? `Device registered — ${row.credits} EcoCredits earned!` : 'Device registered successfully!')
+      setRegisteredDevice({ id: row.device_id, brand: other.brand.trim(), model: other.model.trim(), credits: row.credits })
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Registration failed')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -204,6 +264,42 @@ export function RegisterDevicePage() {
   const available = verified?.status === 'available'
   const CategoryIcon = verified?.category === 'Laptop' ? Laptop : Smartphone
 
+  const purchaseSection = (step: number) => (
+    <section className="bg-white border border-border rounded-xl p-5 space-y-4">
+      <div>
+        <h2 className="text-sm font-semibold text-foreground">{step}. Purchase Information</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">Optional, but helps prove ownership if there's ever a dispute.</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Purchase Date</label>
+          <input type="date" max={new Date().toISOString().slice(0, 10)} value={purchase.purchase_date} onChange={setP('purchase_date')} className={inputCls} />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Purchase Price (LRD)</label>
+          <input type="number" min="0" value={purchase.purchase_price_lrd} onChange={setP('purchase_price_lrd')} placeholder="e.g. 25000" className={inputCls} />
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Retailer / Seller Name</label>
+        <input value={purchase.retailer_name} onChange={setP('retailer_name')} placeholder="Where did you buy it?" className={inputCls} />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Receipt / Proof of Purchase</label>
+        <label className="flex items-center gap-3 border border-dashed border-border rounded-lg px-4 py-3 cursor-pointer hover:border-brand/40 transition-colors">
+          <Upload className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          <span className="text-sm text-muted-foreground flex-1">
+            {receiptFile ? receiptFile.name : 'Upload image or PDF (optional)'}
+          </span>
+          <input type="file" accept="image/*,.pdf" className="hidden" onChange={e => setReceiptFile(e.target.files?.[0] ?? null)} />
+        </label>
+      </div>
+    </section>
+  )
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <button
@@ -219,10 +315,92 @@ export function RegisterDevicePage() {
         <p className="text-xs text-muted-foreground tracking-widest uppercase mb-0.5">Consumer</p>
         <h1 className="text-2xl font-semibold">Register a Device</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Enter your phone's IMEI or your laptop's serial number. We check it against the manufacturer registry to confirm it's a genuine device before adding it to your account.
+          Register any electronic device you own — from phones and laptops to TVs, fridges and printers — so it can be tracked and recycled responsibly.
         </p>
       </div>
 
+      {/* What kind of device? */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5" role="radiogroup" aria-label="Device type">
+        {([
+          ['registry', 'Phone or laptop', 'Verified against the manufacturer registry by IMEI or serial number', Smartphone],
+          ['other', 'Other electronics', 'TV, fridge, printer, tablet, appliance… registered directly by you', Tv],
+        ] as const).map(([key, title, desc, Icon]) => (
+          <button
+            key={key}
+            type="button"
+            role="radio"
+            aria-checked={mode === key}
+            onClick={() => setMode(key)}
+            className={`flex items-start gap-3 text-left rounded-xl border p-4 transition-colors ${
+              mode === key ? 'border-brand bg-brand-tint ring-1 ring-brand' : 'border-border bg-white hover:border-brand/40'
+            }`}
+          >
+            <span className={`flex-shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg ${mode === key ? 'bg-brand text-white' : 'bg-muted text-muted-foreground'}`}>
+              <Icon className="w-4 h-4" />
+            </span>
+            <span>
+              <span className="block text-sm font-semibold text-foreground">{title}</span>
+              <span className="block text-xs text-muted-foreground mt-0.5 leading-relaxed">{desc}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {mode === 'other' ? (
+        <motion.form initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleRegisterOther} className="space-y-5">
+          <section className="bg-white border border-border rounded-xl p-5 space-y-4">
+            <h2 className="text-sm font-semibold text-foreground">1. Device Details</h2>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Category *</label>
+              <select required value={other.category} onChange={setO('category')} className={inputCls}>
+                <option value="">Select category…</option>
+                {OTHER_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Brand *</label>
+                <input required maxLength={80} value={other.brand} onChange={setO('brand')} placeholder="Samsung, LG, HP…" className={inputCls} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Model *</label>
+                <input required maxLength={120} value={other.model} onChange={setO('model')} placeholder='e.g. 43" Smart TV' className={inputCls} />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Serial Number</label>
+                <input value={other.serial_number} onChange={setO('serial_number')} placeholder="Optional" className={`${inputCls} font-mono`} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Manufacture Year</label>
+                <input type="number" min="1950" max={new Date().getFullYear()} value={other.manufacture_year} onChange={setO('manufacture_year')} placeholder="Optional" className={inputCls} />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Hazardous material</label>
+              <select value={other.hazard_class} onChange={setO('hazard_class')} className={inputCls}>
+                <option value="none">None / Unknown</option>
+                <option value="li_ion_battery">Li-Ion Battery</option>
+                <option value="toner">Toner (printers)</option>
+                <option value="mercury_ccfl">Mercury / CCFL (older displays)</option>
+                <option value="mixed">Mixed hazardous materials</option>
+              </select>
+              <p className="text-[11px] text-muted-foreground">Helps the recycler handle the device safely. Fridges and air conditioners also contain refrigerant — choose "Mixed".</p>
+            </div>
+          </section>
+
+          {purchaseSection(2)}
+
+          <button
+            type="submit"
+            disabled={loading || !otherValid}
+            className="w-full py-3 rounded-lg text-sm font-medium text-white bg-brand hover:bg-brand-secondary transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Registering…</> : otherValid ? `Register ${other.brand.trim()} ${other.model.trim()}` : 'Choose a category and enter brand and model'}
+          </button>
+        </motion.form>
+      ) : (<>
       {/* Step 1 — verify IMEI */}
       <motion.form
         initial={{ opacity: 0, y: 12 }}
@@ -301,39 +479,7 @@ export function RegisterDevicePage() {
           onSubmit={handleRegister}
           className="space-y-5 mt-5"
         >
-          <section className="bg-white border border-border rounded-xl p-5 space-y-4">
-            <div>
-              <h2 className="text-sm font-semibold text-foreground">2. Purchase Information</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Optional, but helps prove ownership if there's ever a dispute.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Purchase Date</label>
-                <input type="date" max={new Date().toISOString().slice(0, 10)} value={purchase.purchase_date} onChange={setP('purchase_date')} className={inputCls} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Purchase Price (LRD)</label>
-                <input type="number" min="0" value={purchase.purchase_price_lrd} onChange={setP('purchase_price_lrd')} placeholder="e.g. 25000" className={inputCls} />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Retailer / Seller Name</label>
-              <input value={purchase.retailer_name} onChange={setP('retailer_name')} placeholder="Where did you buy it?" className={inputCls} />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Receipt / Proof of Purchase</label>
-              <label className="flex items-center gap-3 border border-dashed border-border rounded-lg px-4 py-3 cursor-pointer hover:border-brand/40 transition-colors">
-                <Upload className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                <span className="text-sm text-muted-foreground flex-1">
-                  {receiptFile ? receiptFile.name : 'Upload image or PDF (optional)'}
-                </span>
-                <input type="file" accept="image/*,.pdf" className="hidden" onChange={e => setReceiptFile(e.target.files?.[0] ?? null)} />
-              </label>
-            </div>
-          </section>
+          {purchaseSection(2)}
 
           <button
             type="submit"
@@ -344,6 +490,7 @@ export function RegisterDevicePage() {
           </button>
         </motion.form>
       )}
+      </>)}
     </div>
   )
 }
