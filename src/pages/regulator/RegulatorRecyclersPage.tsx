@@ -335,7 +335,7 @@ export function RegulatorRecyclersPage() {
                   {/* Facility */}
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-[#0f1410] flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-brand-deep flex items-center justify-center flex-shrink-0">
                         <span className="text-[10px] font-bold text-white">
                           {f.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()}
                         </span>
@@ -452,7 +452,7 @@ export function RegulatorRecyclersPage() {
                 formatter={(v: number) => [v, 'Facilities']}
                 cursor={{ fill: 'rgba(0,0,0,.03)' }}
               />
-              <Bar dataKey="count" fill="#2f6b3a" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="#1E5A3C" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </motion.div>

@@ -24,7 +24,7 @@ const COUNTY_POS: Record<string, { x: number; y: number }> = {
 }
 
 const STATUS_FLOW = [
-  { key: 'in_use',             label: 'In use',              color: '#2d6a3f' },
+  { key: 'in_use',             label: 'In use',              color: '#083D24' },
   { key: 'awaiting_transfer',  label: 'Awaiting transfer',   color: '#4a7ba5' },
   { key: 'ready_for_disposal', label: 'Ready for disposal',  color: '#c47c00' },
   { key: 'disposed',           label: 'Disposed (recycled)', color: '#5a9a6b' },
@@ -59,7 +59,7 @@ function LifecycleFlow({ items, total }: { items: { label: string; count: number
       {/* Left dark placed block */}
       <div
         className="w-32 rounded-xl flex flex-col items-center justify-center flex-shrink-0 text-white"
-        style={{ background: '#0f1410' }}
+        style={{ background: '#063921' }}
       >
         <p className="text-[9px] tracking-widest text-white/40 uppercase mb-1">Placed</p>
         <p className="text-2xl font-bold leading-none">{fmt(total)}</p>
@@ -181,14 +181,14 @@ export function ManufacturerAnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f5f5f2' }}>
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
         <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#f5f5f2' }}>
+    <div className="min-h-screen" style={{ background: '#F4F7F2' }}>
       {/* ── Top bar ──────────────────────────────────────────────── */}
       <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-sm text-gray-400">
@@ -207,7 +207,7 @@ export function ManufacturerAnalyticsPage() {
                 className="px-3 py-1.5 rounded-md text-xs font-medium transition-all"
                 style={{
                   background: period === p.id ? 'white' : 'transparent',
-                  color: period === p.id ? '#0f1410' : '#9b9b98',
+                  color: period === p.id ? '#063921' : '#566D62',
                   boxShadow: period === p.id ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                 }}
               >
@@ -224,7 +224,7 @@ export function ManufacturerAnalyticsPage() {
               }
             }}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold text-white"
-            style={{ background: '#0f1410' }}
+            style={{ background: '#063921' }}
           >
             <Download className="w-3.5 h-3.5" />
             Export CSR report
@@ -259,26 +259,26 @@ export function ManufacturerAnalyticsPage() {
                     const d30 = new Date(); d30.setDate(d30.getDate() - 30)
                     return new Date(d.created_at) >= d30
                   }).length)} this month`,
-                  subColor: '#2d6a3f',
+                  subColor: '#083D24',
                   chart: true,
                 },
                 {
                   label: 'DISPOSAL RATE',
                   value: `${disposalRate}%`,
                   sub: `${fmt(disposed)} of ${fmt(total)} recycled`,
-                  subColor: '#2d6a3f',
+                  subColor: '#083D24',
                 },
                 {
                   label: 'CO₂ AVOIDED',
                   value: `${totalCO2.toFixed(1)} kg`,
                   sub: 'through compliant recycling',
-                  subColor: '#9b9b98',
+                  subColor: '#566D62',
                 },
                 {
                   label: 'MATERIALS (g)',
                   value: fmt(totalMaterials),
                   sub: 'recoverable across all devices',
-                  subColor: '#9b9b98',
+                  subColor: '#566D62',
                 },
               ].map((card, i) => (
                 <motion.div
@@ -293,7 +293,7 @@ export function ManufacturerAnalyticsPage() {
                   <p className="text-xs mt-1" style={{ color: card.subColor }}>{card.sub}</p>
                   {card.chart && (
                     <svg className="absolute right-4 top-4 w-16 h-8 opacity-60" viewBox="0 0 64 32">
-                      <polyline points="0,28 12,22 24,18 36,14 48,10 64,4" fill="none" stroke="#2d6a3f" strokeWidth="2" strokeLinecap="round" />
+                      <polyline points="0,28 12,22 24,18 36,14 48,10 64,4" fill="none" stroke="#083D24" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   )}
                 </motion.div>
@@ -338,7 +338,7 @@ export function ManufacturerAnalyticsPage() {
                     {topModels.map((m, i) => {
                       const rate = m.total > 0 ? Math.round((m.disposed / m.total) * 100) : 0
                       const barWidth = Math.round((m.total / maxModelTotal) * 100)
-                      const barColor = rate >= 50 ? '#2d6a3f' : rate >= 25 ? '#c47c00' : '#b83535'
+                      const barColor = rate >= 50 ? '#083D24' : rate >= 25 ? '#c47c00' : '#b83535'
                       return (
                         <div key={i}>
                           <div className="flex items-center justify-between text-xs mb-1">
@@ -349,7 +349,7 @@ export function ManufacturerAnalyticsPage() {
                               {fmt(m.total)} units · <span className="font-semibold" style={{ color: barColor }}>{rate}%</span>
                             </span>
                           </div>
-                          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#f0ede6' }}>
+                          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#F4F7F2' }}>
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${barWidth}%` }}
@@ -373,7 +373,7 @@ export function ManufacturerAnalyticsPage() {
                   Geographic distribution &amp; end-of-life routing
                 </h2>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full" style={{ background: '#e8f5ec', color: '#2d6a3f' }}>
+                  <span className="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full" style={{ background: '#E6EEE7', color: '#083D24' }}>
                     RECYCLED {compliantPct}%
                   </span>
                   <span className="text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-full" style={{ background: '#fdf3dc', color: '#b87a00' }}>
@@ -388,11 +388,11 @@ export function ManufacturerAnalyticsPage() {
               </div>
 
               {/* Liberia county map */}
-              <div className="relative" style={{ height: 300, background: '#e8e5de' }}>
+              <div className="relative" style={{ height: 300, background: '#D7E0D5' }}>
                 <svg className="absolute inset-0 w-full h-full opacity-20">
                   <defs>
                     <pattern id="agrid" width="40" height="40" patternUnits="userSpaceOnUse">
-                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#9b9b98" strokeWidth="0.5" />
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#566D62" strokeWidth="0.5" />
                     </pattern>
                   </defs>
                   <rect width="100%" height="100%" fill="url(#agrid)" />
@@ -400,8 +400,8 @@ export function ManufacturerAnalyticsPage() {
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <polygon
                     points="10,22 18,15 35,12 50,5 70,10 85,15 90,30 88,45 82,55 78,65 72,78 65,88 55,92 45,90 35,85 25,80 18,72 12,60 8,48 6,35"
-                    fill="#dbd8d0"
-                    stroke="#c8c5bd"
+                    fill="#D7E0D5"
+                    stroke="#C5D2C7"
                     strokeWidth="0.5"
                   />
                 </svg>
@@ -415,11 +415,11 @@ export function ManufacturerAnalyticsPage() {
                   >
                     <span
                       className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
-                      style={{ background: '#2d6a3f' }}
+                      style={{ background: '#083D24' }}
                     />
                     <span
                       className="mt-0.5 px-1 rounded text-[8px] font-semibold whitespace-nowrap"
-                      style={{ background: 'rgba(255,255,255,0.8)', color: '#0f1410' }}
+                      style={{ background: 'rgba(255,255,255,0.8)', color: '#063921' }}
                     >
                       {county.replace('Grand ', 'Gr. ')}
                     </span>
@@ -460,7 +460,7 @@ export function ManufacturerAnalyticsPage() {
                           <span className="text-gray-500">{mat.label}</span>
                           <span className="font-semibold text-gray-900">{mat.value.toFixed(1)} g</span>
                         </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#f0ede6' }}>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: '#F4F7F2' }}>
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.min((mat.value / maxVal) * 100, 100)}%` }}
@@ -490,12 +490,12 @@ export function ManufacturerAnalyticsPage() {
                       toner: 'Toner', mixed: 'Mixed'
                     }
                     const HAZARD_COLOR: Record<string, string> = {
-                      none: '#2d6a3f', li_ion_battery: '#c47c00', mercury_ccfl: '#b83535',
+                      none: '#083D24', li_ion_battery: '#c47c00', mercury_ccfl: '#b83535',
                       toner: '#4a7ba5', mixed: '#6d28d9'
                     }
                     return Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([hazard, count]) => (
-                      <div key={hazard} className="rounded-xl p-4 text-center" style={{ background: '#f5f5f2' }}>
-                        <p className="text-xl font-bold" style={{ color: HAZARD_COLOR[hazard] ?? '#0f1410' }}>{count}</p>
+                      <div key={hazard} className="rounded-xl p-4 text-center" style={{ background: '#F4F7F2' }}>
+                        <p className="text-xl font-bold" style={{ color: HAZARD_COLOR[hazard] ?? '#063921' }}>{count}</p>
                         <p className="text-[10px] text-gray-400 mt-1">{HAZARD_LABEL[hazard] ?? hazard}</p>
                         <p className="text-[10px] text-gray-300">{total > 0 ? Math.round((count / total) * 100) : 0}%</p>
                       </div>

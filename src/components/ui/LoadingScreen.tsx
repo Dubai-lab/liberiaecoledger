@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Recycle } from 'lucide-react'
 
 export function LoadingScreen() {
   return (
@@ -9,10 +10,7 @@ export function LoadingScreen() {
         className="flex flex-col items-center gap-4"
       >
         <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-          <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7 text-white" stroke="currentColor" strokeWidth={2}>
-            <rect x="3" y="3" width="18" height="18" rx="3" />
-            <circle cx="15" cy="9" r="2" fill="currentColor" stroke="none" />
-          </svg>
+          <Recycle className="w-7 h-7 text-white" strokeWidth={2.25} />
         </div>
         <div className="flex gap-1">
           {[0, 1, 2].map(i => (

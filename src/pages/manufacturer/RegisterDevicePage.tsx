@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { uploadToIPFS } from '@/lib/pinata'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
+import { isValidImei, normaliseImei } from '@/lib/rates'
 import type { HazardClass } from '@/types/database'
 
 function downloadQR(deviceId: string, label: string) {
@@ -20,9 +21,9 @@ function downloadQR(deviceId: string, label: string) {
   const img = new Image()
   img.onload = () => {
     ctx.drawImage(img, 25, 20, 250, 250)
-    ctx.fillStyle = '#0f0f0e'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center'
+    ctx.fillStyle = '#083D24'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center'
     ctx.fillText(label, 150, 295)
-    ctx.font = '10px monospace'; ctx.fillStyle = '#9b9b98'
+    ctx.font = '10px monospace'; ctx.fillStyle = '#566D62'
     ctx.fillText(deviceId.slice(0, 8) + '…', 150, 315)
     const a = document.createElement('a')
     a.download = `ecoledger-${deviceId.slice(0, 8)}.png`
@@ -31,7 +32,8 @@ function downloadQR(deviceId: string, label: string) {
   img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(serialized)))
 }
 
-const CATEGORIES = ['Laptop', 'Smartphone', 'Tablet', 'Desktop Computer', 'Printer', 'Television', 'Monitor', 'Server', 'Networking Equipment', 'Other']
+// Manufacturers are the source of Smartphones and Laptops on EcoLedger; each needs a unique IMEI
+const CATEGORIES = ['Smartphone', 'Laptop']
 
 const HAZARD_OPTIONS: { value: HazardClass; label: string }[] = [
   { value: 'none',          label: 'None' },
@@ -79,7 +81,11 @@ export function RegisterDevicePage() {
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [key]: e.target.value }))
 
-  const isValid = form.brand.trim() && form.model.trim() && form.category
+  // Smartphones: unique, valid IMEI required. Laptops: serial number required, IMEI optional (no uniqueness).
+  const isLaptop = form.category === 'Laptop'
+  const imeiOk = isLaptop ? (form.imei === '' || isValidImei(form.imei)) : isValidImei(form.imei)
+  const serialOk = !isLaptop || form.serial_number.trim().length >= 4
+  const isValid = !!(form.brand.trim() && form.model.trim() && form.category && imeiOk && serialOk)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -105,7 +111,7 @@ export function RegisterDevicePage() {
         category: form.category,
         manufacture_year: parseInt(form.manufacture_year) || null,
         serial_number: form.serial_number.trim() || null,
-        imei: form.imei.trim() || null,
+        imei: normaliseImei(form.imei) || null,
         hazard_class: form.hazard_class,
         retailer_name: form.retailer_name.trim() || null,
         purchase_price_lrd: form.purchase_price_lrd ? parseFloat(form.purchase_price_lrd) : null,
@@ -123,22 +129,13 @@ export function RegisterDevicePage() {
         material_lead_g: parseFloat(form.material_lead_g) || 0,
       }).select('id').single()
 
-      if (error) throw error
+      if (error) {
+        if (error.code === '23505') throw new Error('This IMEI is already registered on EcoLedger. Each device needs a unique IMEI.')
+        throw error
+      }
 
-      // Write the registration event to the immutable lifecycle log
-      await supabase.from('device_lifecycle').insert({
-        device_id: device.id,
-        event_type: 'registered',
-        actor_id: profile.id,
-        actor_name: profile.full_name ?? profile.organization ?? 'Manufacturer',
-        location: profile.city ? `${profile.city}, Liberia` : 'Liberia',
-        metadata: {
-          brand: form.brand.trim(),
-          model: form.model.trim(),
-          category: form.category,
-          hazard_class: form.hazard_class,
-        },
-      })
+      // The database writes the 'manufactured' genesis event automatically (trg_devices_log_manufactured);
+      // the device now sits in the registry until a consumer claims it by IMEI / laptop serial.
 
       toast.success('Device registered successfully.')
       setRegisteredDevice({ id: device.id, brand: form.brand.trim(), model: form.model.trim() })
@@ -163,7 +160,7 @@ export function RegisterDevicePage() {
           <div className="bg-white border border-border rounded-2xl p-6 flex flex-col items-center gap-4">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Device QR Code</p>
             <div className="p-3 bg-white rounded-xl border border-border">
-              <QRCode id="device-qr-svg" value={registeredDevice.id} size={200} fgColor="#0f0f0e" bgColor="#ffffff" />
+              <QRCode id="device-qr-svg" value={registeredDevice.id} size={200} fgColor="#083D24" bgColor="#ffffff" />
             </div>
             <div className="text-center">
               <p className="text-sm font-semibold">{registeredDevice.brand} {registeredDevice.model}</p>
@@ -193,7 +190,7 @@ export function RegisterDevicePage() {
               type="button"
               onClick={() => navigate('/manufacturer/catalogue')}
               className="flex-1 py-3 rounded-lg text-sm font-medium text-white"
-              style={{ background: '#0f1410' }}
+              style={{ background: '#063921' }}
             >
               View Catalogue
             </button>
@@ -208,7 +205,7 @@ export function RegisterDevicePage() {
       <p className="text-xs text-muted-foreground tracking-widest uppercase mb-0.5">Manufacturer</p>
       <h1 className="text-2xl font-semibold mb-1">Register Device</h1>
       <p className="text-sm text-muted-foreground mb-8">
-        Enter the details for a device you manufacture or import into Liberia. Each registered device receives a unique tracking record on the ledger.
+        Register each Smartphone (with its unique IMEI) or Laptop (with its serial number) that you manufacture or import into Liberia. Consumers can only register devices that appear in this registry.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -273,25 +270,37 @@ export function RegisterDevicePage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">Serial Number</label>
+              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">Serial Number{isLaptop ? ' *' : ''}</label>
               <input
                 type="text"
                 value={form.serial_number}
                 onChange={set('serial_number')}
+                required={isLaptop}
                 placeholder="e.g. SN-1234567890"
                 className="w-full border border-border rounded-lg px-3 py-2.5 text-sm font-mono bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">IMEI (phones only)</label>
+              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">IMEI{isLaptop ? ' (optional)' : ' *'}</label>
               <input
                 type="text"
+                inputMode="numeric"
                 value={form.imei}
-                onChange={set('imei')}
+                onChange={e => setForm(f => ({ ...f, imei: normaliseImei(e.target.value) }))}
                 placeholder="15-digit IMEI"
-                maxLength={15}
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm font-mono bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
+                required={!isLaptop}
+                aria-invalid={form.imei.length === 15 && !imeiOk}
+                className={`w-full border rounded-lg px-3 py-2.5 text-sm font-mono bg-white focus:outline-none focus:ring-2 transition-colors ${
+                  form.imei.length === 15 && !imeiOk ? 'border-red-400 focus:ring-red-200' : 'border-border focus:ring-eco-700/20 focus:border-eco-700'
+                }`}
               />
+              <p className={`text-[11px] ${form.imei.length === 15 && !imeiOk ? 'text-red-600' : 'text-muted-foreground'}`}>
+                {form.imei.length === 15 && !imeiOk
+                  ? 'Invalid check digit — re-check the IMEI.'
+                  : isLaptop
+                    ? 'Only if the laptop has a mobile-data modem. Consumers can verify by serial number instead.'
+                    : 'Unique per unit. Consumers verify this number when they register the device.'}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -399,7 +408,7 @@ export function RegisterDevicePage() {
             type="submit"
             disabled={loading || !isValid}
             className="flex-1 py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            style={{ background: '#0f1410', color: '#fafaf7' }}
+            style={{ background: '#063921', color: '#FFFFFF' }}
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Registering…</> : 'Register Device'}
           </button>

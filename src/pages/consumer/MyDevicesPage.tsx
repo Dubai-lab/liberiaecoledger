@@ -161,7 +161,7 @@ export function MyDevicesPage() {
         <Link
           to="/consumer/register"
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors hover:opacity-90 flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <Plus className="w-4 h-4" />
           Register Device
@@ -258,7 +258,7 @@ export function MyDevicesPage() {
                   </div>
                   <div className="flex gap-2 mt-3">
                     <button type="button" onClick={() => acceptTransfer(t)} disabled={acting === t.id}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#0f1410] text-white hover:opacity-90 transition-opacity disabled:opacity-50">
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-brand-deep text-white hover:opacity-90 transition-opacity disabled:opacity-50">
                       {acting === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="w-3.5 h-3.5" />}
                       Accept
                     </button>
@@ -302,7 +302,7 @@ export function MyDevicesPage() {
               {query ? 'Try a different term.' : 'Register your first device to start tracking its lifecycle.'}
             </p>
             {!query && (
-              <Link to="/consumer/register" className="text-xs font-medium hover:underline" style={{ color: '#2f6b3a' }}>
+              <Link to="/consumer/register" className="text-xs font-medium hover:underline" style={{ color: '#1E5A3C' }}>
                 Register a device â†’
               </Link>
             )}
@@ -315,7 +315,7 @@ export function MyDevicesPage() {
                   to={`/consumer/devices/${device.id}`}
                   className="flex items-center gap-4 p-4 bg-white border border-border rounded-xl hover:border-eco-700/40 hover:shadow-sm transition-all group"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-[#f5f5f2] flex items-center justify-center flex-shrink-0">
+                  <div className="w-11 h-11 rounded-xl bg-brand-tint flex items-center justify-center flex-shrink-0">
                     <Cpu className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">

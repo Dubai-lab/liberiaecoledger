@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import logoCompactLight from '@/brands/logo-compact-light.png'
 import jsQR from 'jsqr'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 interface ScanResult {
   deviceId: string
@@ -146,15 +146,15 @@ export function MobileScanPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen" style={{ background: '#f0ede6' }}>
+    <div className="flex flex-col min-h-screen" style={{ background: '#F4F7F2' }}>
       {/* Header */}
       <div className="px-5 pt-6 pb-4 flex items-center justify-between">
-        <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
-        <p className="text-xs text-[#9b9b98]">Scan device</p>
+        <EcoLedgerLogo />
+        <p className="text-xs text-brand-muted">Scan device</p>
       </div>
 
       {/* Camera viewfinder */}
-      <div className="mx-5 rounded-2xl overflow-hidden relative bg-[#1a1a1a]" style={{ minHeight: 300 }}>
+      <div className="mx-5 rounded-2xl overflow-hidden relative bg-brand" style={{ minHeight: 300 }}>
         <video
           ref={videoRef}
           playsInline
@@ -173,7 +173,7 @@ export function MobileScanPage() {
               <div className="absolute top-0 right-0 w-7 h-7 border-t-2 border-r-2 border-white rounded-tr-md" />
               <div className="absolute bottom-0 left-0 w-7 h-7 border-b-2 border-l-2 border-white rounded-bl-md" />
               <div className="absolute bottom-0 right-0 w-7 h-7 border-b-2 border-r-2 border-white rounded-br-md" />
-              <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-[#2d6a3f] rounded-full" />
+              <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-brand rounded-full" />
             </div>
             <p className="text-[10px] tracking-widest text-white/60 uppercase mt-6">Hold steady · Scanning…</p>
           </div>
@@ -190,21 +190,21 @@ export function MobileScanPage() {
 
       {/* Manual input */}
       <div className="mx-5 mt-4">
-        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-2">Or enter manually</p>
+        <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-2">Or enter manually</p>
         <div className="flex gap-2">
           <input
             value={manualInput}
             onChange={e => setManualInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && lookupDevice(manualInput)}
             placeholder="IMEI, Serial number, or Device ID"
-            className="flex-1 bg-white border border-[#e8e5de] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0f0f0e]"
+            className="flex-1 bg-white border border-brand-line rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#083D24]"
           />
           <button
             type="button"
             onClick={() => lookupDevice(manualInput)}
             disabled={searching}
             className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
-            style={{ background: '#0f0f0e' }}
+            style={{ background: '#083D24' }}
           >
             {searching ? '…' : 'Search'}
           </button>
@@ -216,14 +216,14 @@ export function MobileScanPage() {
       {result && (
         <div className="mx-5 mt-4 bg-white rounded-2xl p-4">
           <div className="flex items-start gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full bg-[#2d6a3f] flex items-center justify-center flex-shrink-0">
+            <div className="w-9 h-9 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
               <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="white" strokeWidth={2.5}>
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold text-[#0f0f0e]">{result.brand} {result.model}</p>
-              <p className="text-xs text-[#9b9b98]">
+              <p className="text-sm font-bold text-brand-ink">{result.brand} {result.model}</p>
+              <p className="text-xs text-brand-muted">
                 {result.imei
                   ? `IMEI ${result.imei.slice(0, 6)}…${result.imei.slice(-4)}`
                   : result.serialNumber
@@ -236,7 +236,7 @@ export function MobileScanPage() {
             type="button"
             onClick={() => navigate(`/mobile/device/${result.deviceId}`)}
             className="w-full py-3.5 rounded-xl text-white text-sm font-bold"
-            style={{ background: '#0f0f0e' }}
+            style={{ background: '#083D24' }}
           >
             Open device record
           </button>

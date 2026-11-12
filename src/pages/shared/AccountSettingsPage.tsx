@@ -116,7 +116,7 @@ export function AccountSettingsPage() {
 
       {/* Profile summary */}
       <div className="bg-white rounded-2xl p-5 border border-border mb-6 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-[#0f1410] flex items-center justify-center flex-shrink-0">
+        <div className="w-14 h-14 rounded-2xl bg-brand-deep flex items-center justify-center flex-shrink-0">
           <span className="text-lg font-bold text-white">{initials}</span>
         </div>
         <div>
@@ -155,7 +155,7 @@ export function AccountSettingsPage() {
               value={fullName}
               onChange={e => setFullName(e.target.value)}
               placeholder="Your full name"
-              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2f6b3a]/30 focus:border-[#2f6b3a]"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
             />
           </div>
           <div>
@@ -165,7 +165,7 @@ export function AccountSettingsPage() {
               onChange={e => setPhone(e.target.value)}
               placeholder="+231 ..."
               type="tel"
-              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2f6b3a]/30 focus:border-[#2f6b3a]"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
             />
           </div>
           <div>
@@ -174,7 +174,7 @@ export function AccountSettingsPage() {
               value={organization}
               onChange={e => setOrganization(e.target.value)}
               placeholder="Company or institution"
-              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2f6b3a]/30 focus:border-[#2f6b3a]"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
             />
           </div>
           <div>
@@ -183,7 +183,7 @@ export function AccountSettingsPage() {
               value={city}
               onChange={e => setCity(e.target.value)}
               placeholder="Monrovia"
-              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2f6b3a]/30 focus:border-[#2f6b3a]"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand"
             />
           </div>
         </div>
@@ -192,7 +192,7 @@ export function AccountSettingsPage() {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#0f1410] text-white rounded-lg text-sm font-semibold hover:bg-[#1a2a1f] transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-brand-deep text-white rounded-lg text-sm font-semibold hover:bg-brand-secondary transition-colors disabled:opacity-50"
           >
             {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? 'Saving…' : 'Save Changes'}

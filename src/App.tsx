@@ -36,6 +36,7 @@ import { BlockExplorerPage } from '@/pages/resources/BlockExplorerPage'
 import { PressKitPage } from '@/pages/resources/PressKitPage'
 import { ChangelogPage } from '@/pages/resources/ChangelogPage'
 import { RequestAccessPage } from '@/pages/stakeholders/RequestAccessPage'
+import { SignupPage } from '@/pages/auth/SignupPage'
 import { RecyclerOnboardingPage } from '@/pages/stakeholders/RecyclerOnboardingPage'
 import { RegulatorPortalPage } from '@/pages/stakeholders/RegulatorPortalPage'
 import { NGOPartnershipsPage } from '@/pages/stakeholders/NGOPartnershipsPage'
@@ -98,6 +99,10 @@ export default function App() {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/login/institutional" element={<InstitutionalLoginPage />} />
+        <Route
+          path="/signup"
+          element={isAuthenticated ? <Navigate to={`/${activeRole ?? 'consumer'}`} replace /> : <SignupPage />}
+        />
 
         {/* Account setup — authenticated but no name/password yet */}
         <Route

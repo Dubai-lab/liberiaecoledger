@@ -58,33 +58,33 @@ const governance = [
   },
 ]
 
-const colors = ['#2d6a3f', '#0f0f0e', '#6b4a2a', '#1a3a5c', '#5c1a4a']
+const colors = ['#083D24', '#083D24', '#6b4a2a', '#1a3a5c', '#5c1a4a']
 
 export function BoardPage() {
   return (
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#0f0f0e] pt-24 pb-14 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-2">Stakeholders</p>
-          <h1 className="text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-deep pt-32 pb-14 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-2">Stakeholders</p>
+          <h1 className="text-4xl font-bold text-white mb-3 font-display font-bold">
             Board of Directors
           </h1>
-          <p className="text-[#9b9b98] text-base max-w-2xl leading-relaxed">
+          <p className="text-white/70 text-base max-w-2xl leading-relaxed">
             EcoLedger Foundation is governed by an independent board of five directors with expertise spanning environmental regulation, blockchain technology, finance, environmental science, and community impact.
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-14 space-y-16">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-14 space-y-16">
 
         {/* Board members */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-6">Board members</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-6">Board members</p>
           <div className="space-y-5">
             {board.map((m, i) => (
-              <div key={m.name} className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de] flex gap-5">
+              <div key={m.name} className="bg-brand-tint rounded-2xl p-6 border border-brand-line flex gap-5">
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
                   style={{ background: colors[i % colors.length] }}
@@ -92,12 +92,12 @@ export function BoardPage() {
                   {m.initials}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-[#0f0f0e]">{m.name}</p>
-                  <p className="text-xs font-semibold text-[#9b9b98] mb-2">{m.title}</p>
-                  <p className="text-sm text-[#6b6b68] leading-relaxed mb-3">{m.bio}</p>
+                  <p className="font-bold text-brand-ink">{m.name}</p>
+                  <p className="text-xs font-semibold text-brand-muted mb-2">{m.title}</p>
+                  <p className="text-sm text-brand-muted leading-relaxed mb-3">{m.bio}</p>
                   <div className="flex flex-wrap gap-2">
                     {m.focus.split(' · ').map(tag => (
-                      <span key={tag} className="text-[10px] font-semibold text-[#6b6b68] border border-[#e8e5de] rounded-full px-2.5 py-0.5">
+                      <span key={tag} className="text-[10px] font-semibold text-brand-muted border border-brand-line rounded-full px-2.5 py-0.5">
                         {tag}
                       </span>
                     ))}
@@ -110,20 +110,20 @@ export function BoardPage() {
 
         {/* Governance */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Governance principles</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Governance principles</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {governance.map(g => (
-              <div key={g.title} className="bg-white rounded-2xl p-5 border border-[#e8e5de]">
-                <p className="font-bold text-[#0f0f0e] mb-2">{g.title}</p>
-                <p className="text-sm text-[#9b9b98] leading-relaxed">{g.body}</p>
+              <div key={g.title} className="bg-white rounded-2xl p-5 border border-brand-line">
+                <p className="font-bold text-brand-ink mb-2">{g.title}</p>
+                <p className="text-sm text-brand-muted leading-relaxed">{g.body}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Foundation structure */}
-        <div className="border border-[#e8e5de] rounded-2xl p-6">
-          <p className="font-bold text-[#0f0f0e] mb-4">Foundation structure</p>
+        <div className="border border-brand-line rounded-2xl p-6">
+          <p className="font-bold text-brand-ink mb-4">Foundation structure</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { label: 'Entity type',     value: 'Non-profit Foundation' },
@@ -133,26 +133,26 @@ export function BoardPage() {
               { label: 'Term length',     value: '3 years, max 2 terms' },
               { label: 'Board contact',   value: 'support@liberiaecoledger.com' },
             ].map(f => (
-              <div key={f.label} className="bg-[#fafaf8] rounded-xl px-4 py-3 border border-[#e8e5de]">
-                <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-1">{f.label}</p>
-                <p className="text-sm font-semibold text-[#0f0f0e]">{f.value}</p>
+              <div key={f.label} className="bg-brand-tint rounded-xl px-4 py-3 border border-brand-line">
+                <p className="text-[10px] font-semibold tracking-widest text-brand-muted uppercase mb-1">{f.label}</p>
+                <p className="text-sm font-semibold text-brand-ink">{f.value}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Contact */}
-        <div className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-          <p className="font-bold text-[#0f0f0e] mb-2">Contact the board</p>
-          <p className="text-sm text-[#9b9b98] leading-relaxed mb-4">
+        <div className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
+          <p className="font-bold text-brand-ink mb-2">Contact the board</p>
+          <p className="text-sm text-brand-muted leading-relaxed mb-4">
             For governance enquiries, institutional partnership proposals, or to report a concern under our Code of Ethics, contact the Board Secretary directly.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
+            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-brand hover:underline">
               support@liberiaecoledger.com
             </a>
-            <span className="text-[#e8e5de]">·</span>
-            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-[#2d6a3f] hover:underline">
+            <span className="text-brand-line">·</span>
+            <a href="mailto:support@liberiaecoledger.com" className="text-sm font-semibold text-brand hover:underline">
               support@liberiaecoledger.com (ethics reports)
             </a>
           </div>

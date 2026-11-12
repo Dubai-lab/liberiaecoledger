@@ -4,8 +4,8 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-[#0f0f0e] mb-4 pb-2 border-b border-[#e8e5de]">{title}</h2>
-      <div className="space-y-3 text-sm text-[#6b6b68] leading-relaxed">{children}</div>
+      <h2 className="text-lg font-bold text-brand-ink mb-4 pb-2 border-b border-brand-line">{title}</h2>
+      <div className="space-y-3 text-sm text-brand-muted leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -22,27 +22,27 @@ export function CookiePolicyPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Legal</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Legal</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Cookie Policy
           </h1>
-          <p className="text-sm text-[#9b9b98]">Last updated: May 2026 · Strictly essential cookies only · No ad trackers</p>
+          <p className="text-sm text-brand-muted">Last updated: May 2026 · Strictly essential cookies only · No ad trackers</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
 
-        <div className="bg-[#e8f5ec] border border-[#c5e0cb] rounded-2xl p-5 mb-10 flex gap-4">
-          <div className="w-8 h-8 rounded-full bg-[#2d6a3f] flex items-center justify-center flex-shrink-0 mt-0.5">
+        <div className="bg-brand-tint border border-brand-line rounded-2xl p-5 mb-10 flex gap-4">
+          <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth={2.5}>
               <path d="M20 6L9 17l-5-5" />
             </svg>
           </div>
           <div>
-            <p className="text-sm font-bold text-[#1a4a25] mb-1">We only use essential cookies.</p>
-            <p className="text-sm text-[#2d6a3f]">EcoLedger does not use advertising, marketing, analytics, or third-party tracking cookies. No cookie consent banner is shown because no non-essential cookies are set.</p>
+            <p className="text-sm font-bold text-brand-deep mb-1">We only use essential cookies.</p>
+            <p className="text-sm text-brand">EcoLedger does not use advertising, marketing, analytics, or third-party tracking cookies. No cookie consent banner is shown because no non-essential cookies are set.</p>
           </div>
         </div>
 
@@ -52,24 +52,24 @@ export function CookiePolicyPage() {
 
         <Section title="2. Cookies We Use">
           <p>We use only strictly essential cookies — those required for the Platform to function. The table below lists every cookie set by the EcoLedger Platform.</p>
-          <div className="mt-4 overflow-x-auto rounded-xl border border-[#e8e5de]">
+          <div className="mt-4 overflow-x-auto rounded-xl border border-brand-line">
             <table className="w-full text-xs">
-              <thead className="bg-[#fafaf8]">
+              <thead className="bg-brand-tint">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-[#0f0f0e] w-1/4">Cookie name</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#0f0f0e]">Purpose</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#0f0f0e] w-24">Duration</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#0f0f0e] w-20">Essential</th>
+                  <th className="text-left px-4 py-3 font-semibold text-brand-ink w-1/4">Cookie name</th>
+                  <th className="text-left px-4 py-3 font-semibold text-brand-ink">Purpose</th>
+                  <th className="text-left px-4 py-3 font-semibold text-brand-ink w-24">Duration</th>
+                  <th className="text-left px-4 py-3 font-semibold text-brand-ink w-20">Essential</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#e8e5de]">
+              <tbody className="divide-y divide-brand-line">
                 {cookies.map(c => (
                   <tr key={c.name} className="bg-white">
-                    <td className="px-4 py-3 font-mono text-[#0f0f0e]">{c.name}</td>
-                    <td className="px-4 py-3 text-[#6b6b68]">{c.purpose}</td>
-                    <td className="px-4 py-3 text-[#6b6b68]">{c.duration}</td>
+                    <td className="px-4 py-3 font-mono text-brand-ink">{c.name}</td>
+                    <td className="px-4 py-3 text-brand-muted">{c.purpose}</td>
+                    <td className="px-4 py-3 text-brand-muted">{c.duration}</td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 text-[#2d6a3f] font-semibold">
+                      <span className="inline-flex items-center gap-1 text-brand font-semibold">
                         <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth={2.5}>
                           <path d="M20 6L9 17l-5-5" />
                         </svg>
@@ -97,9 +97,9 @@ export function CookiePolicyPage() {
         <Section title="4. Third-Party Services">
           <p>Our infrastructure providers (Supabase, Vercel, Cloudflare) may set their own cookies as part of their service delivery. These are infrastructure-level cookies and are not used for tracking or profiling. Links to their respective cookie policies are below:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
-            <li>Supabase: <span className="text-[#2d6a3f]">supabase.com/privacy</span></li>
-            <li>Vercel: <span className="text-[#2d6a3f]">vercel.com/legal/privacy-policy</span></li>
-            <li>Cloudflare: <span className="text-[#2d6a3f]">cloudflare.com/privacypolicy</span></li>
+            <li>Supabase: <span className="text-brand">supabase.com/privacy</span></li>
+            <li>Vercel: <span className="text-brand">vercel.com/legal/privacy-policy</span></li>
+            <li>Cloudflare: <span className="text-brand">cloudflare.com/privacypolicy</span></li>
           </ul>
         </Section>
 
@@ -109,7 +109,7 @@ export function CookiePolicyPage() {
         </Section>
 
         <Section title="6. Contact">
-          <p>If you have questions about our use of cookies, contact <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
+          <p>If you have questions about our use of cookies, contact <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
       </div>

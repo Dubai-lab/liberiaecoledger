@@ -6,13 +6,13 @@ import logoDark from '@/brands/logo-dark.png'
 
 function AssetCard({ label, bg, children }: { label: string; bg: string; children: React.ReactNode }) {
   return (
-    <div className="border border-[#e8e5de] rounded-2xl overflow-hidden">
+    <div className="border border-brand-line rounded-2xl overflow-hidden">
       <div className={`${bg} h-36 flex items-center justify-center p-6`}>
         {children}
       </div>
       <div className="px-4 py-3 flex items-center justify-between">
-        <p className="text-xs font-medium text-[#6b6b68]">{label}</p>
-        <span className="text-[10px] text-[#9b9b98]">PNG</span>
+        <p className="text-xs font-medium text-brand-muted">{label}</p>
+        <span className="text-[10px] text-brand-muted">PNG</span>
       </div>
     </div>
   )
@@ -23,21 +23,21 @@ export function PressKitPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Resources</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Resources</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Press Kit
           </h1>
-          <p className="text-sm text-[#9b9b98]">Brand assets, boilerplate copy, and media contact for journalists and partners.</p>
+          <p className="text-sm text-brand-muted">Brand assets, boilerplate copy, and media contact for journalists and partners.</p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-12 space-y-12">
 
         {/* About blurb */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">About EcoLedger</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">About EcoLedger</p>
           <div className="space-y-4">
             {[
               {
@@ -53,9 +53,9 @@ export function PressKitPage() {
                 text: 'Founded in 2025 as academic research into Liberia\'s informal e-waste economy, EcoLedger has grown into a full-stack environmental management system. Liberia generates approximately 8,000 tonnes of e-waste annually, with less than 3% formally recovered. EcoLedger addresses this by minting an on-chain record for every device sold in the country, creating a chain of custody that is publicly auditable and tamper-proof. Manufacturers fulfil Extended Producer Responsibility obligations through the platform. EPA-certified recyclers log verified disposals that automatically trigger EcoCredit rewards to device owners — redeemable for mobile money via Orange Money and MTN MoMo. Regulators access a national compliance map and investigation tools. The platform is aligned with UN SDGs 12 (Responsible Consumption), 13 (Climate Action), 3 (Health), and 11 (Sustainable Cities).',
               },
             ].map(b => (
-              <div key={b.label} className="bg-[#fafaf8] rounded-xl p-5 border border-[#e8e5de]">
-                <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-2">{b.label}</p>
-                <p className="text-sm text-[#0f0f0e] leading-relaxed">{b.text}</p>
+              <div key={b.label} className="bg-brand-tint rounded-xl p-5 border border-brand-line">
+                <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-2">{b.label}</p>
+                <p className="text-sm text-brand-ink leading-relaxed">{b.text}</p>
               </div>
             ))}
           </div>
@@ -63,7 +63,7 @@ export function PressKitPage() {
 
         {/* Key facts */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Key Facts</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Key Facts</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {[
               { label: 'Founded',         value: '2025' },
@@ -75,9 +75,9 @@ export function PressKitPage() {
               { label: 'Mobile app',      value: 'Progressive Web App (PWA) for field recyclers' },
               { label: 'Contact',         value: 'support@liberiaecoledger.com' },
             ].map(f => (
-              <div key={f.label} className="flex gap-3 border border-[#e8e5de] rounded-xl px-4 py-3">
-                <p className="text-xs font-semibold text-[#9b9b98] w-36 flex-shrink-0">{f.label}</p>
-                <p className="text-sm text-[#0f0f0e]">{f.value}</p>
+              <div key={f.label} className="flex gap-3 border border-brand-line rounded-xl px-4 py-3">
+                <p className="text-xs font-semibold text-brand-muted w-36 flex-shrink-0">{f.label}</p>
+                <p className="text-sm text-brand-ink">{f.value}</p>
               </div>
             ))}
           </div>
@@ -85,16 +85,16 @@ export function PressKitPage() {
 
         {/* Logo assets */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-2">Logo Assets</p>
-          <p className="text-sm text-[#9b9b98] mb-5">Use logos as provided. Do not alter colours, proportions, or add effects. Minimum clear space equals the height of the "E" in EcoLedger.</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-2">Logo Assets</p>
+          <p className="text-sm text-brand-muted mb-5">Use logos as provided. Do not alter colours, proportions, or add effects. Minimum clear space equals the height of the "E" in EcoLedger.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <AssetCard label="Logo dark (on light backgrounds)" bg="bg-[#f5f5f2]">
+            <AssetCard label="Logo dark (on light backgrounds)" bg="bg-brand-tint">
               <img src={logoDark} alt="EcoLedger logo dark" className="max-h-16 w-auto object-contain" />
             </AssetCard>
-            <AssetCard label="Compact logo — light variant" bg="bg-[#fafaf8]">
+            <AssetCard label="Compact logo — light variant" bg="bg-brand-tint">
               <img src={logoCompactLight} alt="EcoLedger compact light" className="max-h-16 w-auto object-contain" />
             </AssetCard>
-            <AssetCard label="Compact logo — dark variant" bg="bg-[#0f0f0e]">
+            <AssetCard label="Compact logo — dark variant" bg="bg-brand">
               <img src={logoCompactDark} alt="EcoLedger compact dark" className="max-h-16 w-auto object-contain" />
             </AssetCard>
           </div>
@@ -102,20 +102,23 @@ export function PressKitPage() {
 
         {/* Brand colours */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Brand Colours</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Brand Colours</p>
           <div className="flex flex-wrap gap-4">
             {[
-              { name: 'Forest',     hex: '#2d6a3f', text: 'white' },
-              { name: 'Near Black', hex: '#0f0f0e', text: 'white' },
-              { name: 'Warm White', hex: '#fafaf8', text: '#0f0f0e' },
-              { name: 'Stone',      hex: '#9b9b98', text: 'white' },
-              { name: 'Border',     hex: '#e8e5de', text: '#0f0f0e' },
+              { name: 'Primary Forest Green', hex: '#083D24', text: 'white' },
+              { name: 'Secondary Green',      hex: '#0F482E', text: 'white' },
+              { name: 'Deep Green',           hex: '#063921', text: 'white' },
+              { name: 'Muted Sage',           hex: '#748C7F', text: 'white' },
+              { name: 'Light Sage',           hex: '#D7E0D5', text: '#102F27' },
+              { name: 'Primary Text',         hex: '#102F27', text: 'white' },
+              { name: 'Muted Text',           hex: '#566D62', text: 'white' },
+              { name: 'White',                hex: '#FFFFFF', text: '#102F27' },
             ].map(c => (
               <div key={c.name} className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl border border-[#e8e5de] flex-shrink-0" style={{ background: c.hex }} />
+                <div className="w-12 h-12 rounded-xl border border-brand-line flex-shrink-0" style={{ background: c.hex }} />
                 <div>
-                  <p className="text-sm font-semibold text-[#0f0f0e]">{c.name}</p>
-                  <p className="text-xs font-mono text-[#9b9b98]">{c.hex}</p>
+                  <p className="text-sm font-semibold text-brand-ink">{c.name}</p>
+                  <p className="text-xs font-mono text-brand-muted">{c.hex}</p>
                 </div>
               </div>
             ))}
@@ -123,14 +126,14 @@ export function PressKitPage() {
         </div>
 
         {/* Media contact */}
-        <div className="bg-[#0f0f0e] rounded-2xl p-8">
-          <p className="text-[10px] font-bold tracking-widest text-[#6b6b68] uppercase mb-3">Media Contact</p>
+        <div className="bg-brand-deep rounded-2xl p-8">
+          <p className="text-[10px] font-bold tracking-widest text-white/60 uppercase mb-3">Media Contact</p>
           <p className="text-white font-bold text-lg mb-1">EcoLedger Foundation — Press Office</p>
-          <p className="text-[#9b9b98] text-sm mb-4">For interview requests, editorial use of assets, or partnership enquiries:</p>
-          <a href="mailto:support@liberiaecoledger.com" className="text-[#6dba7f] text-sm font-semibold hover:underline">
+          <p className="text-white/70 text-sm mb-4">For interview requests, editorial use of assets, or partnership enquiries:</p>
+          <a href="mailto:support@liberiaecoledger.com" className="text-[#8FD3A8] text-sm font-semibold hover:underline">
             support@liberiaecoledger.com
           </a>
-          <p className="text-[#6b6b68] text-xs mt-2">We aim to respond to media enquiries within 48 hours.</p>
+          <p className="text-white/60 text-xs mt-2">We aim to respond to media enquiries within 48 hours.</p>
         </div>
 
       </div>

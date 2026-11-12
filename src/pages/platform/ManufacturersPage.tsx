@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { FeatureIcon } from '@/components/landing/FeatureIcon'
 
 const features = [
   {
@@ -49,21 +50,21 @@ export function ManufacturersPage() {
       <LandingNav alwaysOpaque />
 
       {/* Hero */}
-      <div className="bg-[#0f0f0e] pt-24 pb-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-3">Platform · Manufacturers</p>
-          <h1 className="text-5xl font-bold text-white leading-tight mb-5" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-deep pt-32 pb-16 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-3">Platform · Manufacturers</p>
+          <h1 className="text-5xl font-bold text-white leading-tight mb-5 font-display font-bold">
             Fulfil your EPR obligations.<br />
-            <span className="text-[#6dba7f]">Prove it with data.</span>
+            <span className="text-[#8FD3A8]">Prove it with data.</span>
           </h1>
-          <p className="text-lg text-[#9b9b98] leading-relaxed max-w-2xl mb-8">
+          <p className="text-lg text-white/70 leading-relaxed max-w-2xl mb-8">
             EcoLedger gives manufacturers a verified, auditable record of every unit registered, transferred, and disposed. Turn compliance from a burden into a competitive advantage.
           </p>
           <div className="flex flex-wrap gap-4">
             <button
               type="button"
               onClick={() => navigate('/login')}
-              className="px-6 py-3 bg-white text-[#0f0f0e] text-sm font-semibold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+              className="px-6 py-3 bg-white text-brand text-sm font-semibold rounded-xl hover:bg-brand-tint transition-colors"
             >
               Apply for manufacturer access
             </button>
@@ -75,32 +76,32 @@ export function ManufacturersPage() {
       </div>
 
       {/* Stats bar */}
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] py-8 px-6">
-        <div className="max-w-4xl mx-auto flex flex-wrap gap-8">
+      <div className="bg-brand-tint border-b border-brand-line py-8 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto flex flex-wrap gap-8">
           {[
             { value: '2.4M+', label: 'units imported into Liberia annually' },
             { value: '<3%',   label: 'formally recycled without EcoLedger' },
             { value: '100%',  label: 'EPR audit trail from chain data' },
           ].map(s => (
             <div key={s.label}>
-              <p className="text-2xl font-bold text-[#0f0f0e]">{s.value}</p>
-              <p className="text-xs text-[#9b9b98] mt-0.5">{s.label}</p>
+              <p className="text-2xl font-bold text-brand-ink">{s.value}</p>
+              <p className="text-xs text-brand-muted mt-0.5">{s.label}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Features */}
-      <div className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-3">What you can do</p>
-          <h2 className="text-3xl font-bold text-[#0f0f0e] mb-12 max-w-xl">Full lifecycle visibility from manufacture to disposal.</h2>
+      <div className="py-20 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-3">What you can do</p>
+          <h2 className="text-3xl font-bold text-brand-ink mb-12 max-w-xl">Full lifecycle visibility from manufacture to disposal.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {features.map(f => (
-              <div key={f.title} className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-                <p className="text-2xl mb-3">{f.icon}</p>
-                <p className="font-bold text-[#0f0f0e] mb-2">{f.title}</p>
-                <p className="text-sm text-[#9b9b98] leading-relaxed">{f.body}</p>
+              <div key={f.title} className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
+                <FeatureIcon emoji={f.icon} />
+                <p className="font-bold text-brand-ink mb-2">{f.title}</p>
+                <p className="text-sm text-brand-muted leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
@@ -108,20 +109,20 @@ export function ManufacturersPage() {
       </div>
 
       {/* EPR Obligations */}
-      <div id="obligations" className="py-20 px-6 bg-[#fafaf8] border-t border-[#e8e5de] scroll-mt-20">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-3">EPR Obligations</p>
-          <h2 className="text-3xl font-bold text-[#0f0f0e] mb-4">What Liberian law requires of manufacturers.</h2>
-          <p className="text-sm text-[#9b9b98] mb-10 max-w-2xl">Extended Producer Responsibility (EPR) regulations require manufacturers who sell electronics into Liberia to take responsibility for end-of-life management. EcoLedger makes compliance straightforward and verifiable.</p>
+      <div id="obligations" className="py-20 px-5 md:px-8 lg:px-12 bg-brand-tint border-t border-brand-line scroll-mt-20">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-3">EPR Obligations</p>
+          <h2 className="text-3xl font-bold text-brand-ink mb-4">What Liberian law requires of manufacturers.</h2>
+          <p className="text-sm text-brand-muted mb-10 max-w-2xl">Extended Producer Responsibility (EPR) regulations require manufacturers who sell electronics into Liberia to take responsibility for end-of-life management. EcoLedger makes compliance straightforward and verifiable.</p>
           <div className="space-y-4">
             {obligations.map((o, i) => (
-              <div key={o.label} className="flex gap-5 bg-white rounded-2xl p-5 border border-[#e8e5de]">
-                <div className="w-8 h-8 rounded-full bg-[#0f0f0e] text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+              <div key={o.label} className="flex gap-5 bg-white rounded-2xl p-5 border border-brand-line">
+                <div className="w-8 h-8 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                   {String(i + 1).padStart(2, '0')}
                 </div>
                 <div>
-                  <p className="font-bold text-[#0f0f0e] mb-1">{o.label}</p>
-                  <p className="text-sm text-[#9b9b98] leading-relaxed">{o.desc}</p>
+                  <p className="font-bold text-brand-ink mb-1">{o.label}</p>
+                  <p className="text-sm text-brand-muted leading-relaxed">{o.desc}</p>
                 </div>
               </div>
             ))}
@@ -130,16 +131,16 @@ export function ManufacturersPage() {
       </div>
 
       {/* CTA */}
-      <div className="py-20 px-6 bg-[#0f0f0e]">
-        <div className="max-w-4xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="py-20 px-5 md:px-8 lg:px-12 bg-brand">
+        <div className="max-w-content mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="text-3xl font-bold text-white mb-2">Ready to register your products?</h2>
-            <p className="text-[#9b9b98] max-w-md">Manufacturer access requires verification of business registration and EPA Liberia product import records.</p>
+            <p className="text-white/70 max-w-md">Manufacturer access requires verification of business registration and EPA Liberia product import records.</p>
           </div>
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="flex-shrink-0 px-8 py-4 bg-white text-[#0f0f0e] text-sm font-bold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+            className="flex-shrink-0 px-8 py-4 bg-white text-brand text-sm font-bold rounded-xl hover:bg-brand-tint transition-colors"
           >
             Apply for access
           </button>

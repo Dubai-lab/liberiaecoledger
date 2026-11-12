@@ -4,8 +4,8 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-[#0f0f0e] mb-4 pb-2 border-b border-[#e8e5de]">{title}</h2>
-      <div className="space-y-3 text-sm text-[#6b6b68] leading-relaxed">{children}</div>
+      <h2 className="text-lg font-bold text-brand-ink mb-4 pb-2 border-b border-brand-line">{title}</h2>
+      <div className="space-y-3 text-sm text-brand-muted leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -15,17 +15,17 @@ export function TermsOfServicePage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Legal</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Legal</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Terms of Service
           </h1>
-          <p className="text-sm text-[#9b9b98]">Last updated: May 2026 · Governing law: Republic of Liberia</p>
+          <p className="text-sm text-brand-muted">Last updated: May 2026 · Governing law: Republic of Liberia</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
 
         <Section title="1. Acceptance of Terms">
           <p>By accessing or using the Liberia EcoLedger platform ("the Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Platform. These Terms apply to all users regardless of role — consumer, manufacturer, recycler, regulator, auditor, or administrator.</p>
@@ -50,10 +50,10 @@ export function TermsOfServicePage() {
         </Section>
 
         <Section title="4. Role-Specific Obligations">
-          <p><strong className="text-[#0f0f0e]">Manufacturers</strong> are responsible for accurately registering all units sold into Liberia. Fraudulent registrations or deliberate misclassification of hazard levels may result in account suspension and referral to the EPA Liberia.</p>
-          <p><strong className="text-[#0f0f0e]">Recyclers</strong> must hold a valid EPA Liberia licence at all times. You agree not to log disposal events for devices you have not physically received and processed. Misuse of disposal logging constitutes fraud.</p>
-          <p><strong className="text-[#0f0f0e]">Consumers</strong> agree that device registrations and transfers accurately reflect real-world ownership. You may not register devices you do not own.</p>
-          <p><strong className="text-[#0f0f0e]">Regulators and Auditors</strong> agree to use compliance data solely for lawful regulatory or auditing purposes. Exporting or sharing Platform data with unauthorised parties is prohibited.</p>
+          <p><strong className="text-brand-ink">Manufacturers</strong> are responsible for accurately registering all units sold into Liberia. Fraudulent registrations or deliberate misclassification of hazard levels may result in account suspension and referral to the EPA Liberia.</p>
+          <p><strong className="text-brand-ink">Recyclers</strong> must hold a valid EPA Liberia licence at all times. You agree not to log disposal events for devices you have not physically received and processed. Misuse of disposal logging constitutes fraud.</p>
+          <p><strong className="text-brand-ink">Consumers</strong> agree that device registrations and transfers accurately reflect real-world ownership. You may not register devices you do not own.</p>
+          <p><strong className="text-brand-ink">Regulators and Auditors</strong> agree to use compliance data solely for lawful regulatory or auditing purposes. Exporting or sharing Platform data with unauthorised parties is prohibited.</p>
         </Section>
 
         <Section title="5. EcoCredits">
@@ -89,7 +89,7 @@ export function TermsOfServicePage() {
         </Section>
 
         <Section title="9. Termination">
-          <p>We reserve the right to suspend or terminate any account that violates these Terms, at our discretion and without prior notice. Users may request account closure by contacting <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. On-chain records associated with a closed account remain on the public ledger.</p>
+          <p>We reserve the right to suspend or terminate any account that violates these Terms, at our discretion and without prior notice. Users may request account closure by contacting <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>. On-chain records associated with a closed account remain on the public ledger.</p>
         </Section>
 
         <Section title="10. Governing Law">
@@ -97,7 +97,7 @@ export function TermsOfServicePage() {
         </Section>
 
         <Section title="11. Contact">
-          <p>For questions about these Terms, contact <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
+          <p>For questions about these Terms, contact <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
       </div>

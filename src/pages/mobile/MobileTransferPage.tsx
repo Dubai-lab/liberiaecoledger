@@ -114,40 +114,40 @@ export function MobileTransferPage() {
   const selectedDevice = devices.find(d => d.id === deviceId)
 
   return (
-    <div className="min-h-screen px-5 pt-6 pb-10" style={{ background: '#f0ede6' }}>
+    <div className="min-h-screen px-5 pt-6 pb-10" style={{ background: '#F4F7F2' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
           aria-label="Go back"
           onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center flex-shrink-0"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth={2}>
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
         <div>
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase">Consumer</p>
-          <p className="text-base font-semibold text-[#0f0f0e]">Transfer a Device</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase">Consumer</p>
+          <p className="text-base font-semibold text-brand-ink">Transfer a Device</p>
         </div>
       </div>
 
-      <p className="text-xs text-[#9b9b98] mb-6 leading-relaxed">
+      <p className="text-xs text-brand-muted mb-6 leading-relaxed">
         Transferring ownership creates an immutable record on the EcoLedger chain.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Device selection */}
         <div className="bg-white rounded-2xl p-4 space-y-3">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase">Device</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase">Device</p>
 
           {loadingDevices ? (
-            <div className="flex items-center gap-2 text-sm text-[#9b9b98]">
+            <div className="flex items-center gap-2 text-sm text-brand-muted">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading devices…
             </div>
           ) : devices.length === 0 ? (
-            <p className="text-sm text-[#9b9b98]">No eligible devices found.</p>
+            <p className="text-sm text-brand-muted">No eligible devices found.</p>
           ) : (
             <div className="space-y-2">
               {devices.map(d => (
@@ -157,16 +157,16 @@ export function MobileTransferPage() {
                   onClick={() => setDeviceId(d.id)}
                   className="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all text-left"
                   style={{
-                    borderColor: deviceId === d.id ? '#0f0f0e' : '#e8e5de',
-                    background: deviceId === d.id ? '#0f0f0e' : 'white',
+                    borderColor: deviceId === d.id ? '#083D24' : '#D7E0D5',
+                    background: deviceId === d.id ? '#083D24' : 'white',
                   }}
                 >
                   <div>
-                    <p className="text-sm font-semibold" style={{ color: deviceId === d.id ? 'white' : '#0f0f0e' }}>
+                    <p className="text-sm font-semibold" style={{ color: deviceId === d.id ? 'white' : '#083D24' }}>
                       {d.brand} {d.model}
                     </p>
                     {d.serial_number && (
-                      <p className="text-xs" style={{ color: deviceId === d.id ? '#9b9b98' : '#9b9b98' }}>
+                      <p className="text-xs" style={{ color: deviceId === d.id ? '#566D62' : '#566D62' }}>
                         S/N: {d.serial_number}
                       </p>
                     )}
@@ -182,17 +182,17 @@ export function MobileTransferPage() {
           )}
 
           {selectedDevice && (
-            <p className="text-xs text-[#9b9b98]">
-              Status: <span className="font-medium text-[#0f0f0e]">{selectedDevice.status.replace('_', ' ')}</span>
+            <p className="text-xs text-brand-muted">
+              Status: <span className="font-medium text-brand-ink">{selectedDevice.status.replace('_', ' ')}</span>
             </p>
           )}
         </div>
 
         {/* Recipient */}
         <div className="bg-white rounded-2xl p-4 space-y-3">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase">Recipient</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase">Recipient</p>
           <div>
-            <label className="text-[10px] tracking-widest text-[#9b9b98] uppercase block mb-1.5">
+            <label className="text-[10px] tracking-widest text-brand-muted uppercase block mb-1.5">
               Email Address *
             </label>
             <input
@@ -201,18 +201,18 @@ export function MobileTransferPage() {
               value={recipientEmail}
               onChange={e => setRecipientEmail(e.target.value)}
               placeholder="recipient@ecoledger.lr"
-              className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#0f0f0e] transition-colors"
+              className="w-full border border-brand-line rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#083D24] transition-colors"
             />
-            <p className="text-xs text-[#9b9b98] mt-1.5">The recipient must have an EcoLedger account.</p>
+            <p className="text-xs text-brand-muted mt-1.5">The recipient must have an EcoLedger account.</p>
           </div>
         </div>
 
         {/* Transfer details */}
         <div className="bg-white rounded-2xl p-4 space-y-4">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase">Transfer Details</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase">Transfer Details</p>
 
           <div>
-            <label className="text-[10px] tracking-widest text-[#9b9b98] uppercase block mb-1.5">
+            <label className="text-[10px] tracking-widest text-brand-muted uppercase block mb-1.5">
               Reason *
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -223,9 +223,9 @@ export function MobileTransferPage() {
                   onClick={() => setReason(r.value)}
                   className="py-2.5 px-3 rounded-xl border text-sm font-medium transition-all"
                   style={{
-                    borderColor: reason === r.value ? '#0f0f0e' : '#e8e5de',
-                    background: reason === r.value ? '#0f0f0e' : 'white',
-                    color: reason === r.value ? 'white' : '#0f0f0e',
+                    borderColor: reason === r.value ? '#083D24' : '#D7E0D5',
+                    background: reason === r.value ? '#083D24' : 'white',
+                    color: reason === r.value ? 'white' : '#083D24',
                   }}
                 >
                   {r.label}
@@ -236,7 +236,7 @@ export function MobileTransferPage() {
 
           {reason === 'resale' && (
             <div>
-              <label className="text-[10px] tracking-widest text-[#9b9b98] uppercase block mb-1.5">
+              <label className="text-[10px] tracking-widest text-brand-muted uppercase block mb-1.5">
                 Sale Price (LRD)
               </label>
               <input
@@ -245,13 +245,13 @@ export function MobileTransferPage() {
                 value={price}
                 onChange={e => setPrice(e.target.value)}
                 placeholder="e.g. 18000"
-                className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#0f0f0e] transition-colors"
+                className="w-full border border-brand-line rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#083D24] transition-colors"
               />
             </div>
           )}
 
           <div>
-            <label className="text-[10px] tracking-widest text-[#9b9b98] uppercase block mb-1.5">
+            <label className="text-[10px] tracking-widest text-brand-muted uppercase block mb-1.5">
               Condition Notes
             </label>
             <textarea
@@ -259,7 +259,7 @@ export function MobileTransferPage() {
               onChange={e => setNotes(e.target.value)}
               placeholder="Optional — describe current condition"
               rows={3}
-              className="w-full border border-[#e8e5de] rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#0f0f0e] transition-colors resize-none"
+              className="w-full border border-brand-line rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:border-[#083D24] transition-colors resize-none"
             />
           </div>
         </div>
@@ -268,7 +268,7 @@ export function MobileTransferPage() {
           type="submit"
           disabled={submitting || !deviceId || !recipientEmail}
           className="w-full py-4 rounded-2xl text-sm font-bold transition-all disabled:opacity-40 flex items-center justify-center gap-2"
-          style={{ background: '#0f0f0e', color: 'white' }}
+          style={{ background: '#083D24', color: 'white' }}
         >
           {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Initiating…</> : 'Initiate Transfer'}
         </button>

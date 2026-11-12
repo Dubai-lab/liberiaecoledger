@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { PublicLedgerFeed } from '@/components/ledger/PublicLedgerFeed'
 
 const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  as string
 const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string
@@ -18,34 +19,34 @@ function fmt(n: number) {
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#fafaf8] rounded-2xl p-5 border border-[#e8e5de] text-center">
-      <p className="text-3xl font-bold text-[#0f0f0e] tabular-nums mb-1">{value}</p>
-      <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase">{label}</p>
+    <div className="bg-brand-tint rounded-2xl p-5 border border-brand-line text-center">
+      <p className="text-3xl font-bold text-brand-ink tabular-nums mb-1">{value}</p>
+      <p className="text-[10px] font-semibold tracking-widest text-brand-muted uppercase">{label}</p>
     </div>
   )
 }
 
 function ContractCard({ name, address, desc, link }: { name: string; address: string; desc: string; link: string }) {
   return (
-    <div className="border border-[#e8e5de] rounded-2xl p-6">
+    <div className="border border-brand-line rounded-2xl p-6">
       <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
         <div>
-          <p className="font-bold text-[#0f0f0e] mb-0.5">{name}</p>
-          <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase">{CHAIN_NAME}</p>
+          <p className="font-bold text-brand-ink mb-0.5">{name}</p>
+          <p className="text-[10px] font-semibold tracking-widest text-brand-muted uppercase">{CHAIN_NAME}</p>
         </div>
-        <span className="flex items-center gap-1.5 text-[10px] font-semibold tracking-widest text-[#2d6a3f] bg-[#e8f5ec] rounded-full px-3 py-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#2d6a3f] animate-pulse" />
+        <span className="flex items-center gap-1.5 text-[10px] font-semibold tracking-widest text-brand bg-brand-tint rounded-full px-3 py-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
           LIVE
         </span>
       </div>
-      <p className="text-sm text-[#6b6b68] mb-4 leading-relaxed">{desc}</p>
-      <div className="bg-[#0f0f0e] rounded-xl px-4 py-3 flex items-center justify-between gap-4">
-        <code className="text-xs font-mono text-[#6dba7f] break-all">{address}</code>
+      <p className="text-sm text-brand-muted mb-4 leading-relaxed">{desc}</p>
+      <div className="bg-brand-deep rounded-xl px-4 py-3 flex items-center justify-between gap-4">
+        <code className="text-xs font-mono text-[#8FD3A8] break-all">{address}</code>
         <a
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex-shrink-0 text-[10px] font-semibold text-white/60 hover:text-white transition-colors border border-white/10 rounded-lg px-2.5 py-1"
+          className="flex-shrink-0 text-[10px] font-semibold text-white/60 hover:text-white transition-colors border border-white/15 rounded-lg px-2.5 py-1"
         >
           Etherscan →
         </a>
@@ -67,21 +68,22 @@ export function BlockExplorerPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#0f0f0e] pt-24 pb-12 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#6b6b68] uppercase mb-2">Resources</p>
-          <h1 className="text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-deep pt-32 pb-12 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-white/70 uppercase mb-2">Resources</p>
+          <h1 className="text-4xl font-bold text-white mb-3 font-display font-bold">
             Block Explorer
           </h1>
-          <p className="text-[#9b9b98] text-sm">Live on-chain data for EcoLedger smart contracts — publicly verifiable, permanently recorded.</p>
+          <p className="text-white/70 text-sm">Live on-chain data for EcoLedger smart contracts — publicly verifiable, permanently recorded.</p>
+          <a href="#ledger" className="inline-flex items-center gap-2 mt-6 h-11 px-5 rounded-lg bg-white text-brand text-sm font-semibold hover:bg-brand-tint transition-colors">View the public ledger ↓</a>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-10">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-12 space-y-10">
 
         {/* Live stats */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Live Chain Stats</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Live Chain Stats</p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard label="Devices on chain"   value={fmt(stats.devices) || '—'} />
             <StatCard label="Lifecycle events"   value={fmt(stats.lifecycleEvents) || '—'} />
@@ -90,9 +92,23 @@ export function BlockExplorerPage() {
           </div>
         </div>
 
+        {/* Public ledger — every lifecycle action, readable by anyone */}
+        <section id="ledger" className="scroll-mt-28">
+          <div className="flex items-end justify-between gap-4 mb-4 flex-wrap">
+            <div>
+              <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-1">Public Ledger</p>
+              <h2 className="text-2xl font-bold text-brand-ink">Every action, as it happens</h2>
+              <p className="text-sm text-brand-muted mt-1 max-w-2xl">
+                Manufacture, registration, transfer, recycling and compliance events from across Liberia. No login required.
+              </p>
+            </div>
+          </div>
+          <PublicLedgerFeed />
+        </section>
+
         {/* Contracts */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Deployed Contracts</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Deployed Contracts</p>
           <div className="space-y-4">
             <ContractCard
               name="EcoToken.sol"
@@ -111,8 +127,8 @@ export function BlockExplorerPage() {
 
         {/* Network info */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Network Information</p>
-          <div className="bg-[#fafaf8] border border-[#e8e5de] rounded-2xl overflow-hidden">
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Network Information</p>
+          <div className="bg-brand-tint border border-brand-line rounded-2xl overflow-hidden">
             {[
               { label: 'Network',      value: 'Ethereum Sepolia Testnet' },
               { label: 'Chain ID',     value: '11155111' },
@@ -121,26 +137,26 @@ export function BlockExplorerPage() {
               { label: 'Consensus',    value: 'Proof-of-Stake (Ethereum)' },
               { label: 'Finality',     value: '~12 seconds (2 epochs)' },
             ].map((row, i, arr) => (
-              <div key={row.label} className={`flex items-center justify-between px-5 py-3.5 ${i < arr.length - 1 ? 'border-b border-[#e8e5de]' : ''}`}>
-                <p className="text-xs font-semibold text-[#9b9b98]">{row.label}</p>
-                <p className="text-sm font-mono text-[#0f0f0e]">{row.value}</p>
+              <div key={row.label} className={`flex items-center justify-between px-5 py-3.5 ${i < arr.length - 1 ? 'border-b border-brand-line' : ''}`}>
+                <p className="text-xs font-semibold text-brand-muted">{row.label}</p>
+                <p className="text-sm font-mono text-brand-ink">{row.value}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* CTA */}
-        <div className="bg-[#0f0f0e] rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="bg-brand-deep rounded-2xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <p className="font-bold text-white mb-1">View all transactions on Sepolia Etherscan</p>
-            <p className="text-sm text-[#9b9b98]">Every device registration, transfer, and disposal event is publicly accessible — no login required.</p>
+            <p className="text-sm text-white/70">Every device registration, transfer, and disposal event is publicly accessible — no login required.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0">
             <a
               href={`${ETHERSCAN}/address/${ECOLEDGER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-white text-[#0f0f0e] text-sm font-semibold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+              className="px-5 py-2.5 bg-white text-brand text-sm font-semibold rounded-xl hover:bg-brand-tint transition-colors"
             >
               EcoLedger contract →
             </a>

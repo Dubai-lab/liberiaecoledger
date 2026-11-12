@@ -256,7 +256,7 @@ export function RewardsPage() {
             <button
               onClick={openAdd}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-              style={{ background: '#0f1410' }}
+              style={{ background: '#063921' }}
             >
               <Plus className="w-4 h-4" />
               Add item
@@ -286,7 +286,7 @@ export function RewardsPage() {
                       value={form.title}
                       onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                       placeholder="LRD 500 mobile airtime"
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                     />
                   </div>
                   <div className="col-span-2 sm:col-span-1">
@@ -295,7 +295,7 @@ export function RewardsPage() {
                       value={form.partner}
                       onChange={e => setForm(f => ({ ...f, partner: e.target.value }))}
                       placeholder="Lonestar / Orange MTN"
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                     />
                   </div>
                   <div>
@@ -303,7 +303,7 @@ export function RewardsPage() {
                     <select
                       value={form.category}
                       onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a] bg-white"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C] bg-white"
                     >
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
@@ -316,7 +316,7 @@ export function RewardsPage() {
                       onChange={e => setForm(f => ({ ...f, cost_ec: e.target.value }))}
                       placeholder="250"
                       min={1}
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                     />
                   </div>
                   <div>
@@ -327,7 +327,7 @@ export function RewardsPage() {
                       onChange={e => setForm(f => ({ ...f, stock: e.target.value }))}
                       placeholder="unlimited"
                       min={0}
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                     />
                   </div>
                   <div>
@@ -336,7 +336,7 @@ export function RewardsPage() {
                       value={form.image_url}
                       onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                     />
                   </div>
                   <div className="col-span-2">
@@ -346,7 +346,7 @@ export function RewardsPage() {
                       onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                       placeholder="Brief description visible to consumers..."
                       rows={2}
-                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a] resize-none"
+                      className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C] resize-none"
                     />
                   </div>
                 </div>
@@ -362,7 +362,7 @@ export function RewardsPage() {
                     onClick={handleSaveItem}
                     disabled={savingItem}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-                    style={{ background: '#2f6b3a' }}
+                    style={{ background: '#1E5A3C' }}
                   >
                     {savingItem ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                     {editingId ? 'Save changes' : 'Add item'}
@@ -410,7 +410,7 @@ export function RewardsPage() {
 
                   <div className="flex items-center gap-4 flex-shrink-0">
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-[#2f6b3a]">{item.cost_ec} EC</p>
+                      <p className="text-sm font-semibold text-brand">{item.cost_ec} EC</p>
                       <p className="text-[10px] text-muted-foreground">
                         {item.stock != null ? `${item.stock} left` : 'Unlimited'}
                       </p>
@@ -478,7 +478,7 @@ export function RewardsPage() {
                           <p className="text-sm font-medium">{r.item_title}</p>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {r.item_partner} · <span className="font-medium text-[#2f6b3a]">{r.ec_cost} EC</span>
+                          {r.item_partner} · <span className="font-medium text-brand">{r.ec_cost} EC</span>
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Consumer: <span className="font-medium text-foreground">{r.user_full_name ?? r.user_email ?? r.user_id.slice(0, 8)}</span>
@@ -523,7 +523,7 @@ export function RewardsPage() {
                                 value={fulfillNotes}
                                 onChange={e => setFulfillNotes(e.target.value)}
                                 placeholder="e.g. Airtime sent to 0776-123-456 at 14:32"
-                                className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#2f6b3a]"
+                                className="w-full px-3 py-2 rounded-lg border border-border text-sm focus:outline-none focus:ring-1 focus:ring-[#1E5A3C]"
                               />
                             </div>
                             <div className="flex gap-2">
@@ -531,7 +531,7 @@ export function RewardsPage() {
                                 onClick={() => handleFulfill(r.id, 'fulfilled')}
                                 disabled={processingId === r.id}
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-                                style={{ background: '#2f6b3a' }}
+                                style={{ background: '#1E5A3C' }}
                               >
                                 {processingId === r.id
                                   ? <Loader2 className="w-3.5 h-3.5 animate-spin" />

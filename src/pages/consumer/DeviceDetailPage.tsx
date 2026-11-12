@@ -184,7 +184,7 @@ export function DeviceDetailPage() {
               {events.map((evt, i) => (
                 <div key={evt.id} className="flex items-start gap-4 relative">
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 z-10 ${
-                    i === events.length - 1 ? 'bg-[#2f6b3a] text-white' : 'bg-muted text-muted-foreground'
+                    i === events.length - 1 ? 'bg-brand-secondary text-white' : 'bg-muted text-muted-foreground'
                   }`}>
                     {EVENT_ICON[evt.event_type] ?? <Clock className="w-3.5 h-3.5" />}
                   </div>

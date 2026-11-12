@@ -4,7 +4,7 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 type EntryType = 'feature' | 'fix' | 'improvement' | 'security'
 
 const TYPE_META: Record<EntryType, { label: string; bg: string; text: string }> = {
-  feature:     { label: 'New',         bg: 'bg-[#e8f5ec]',   text: 'text-[#2d6a3f]' },
+  feature:     { label: 'New',         bg: 'bg-brand-tint',   text: 'text-brand' },
   fix:         { label: 'Fix',         bg: 'bg-red-50',       text: 'text-red-700' },
   improvement: { label: 'Improved',    bg: 'bg-blue-50',      text: 'text-blue-700' },
   security:    { label: 'Security',    bg: 'bg-amber-50',     text: 'text-amber-700' },
@@ -82,36 +82,36 @@ export function ChangelogPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Resources</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Resources</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Changelog
           </h1>
-          <p className="text-sm text-[#9b9b98]">A complete record of platform releases, improvements, and fixes.</p>
+          <p className="text-sm text-brand-muted">A complete record of platform releases, improvements, and fixes.</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
         <div className="space-y-12">
           {releases.map((r, i) => (
             <div key={r.version} className="flex gap-6">
               {/* Timeline */}
               <div className="flex flex-col items-center flex-shrink-0 w-4">
-                <div className={`w-3 h-3 rounded-full border-2 mt-1.5 ${i === 0 ? 'border-[#2d6a3f] bg-[#2d6a3f]' : 'border-[#e8e5de] bg-white'}`} />
-                {i < releases.length - 1 && <div className="w-px flex-1 bg-[#e8e5de] mt-1" />}
+                <div className={`w-3 h-3 rounded-full border-2 mt-1.5 ${i === 0 ? 'border-brand bg-brand' : 'border-brand-line bg-white'}`} />
+                {i < releases.length - 1 && <div className="w-px flex-1 bg-brand-line mt-1" />}
               </div>
 
               {/* Content */}
               <div className="flex-1 pb-4">
                 <div className="flex items-center gap-3 mb-1 flex-wrap">
-                  <h2 className="text-xl font-bold text-[#0f0f0e]">v{r.version}</h2>
+                  <h2 className="text-xl font-bold text-brand-ink">v{r.version}</h2>
                   {i === 0 && (
-                    <span className="text-[10px] font-bold tracking-widest text-[#2d6a3f] bg-[#e8f5ec] rounded-full px-2.5 py-0.5">LATEST</span>
+                    <span className="text-[10px] font-bold tracking-widest text-brand bg-brand-tint rounded-full px-2.5 py-0.5">LATEST</span>
                   )}
-                  <span className="text-xs text-[#9b9b98]">{r.date}</span>
+                  <span className="text-xs text-brand-muted">{r.date}</span>
                 </div>
-                <p className="text-sm text-[#6b6b68] mb-5">{r.summary}</p>
+                <p className="text-sm text-brand-muted mb-5">{r.summary}</p>
 
                 <div className="space-y-2.5">
                   {r.entries.map((e, j) => {
@@ -121,7 +121,7 @@ export function ChangelogPage() {
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0 mt-0.5 ${meta.bg} ${meta.text}`}>
                           {meta.label}
                         </span>
-                        <p className="text-sm text-[#6b6b68] leading-relaxed">{e.text}</p>
+                        <p className="text-sm text-brand-muted leading-relaxed">{e.text}</p>
                       </div>
                     )
                   })}

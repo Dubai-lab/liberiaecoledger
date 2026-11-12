@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { FeatureIcon } from '@/components/landing/FeatureIcon'
 
 const capabilities = [
   {
@@ -67,29 +68,29 @@ export function RegulatorPortalPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-14 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Stakeholders</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-14 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Stakeholders</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Regulator Portal
           </h1>
-          <p className="text-base text-[#6b6b68] leading-relaxed max-w-2xl">
+          <p className="text-base text-brand-muted leading-relaxed max-w-2xl">
             Purpose-built enforcement and compliance tooling for EPA Liberia and authorised government bodies. Real-time national visibility. Court-ready evidence. One platform.
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-14 space-y-16">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-14 space-y-16">
 
         {/* Capabilities */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Portal capabilities</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Portal capabilities</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {capabilities.map(c => (
-              <div key={c.title} className="bg-[#fafaf8] rounded-2xl p-5 border border-[#e8e5de]">
-                <p className="text-2xl mb-3">{c.icon}</p>
-                <p className="font-bold text-[#0f0f0e] mb-2">{c.title}</p>
-                <p className="text-sm text-[#9b9b98] leading-relaxed">{c.body}</p>
+              <div key={c.title} className="bg-brand-tint rounded-2xl p-5 border border-brand-line">
+                <FeatureIcon emoji={c.icon} />
+                <p className="font-bold text-brand-ink mb-2">{c.title}</p>
+                <p className="text-sm text-brand-muted leading-relaxed">{c.body}</p>
               </div>
             ))}
           </div>
@@ -97,16 +98,16 @@ export function RegulatorPortalPage() {
 
         {/* Access levels */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Access tiers</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Access tiers</p>
           <div className="space-y-3">
             {accessLevels.map(a => (
-              <div key={a.role} className="bg-white rounded-2xl p-5 border border-[#e8e5de] flex flex-col md:flex-row md:items-center gap-4">
+              <div key={a.role} className="bg-white rounded-2xl p-5 border border-brand-line flex flex-col md:flex-row md:items-center gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <p className="font-bold text-[#0f0f0e]">{a.role}</p>
-                    <span className="text-[10px] font-bold tracking-widest text-[#6b6b68] border border-[#e8e5de] rounded-full px-2.5 py-0.5">{a.badge}</span>
+                    <p className="font-bold text-brand-ink">{a.role}</p>
+                    <span className="text-[10px] font-bold tracking-widest text-brand-muted border border-brand-line rounded-full px-2.5 py-0.5">{a.badge}</span>
                   </div>
-                  <p className="text-sm text-[#9b9b98] leading-relaxed">{a.access}</p>
+                  <p className="text-sm text-brand-muted leading-relaxed">{a.access}</p>
                 </div>
               </div>
             ))}
@@ -115,33 +116,33 @@ export function RegulatorPortalPage() {
 
         {/* Who is eligible */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Eligible institutions</p>
-          <div className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Eligible institutions</p>
+          <div className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
             <div className="space-y-3">
               {eligible.map(e => (
                 <div key={e} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-[#0f0f0e] flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
                     <svg viewBox="0 0 24 24" fill="none" className="w-3 h-3" stroke="white" strokeWidth={2.5}>
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                   </div>
-                  <p className="text-sm text-[#6b6b68]">{e}</p>
+                  <p className="text-sm text-brand-muted">{e}</p>
                 </div>
               ))}
             </div>
           </div>
-          <p className="text-xs text-[#9b9b98] mt-3">Access requires a government-issued email address and a letter of authorisation from your department head. All applications are reviewed by EcoLedger Foundation and EPA Liberia jointly.</p>
+          <p className="text-xs text-brand-muted mt-3">Access requires a government-issued email address and a letter of authorisation from your department head. All applications are reviewed by EcoLedger Foundation and EPA Liberia jointly.</p>
         </div>
 
         {/* Integration note */}
-        <div className="border border-[#e8e5de] rounded-2xl p-6">
-          <p className="font-bold text-[#0f0f0e] mb-2">EPA Liberia institutional integration</p>
-          <p className="text-sm text-[#9b9b98] leading-relaxed">
+        <div className="border border-brand-line rounded-2xl p-6">
+          <p className="font-bold text-brand-ink mb-2">EPA Liberia institutional integration</p>
+          <p className="text-sm text-brand-muted leading-relaxed">
             EcoLedger is designed to work alongside EPA Liberia's existing enforcement processes — not replace them. The portal generates reports in the formats required for internal EPA Liberia filing, Basel Convention annexures, and court submissions. We can arrange a live demonstration for your department's senior officers.
           </p>
           <a
             href="mailto:support@liberiaecoledger.com"
-            className="inline-block mt-4 text-sm font-semibold text-[#2d6a3f] hover:underline"
+            className="inline-block mt-4 text-sm font-semibold text-brand hover:underline"
           >
             Contact our regulatory partnerships team →
           </a>
@@ -150,11 +151,11 @@ export function RegulatorPortalPage() {
       </div>
 
       {/* CTA */}
-      <div className="bg-[#0f0f0e] py-16 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="bg-brand-deep py-16 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Enforce e-waste law with real data.</h2>
-            <p className="text-[#9b9b98] text-sm max-w-md">Request access for your institution or schedule a demonstration for your regulatory team.</p>
+            <p className="text-white/70 text-sm max-w-md">Request access for your institution or schedule a demonstration for your regulatory team.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0 flex-wrap">
             <a
@@ -166,7 +167,7 @@ export function RegulatorPortalPage() {
             <button
               type="button"
               onClick={() => navigate('/stakeholders/request-access')}
-              className="px-6 py-3 bg-white text-[#0f0f0e] text-sm font-bold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+              className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-xl hover:bg-brand-tint transition-colors"
             >
               Apply for access →
             </button>

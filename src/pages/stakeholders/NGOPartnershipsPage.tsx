@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { FeatureIcon } from '@/components/landing/FeatureIcon'
 
 const partnershipTypes = [
   {
@@ -53,30 +54,30 @@ export function NGOPartnershipsPage() {
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
 
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-14 px-6">
-        <div className="max-w-4xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Stakeholders</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-14 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto">
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Stakeholders</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             NGO Partnerships
           </h1>
-          <p className="text-base text-[#6b6b68] leading-relaxed max-w-2xl">
+          <p className="text-base text-brand-muted leading-relaxed max-w-2xl">
             EcoLedger is an infrastructure platform, not an advocacy organisation. We partner with NGOs, researchers, and community groups who can turn our data into impact on the ground.
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-14 space-y-16">
+      <div className="max-w-content mx-auto box-content px-5 md:px-8 lg:px-12 py-14 space-y-16">
 
         {/* Partnership types */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">Partnership types</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">Partnership types</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {partnershipTypes.map(p => (
-              <div key={p.type} className="bg-[#fafaf8] rounded-2xl p-6 border border-[#e8e5de]">
-                <p className="text-2xl mb-3">{p.icon}</p>
-                <p className="font-bold text-[#0f0f0e] mb-2">{p.type}</p>
-                <p className="text-sm text-[#6b6b68] leading-relaxed mb-3">{p.desc}</p>
-                <p className="text-[10px] font-semibold tracking-widest text-[#9b9b98] uppercase">{p.forWho}</p>
+              <div key={p.type} className="bg-brand-tint rounded-2xl p-6 border border-brand-line">
+                <FeatureIcon emoji={p.icon} />
+                <p className="font-bold text-brand-ink mb-2">{p.type}</p>
+                <p className="text-sm text-brand-muted leading-relaxed mb-3">{p.desc}</p>
+                <p className="text-[10px] font-semibold tracking-widest text-brand-muted uppercase">{p.forWho}</p>
               </div>
             ))}
           </div>
@@ -84,13 +85,13 @@ export function NGOPartnershipsPage() {
 
         {/* What partners get */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">What partners receive</p>
-          <div className="bg-[#0f0f0e] rounded-2xl p-6">
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">What partners receive</p>
+          <div className="bg-brand-deep rounded-2xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {benefits.map(b => (
                 <div key={b} className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#6dba7f] mt-2 flex-shrink-0" />
-                  <p className="text-sm text-[#9b9b98]">{b}</p>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#8FD3A8] mt-2 flex-shrink-0" />
+                  <p className="text-sm text-white/70">{b}</p>
                 </div>
               ))}
             </div>
@@ -99,36 +100,36 @@ export function NGOPartnershipsPage() {
 
         {/* Process */}
         <div>
-          <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] uppercase mb-4">How to partner with us</p>
+          <p className="text-[10px] font-bold tracking-widest text-brand-muted uppercase mb-4">How to partner with us</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {process.map(s => (
-              <div key={s.n} className="bg-[#fafaf8] rounded-2xl p-5 border border-[#e8e5de]">
-                <p className="text-[10px] font-bold tracking-widest text-[#9b9b98] mb-3">{s.n}</p>
-                <p className="font-bold text-[#0f0f0e] mb-2 text-sm leading-snug">{s.title}</p>
-                <p className="text-xs text-[#9b9b98] leading-relaxed">{s.body}</p>
+              <div key={s.n} className="bg-brand-tint rounded-2xl p-5 border border-brand-line">
+                <p className="text-[10px] font-bold tracking-widest text-brand-muted mb-3">{s.n}</p>
+                <p className="font-bold text-brand-ink mb-2 text-sm leading-snug">{s.title}</p>
+                <p className="text-xs text-brand-muted leading-relaxed">{s.body}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Principles */}
-        <div className="border border-[#e8e5de] rounded-2xl p-6">
-          <p className="font-bold text-[#0f0f0e] mb-3">Our partnership principles</p>
-          <div className="space-y-3 text-sm text-[#6b6b68]">
-            <p><strong className="text-[#0f0f0e]">Independence:</strong> Partners are free to publish findings that critique the platform, the recycling sector, or government enforcement. We do not edit or approve partner publications.</p>
-            <p><strong className="text-[#0f0f0e]">No greenwashing:</strong> We will not co-brand with organisations whose primary funders profit from e-waste disposal violations.</p>
-            <p><strong className="text-[#0f0f0e]">Community benefit first:</strong> Partnership decisions prioritise organisations whose work directly benefits communities affected by e-waste in Liberia.</p>
+        <div className="border border-brand-line rounded-2xl p-6">
+          <p className="font-bold text-brand-ink mb-3">Our partnership principles</p>
+          <div className="space-y-3 text-sm text-brand-muted">
+            <p><strong className="text-brand-ink">Independence:</strong> Partners are free to publish findings that critique the platform, the recycling sector, or government enforcement. We do not edit or approve partner publications.</p>
+            <p><strong className="text-brand-ink">No greenwashing:</strong> We will not co-brand with organisations whose primary funders profit from e-waste disposal violations.</p>
+            <p><strong className="text-brand-ink">Community benefit first:</strong> Partnership decisions prioritise organisations whose work directly benefits communities affected by e-waste in Liberia.</p>
           </div>
         </div>
 
       </div>
 
       {/* CTA */}
-      <div className="bg-[#0f0f0e] py-16 px-6">
-        <div className="max-w-4xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
+      <div className="bg-brand-deep py-16 px-5 md:px-8 lg:px-12">
+        <div className="max-w-content mx-auto flex flex-col lg:flex-row items-center justify-between gap-8">
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Interested in partnering?</h2>
-            <p className="text-[#9b9b98] text-sm max-w-md">Send us an expression of interest or fill in the access request form to start the conversation.</p>
+            <p className="text-white/70 text-sm max-w-md">Send us an expression of interest or fill in the access request form to start the conversation.</p>
           </div>
           <div className="flex gap-3 flex-shrink-0 flex-wrap">
             <a
@@ -140,7 +141,7 @@ export function NGOPartnershipsPage() {
             <button
               type="button"
               onClick={() => navigate('/stakeholders/request-access')}
-              className="px-6 py-3 bg-white text-[#0f0f0e] text-sm font-bold rounded-xl hover:bg-[#f5f5f2] transition-colors"
+              className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-xl hover:bg-brand-tint transition-colors"
             >
               Start an application →
             </button>

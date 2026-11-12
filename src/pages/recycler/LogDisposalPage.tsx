@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { uploadToIPFS } from '@/lib/pinata'
 import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
+import { usePlatformRates, calcDisposalCredits, creditsPerGram } from '@/lib/rates'
 import { toast } from 'sonner'
 import type { Device, RecyclerFacility } from '@/types/database'
 
@@ -16,30 +17,11 @@ const DISPOSAL_TYPES = [
   { value: 'hazardous',      label: 'Hazardous Waste Route' },
 ]
 
-// Credits per gram of recovered material
-const CREDIT_RATES = {
-  gold:     50,
-  copper:   5,
-  aluminum: 2,
-  lithium:  30,
-  cobalt:   20,
-  lead:     3,
-}
-
-function calcCredits(g: { gold: number; copper: number; aluminum: number; lithium: number; cobalt: number; lead: number }) {
-  return Math.round(
-    g.gold * CREDIT_RATES.gold +
-    g.copper * CREDIT_RATES.copper +
-    g.aluminum * CREDIT_RATES.aluminum +
-    g.lithium * CREDIT_RATES.lithium +
-    g.cobalt * CREDIT_RATES.cobalt +
-    g.lead * CREDIT_RATES.lead
-  )
-}
-
 export function LogDisposalPage() {
   const { profile } = useAuth()
   const navigate = useNavigate()
+  // Material prices are set by admins (Admin → Rates & Prices) and fluctuate with the market
+  const { values: rates } = usePlatformRates()
   const [devices, setDevices] = useState<Device[]>([])
   const [facility, setFacility] = useState<RecyclerFacility | null>(null)
   const [loading, setLoading] = useState(false)
@@ -89,14 +71,15 @@ export function LogDisposalPage() {
   }
 
   // Auto-calculate EcoCredits from current material weights
-  const calculatedCredits = useMemo(() => calcCredits({
+  const calculatedCredits = useMemo(() => calcDisposalCredits(rates, {
     gold:     Number(form.goldG)     || 0,
     copper:   Number(form.copperG)   || 0,
     aluminum: Number(form.aluminumG) || 0,
     lithium:  Number(form.lithiumG)  || 0,
     cobalt:   Number(form.cobaltG)   || 0,
     lead:     Number(form.leadG)     || 0,
-  }), [form.goldG, form.copperG, form.aluminumG, form.lithiumG, form.cobaltG, form.leadG])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [form.goldG, form.copperG, form.aluminumG, form.lithiumG, form.cobaltG, form.leadG, JSON.stringify(rates)])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -323,16 +306,16 @@ export function LogDisposalPage() {
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[
-              { k: 'goldG', label: 'Gold', rate: CREDIT_RATES.gold },
-              { k: 'copperG', label: 'Copper', rate: CREDIT_RATES.copper },
-              { k: 'aluminumG', label: 'Aluminum', rate: CREDIT_RATES.aluminum },
-              { k: 'lithiumG', label: 'Lithium', rate: CREDIT_RATES.lithium },
-              { k: 'cobaltG', label: 'Cobalt', rate: CREDIT_RATES.cobalt },
-              { k: 'leadG', label: 'Lead', rate: CREDIT_RATES.lead },
+              { k: 'goldG', label: 'Gold', rate: creditsPerGram(rates, 'gold') },
+              { k: 'copperG', label: 'Copper', rate: creditsPerGram(rates, 'copper') },
+              { k: 'aluminumG', label: 'Aluminum', rate: creditsPerGram(rates, 'aluminum') },
+              { k: 'lithiumG', label: 'Lithium', rate: creditsPerGram(rates, 'lithium') },
+              { k: 'cobaltG', label: 'Cobalt', rate: creditsPerGram(rates, 'cobalt') },
+              { k: 'leadG', label: 'Lead', rate: creditsPerGram(rates, 'lead') },
             ].map(({ k, label, rate }) => (
               <div key={k} className="space-y-1">
                 <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                  {label} <span className="text-eco-700">{rate} EC/g</span>
+                  {label} <span className="text-eco-700">{Number(rate.toFixed(2))} EC/g</span>
                 </label>
                 <input type="number" min="0" step="0.001"
                   value={form[k as keyof typeof form]}
@@ -352,7 +335,7 @@ export function LogDisposalPage() {
             <span className="text-lg font-bold text-eco-700">{calculatedCredits}</span>
           </div>
           <p className="text-[10px] text-muted-foreground">
-            Calculated automatically: Gold×{CREDIT_RATES.gold} + Copper×{CREDIT_RATES.copper} + Aluminum×{CREDIT_RATES.aluminum} + Lithium×{CREDIT_RATES.lithium} + Cobalt×{CREDIT_RATES.cobalt} + Lead×{CREDIT_RATES.lead}
+            Calculated automatically from current market prices: grams × price per gram ÷ LRD {rates.lrd_per_credit} per EcoCredit. Prices are set by the platform admin.
           </p>
         </section>
 
@@ -373,7 +356,7 @@ export function LogDisposalPage() {
 
         <button type="submit" disabled={loading || !facility}
           className="w-full py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          style={{ background: '#0f1410', color: '#fafaf7' }}>
+          style={{ background: '#063921', color: '#FFFFFF' }}>
           {loading
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Logging…</>
             : `Log Disposal & Award ${calculatedCredits} EcoCredits`}

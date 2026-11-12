@@ -172,14 +172,14 @@ export function SmartContractsPage() {
       value: stats.liveContracts,
       sub: `→ ${contracts.filter(c => c.status !== 'healthy').length} not deployed`,
       sparkline: null,
-      color: '#0f1410',
+      color: '#063921',
     },
     {
       label: '24H TX VOLUME',
       value: stats.txVolume24h.toLocaleString(),
       sub: stats.txVolume24h > 0 ? '↑ active today' : '→ no events today',
       sparkline: contracts[1]?.trend ?? [],
-      color: '#2f6b3a',
+      color: '#1E5A3C',
     },
     {
       label: 'AVG GAS / EVENT',
@@ -231,7 +231,7 @@ export function SmartContractsPage() {
             href={`${EXPLORER}/address/${ECOLEDGER_ADDR}`}
             target="_blank" rel="noreferrer"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: '#0f1410' }}
+            style={{ background: '#063921' }}
           >
             <Plus className="w-4 h-4" />
             Propose deployment
@@ -241,7 +241,7 @@ export function SmartContractsPage() {
 
       {/* Network badge */}
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0f1410] text-white text-xs font-medium">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-deep text-white text-xs font-medium">
           <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
           SEPOLIA · TESTNET
         </div>
@@ -333,7 +333,7 @@ export function SmartContractsPage() {
                 <div>
                   <Sparkline
                     values={c.trend.length > 1 ? c.trend : [0, 0, 0, 1, 0, 1, 2, 1, 0, 1, 2, c.calls24h]}
-                    color={c.status === 'healthy' ? '#2f6b3a' : c.status === 'watch' ? '#d97706' : '#dc2626'}
+                    color={c.status === 'healthy' ? '#1E5A3C' : c.status === 'watch' ? '#d97706' : '#dc2626'}
                   />
                 </div>
 
@@ -361,7 +361,7 @@ export function SmartContractsPage() {
               <p className="text-xs font-mono flex-1 truncate">{c.address || 'Not deployed'}</p>
               {c.address && (
                 <a href={`${EXPLORER}/address/${c.address}`} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-1 text-xs text-[#2f6b3a] hover:underline flex-shrink-0">
+                  className="flex items-center gap-1 text-xs text-brand hover:underline flex-shrink-0">
                   Etherscan <ExternalLink className="w-3 h-3" />
                 </a>
               )}

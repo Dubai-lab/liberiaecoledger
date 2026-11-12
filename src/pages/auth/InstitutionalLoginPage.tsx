@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 export function InstitutionalLoginPage() {
   const navigate = useNavigate()
@@ -62,21 +63,15 @@ export function InstitutionalLoginPage() {
       {/* Dark panel */}
       <div
         className="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: '#0f1410' }}
+        style={{ background: '#063921' }}
       >
-        <div className="absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full opacity-10" style={{ border: '1px solid #fafaf7' }} />
-        <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full opacity-5" style={{ border: '1px solid #fafaf7' }} />
+        <div className="absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full opacity-10" style={{ border: '1px solid #FFFFFF' }} />
+        <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full opacity-5" style={{ border: '1px solid #FFFFFF' }} />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#1a2e1c' }}>
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fafaf7" strokeWidth={1.5}>
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-            </svg>
-          </div>
           <div>
-            <p className="font-medium text-sm" style={{ color: '#fafaf7' }}>EcoLedger</p>
-            <p className="text-xs tracking-widest uppercase" style={{ color: '#fafaf7', opacity: 0.4 }}>Government & Institutional</p>
+            <EcoLedgerLogo tone="dark" />
+            <p className="text-xs tracking-widest uppercase mt-2" style={{ color: '#FFFFFF', opacity: 0.6 }}>Government & Institutional</p>
           </div>
         </div>
 
@@ -88,11 +83,11 @@ export function InstitutionalLoginPage() {
         >
           <h1
             className="text-4xl leading-tight mb-5"
-            style={{ color: '#fafaf7', fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+            style={{ color: '#FFFFFF', fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}
           >
             Reserved for government bodies, regulators, and verified NGOs.
           </h1>
-          <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#fafaf7', opacity: 0.5 }}>
+          <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#FFFFFF', opacity: 0.5 }}>
             Access codes are issued by the Platform Administrator after identity verification. Contact support if you have not received one.
           </p>
         </motion.div>
@@ -104,8 +99,8 @@ export function InstitutionalLoginPage() {
             { value: 'LISGIS', label: 'Statistics & Geo-Information' },
           ].map(item => (
             <div key={item.label}>
-              <p className="text-xs font-semibold" style={{ color: '#fafaf7' }}>{item.value}</p>
-              <p className="text-[10px]" style={{ color: '#fafaf7', opacity: 0.4 }}>{item.label}</p>
+              <p className="text-xs font-semibold" style={{ color: '#FFFFFF' }}>{item.value}</p>
+              <p className="text-[10px]" style={{ color: '#FFFFFF', opacity: 0.4 }}>{item.label}</p>
             </div>
           ))}
         </div>
@@ -119,32 +114,33 @@ export function InstitutionalLoginPage() {
           transition={{ delay: 0.1 }}
           className="w-full max-w-sm space-y-6"
         >
+          <div className="lg:hidden mb-10"><EcoLedgerLogo /></div>
           <Link
             to="/login"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-sm text-brand-muted hover:text-brand-ink transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to sign in
           </Link>
 
           <div>
-            <p className="text-xs text-muted-foreground tracking-widest uppercase mb-1">
+            <p className="text-xs text-brand-muted tracking-widest uppercase mb-1">
               Government / Institutional Access
             </p>
             <h2
               className="text-3xl"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, color: '#0f1410' }}
+              style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, color: '#063921' }}
             >
               Institutional Sign In
             </h2>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-brand-muted mt-2">
               Enter your official email and the access code issued by the platform administrator.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+              <label className="text-xs font-medium tracking-widest uppercase text-brand-muted">
                 Official Email
               </label>
               <input
@@ -153,12 +149,12 @@ export function InstitutionalLoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@epa.gov.lr"
                 required
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
+                className="w-full border border-brand-line rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+              <label className="text-xs font-medium tracking-widest uppercase text-brand-muted">
                 Access Code
               </label>
               <input
@@ -167,13 +163,13 @@ export function InstitutionalLoginPage() {
                 onChange={e => setCode(e.target.value.toUpperCase())}
                 placeholder="ECO-XXXX-XXXX"
                 required
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors font-mono tracking-widest"
+                className="w-full border border-brand-line rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors font-mono tracking-widest"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-brand-muted">
                 Don't have a code?{' '}
-                <a href="mailto:support@liberiaecoledger.com" className="text-eco-700 hover:underline">
-                  Request one from support
-                </a>
+                <Link to="/stakeholders/request-access" className="text-brand hover:underline">
+                  Request access
+                </Link>
               </p>
             </div>
 
@@ -181,7 +177,7 @@ export function InstitutionalLoginPage() {
               type="submit"
               disabled={loading || !email || !code}
               className="w-full py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ background: '#0f1410', color: '#fafaf7' }}
+              style={{ background: '#063921', color: '#FFFFFF' }}
             >
               {loading ? 'Verifying…' : 'Verify & Sign in'}
             </button>

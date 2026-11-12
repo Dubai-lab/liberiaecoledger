@@ -41,19 +41,35 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        eco: {
-          50:  '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#14532d',
-          950: '#052e16',
+        // EcoLedger design system (Design/design.md)
+        brand: {
+          DEFAULT:   '#083D24', // Primary Forest Green — logo, primary buttons
+          secondary: '#0F482E', // Secondary green — hover / interactive states
+          deep:      '#063921', // Deep green — dark sections, footer
+          sage:      '#748C7F', // Muted sage — secondary text, subdued icons
+          line:      '#D7E0D5', // Light sage — borders, dividers
+          ink:       '#102F27', // Primary text
+          muted:     '#566D62', // Muted text
+          tint:      '#F4F7F2', // Soft section background
+          accent:    '#C4561D', // Hero eyebrow accent (from mockup)
         },
+        // Legacy accent scale, re-based on the brand forest green so every eco-* usage matches design.md
+        eco: {
+          50:  '#F4F7F2',
+          100: '#E6EEE7',
+          200: '#CFDDD2',
+          300: '#A9C3B0',
+          400: '#6F9A7D',
+          500: '#3E7556',
+          600: '#1E5A3C',
+          700: '#083D24',
+          800: '#063921',
+          900: '#052E1B',
+          950: '#031F12',
+        },
+      },
+      maxWidth: {
+        content: '1200px',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -61,7 +77,8 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Poppins', 'Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       animation: {

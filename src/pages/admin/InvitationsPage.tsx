@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Copy, Trash2, Loader2, CheckCircle, Clock, X } from 'lucide-react'
+import { Plus, Copy, Trash2, Loader2, Send, CheckCircle, Clock, X, UserCheck, UserX, Mail, Phone, Building2, Briefcase, Inbox } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
-import type { Invitation, UserRole } from '@/types/database'
+import type { AccessRequest, AccessRequestStatus, Invitation, UserRole } from '@/types/database'
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'regulator',    label: 'Regulator' },
@@ -13,6 +13,16 @@ const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'recycler',     label: 'Recycler' },
   { value: 'admin',        label: 'Platform Admin' },
 ]
+
+// Roles an access request can be approved as (consumers self-register at /signup)
+const APPROVE_ROLE_OPTIONS = ROLE_OPTIONS
+
+const REQUESTED_ROLE_LABEL: Record<string, string> = {
+  manufacturer: 'Manufacturer', recycler: 'Recycler',
+  regulator: 'Regulator', auditor: 'Auditor / NGO', other: 'Other',
+}
+
+const inputCls = 'w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors'
 
 function generateToken() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -47,7 +57,133 @@ export function InvitationsPage() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { loadInvitations() }, [loadInvitations])
+  // ── Access requests (from the public "Request access" form) ────────────────
+  const [requests, setRequests] = useState<AccessRequest[]>([])
+  const [requestFilter, setRequestFilter] = useState<AccessRequestStatus>('pending')
+  const [approvingId, setApprovingId] = useState<string | null>(null)
+  const [approveForm, setApproveForm] = useState({ role: 'regulator' as UserRole, organization: '', expiryDays: '7' })
+  const [busyRequestId, setBusyRequestId] = useState<string | null>(null)
+
+  const loadRequests = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('access_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) { toast.error(`Could not load access requests: ${error.message}`); return }
+    setRequests((data ?? []) as AccessRequest[])
+  }, [])
+
+  useEffect(() => { loadInvitations(); loadRequests() }, [loadInvitations, loadRequests])
+
+  /** Creates an invitation row and emails the access code. Returns the new invitation id. */
+  const createInvitation = async (o: { email: string; role: UserRole; organization: string; expiryDays: number }) => {
+    if (!profile) throw new Error('Not signed in')
+    const email = o.email.toLowerCase().trim()
+    const organization = o.organization.trim()
+    const token = generateToken()
+    const expiresAt = new Date(Date.now() + o.expiryDays * 86400_000).toISOString()
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase.from('invitations') as any)
+      .insert({ email, role: o.role, organization, invited_by: profile.id, token, expires_at: expiresAt })
+      .select('id')
+      .single()
+    if (error) throw error
+
+    const emailError = await sendInvitationEmail(token, 'INSERT')
+    return { id: (data as { id: string }).id, token, emailError }
+  }
+
+  /** Asks the notify function to email the invitation. Returns an error message, or null when delivered. */
+  const sendInvitationEmail = async (token: string, type: 'INSERT' | 'RESEND'): Promise<string | null> => {
+    const { data, error } = await supabase.functions.invoke('notify', {
+      body: { type, table: 'invitations', record: { token } },
+    })
+    if (!error && (data as { ok?: boolean } | null)?.ok !== false) return null
+    // FunctionsHttpError carries the function's JSON body in error.context
+    let detail = (data as { error?: string } | null)?.error ?? error?.message ?? 'Unknown error'
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const body = await (error as any)?.context?.json?.()
+      if (body?.error) detail = body.error
+    } catch { /* body not JSON */ }
+    return detail
+  }
+
+  const [resendingToken, setResendingToken] = useState<string | null>(null)
+  const resendInvitation = async (inv: Invitation) => {
+    setResendingToken(inv.token)
+    const err = await sendInvitationEmail(inv.token, 'RESEND')
+    setResendingToken(null)
+    if (err) toast.error(`Email to ${inv.email} failed`, { description: `${err} — share the access code ${inv.token} manually.`, duration: 10000 })
+    else toast.success(`Invitation re-sent to ${inv.email}`)
+  }
+
+  const startApprove = (req: AccessRequest) => {
+    const suggested = APPROVE_ROLE_OPTIONS.some(r => r.value === req.requested_role)
+      ? (req.requested_role as UserRole)
+      : 'auditor'
+    setApproveForm({ role: suggested, organization: req.organization ?? '', expiryDays: '7' })
+    setApprovingId(req.id)
+  }
+
+  const handleApprove = async (req: AccessRequest) => {
+    if (!profile) return
+    if (!approveForm.organization.trim()) { toast.error('Organization is required'); return }
+    setBusyRequestId(req.id)
+    try {
+      const { id: invitationId, token, emailError } = await createInvitation({
+        email: req.email,
+        role: approveForm.role,
+        organization: approveForm.organization,
+        expiryDays: Number(approveForm.expiryDays),
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from('access_requests') as any)
+        .update({
+          status: 'approved',
+          reviewed_by: profile.id,
+          reviewed_at: new Date().toISOString(),
+          invitation_id: invitationId,
+        })
+        .eq('id', req.id)
+      if (error) throw error
+
+      if (emailError) {
+        toast.warning(`Access approved for ${req.full_name}, but the email failed`, {
+          duration: 12000,
+          description: `${emailError}. Share access code ${token} with ${req.email} manually, or use Resend below.`,
+        })
+      } else {
+        toast.success(`Access approved for ${req.full_name}`, {
+          duration: 8000,
+          description: `An invitation with access code ${token} has been emailed to ${req.email}.`,
+        })
+      }
+      setApprovingId(null)
+      loadRequests()
+      loadInvitations()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to approve request')
+    } finally {
+      setBusyRequestId(null)
+    }
+  }
+
+  const handleReject = async (req: AccessRequest) => {
+    if (!profile) return
+    if (!window.confirm(`Reject the access request from ${req.full_name} (${req.email})?`)) return
+    setBusyRequestId(req.id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error } = await (supabase.from('access_requests') as any)
+      .update({ status: 'rejected', reviewed_by: profile.id, reviewed_at: new Date().toISOString() })
+      .eq('id', req.id)
+    setBusyRequestId(null)
+    if (error) { toast.error(error.message); return }
+    toast.success('Request rejected')
+    loadRequests()
+  }
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,40 +191,24 @@ export function InvitationsPage() {
     setSubmitting(true)
 
     try {
-      const token = generateToken()
-      const expiresAt = new Date(Date.now() + Number(form.expiryDays) * 86400_000).toISOString()
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from('invitations') as any).insert({
-        email: form.email.toLowerCase().trim(),
+      const { token, emailError } = await createInvitation({
+        email: form.email,
         role: form.role,
-        organization: form.organization.trim(),
-        invited_by: profile.id,
-        token,
-        expires_at: expiresAt,
+        organization: form.organization,
+        expiryDays: Number(form.expiryDays),
       })
 
-      if (error) throw error
-
-      // Send invitation email automatically via notify edge function
-      await supabase.functions.invoke('notify', {
-        body: {
-          type: 'INSERT',
-          table: 'invitations',
-          record: {
-            email:       form.email.toLowerCase().trim(),
-            role:        form.role,
-            organization: form.organization.trim(),
-            token,
-            expiry_days: Number(form.expiryDays),
-          },
-        },
-      })
-
-      toast.success(
-        `Invitation sent to ${form.email}`,
-        { duration: 8000, description: `Access code ${token} has been emailed. The copy button is available as a backup.` }
-      )
+      if (emailError) {
+        toast.warning(`Invitation created, but the email to ${form.email} failed`, {
+          duration: 12000,
+          description: `${emailError}. Copy access code ${token} and share it manually, or use Resend.`,
+        })
+      } else {
+        toast.success(`Invitation sent to ${form.email}`, {
+          duration: 8000,
+          description: `Access code ${token} has been emailed. The copy button is available as a backup.`,
+        })
+      }
 
       setForm({ email: '', role: 'regulator', organization: '', expiryDays: '7' })
       setShowForm(false)
@@ -116,6 +236,9 @@ export function InvitationsPage() {
   const accepted = invitations.filter(i => i.accepted_at)
   const expired = invitations.filter(i => !i.accepted_at && new Date(i.expires_at) <= new Date())
 
+  const pendingRequests = requests.filter(r => r.status === 'pending')
+  const visibleRequests = requests.filter(r => r.status === requestFilter)
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -131,7 +254,7 @@ export function InvitationsPage() {
           type="button"
           onClick={() => setShowForm(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors hover:opacity-90 flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <Plus className="w-4 h-4" />
           New Invitation
@@ -213,7 +336,7 @@ export function InvitationsPage() {
                 type="submit"
                 disabled={submitting}
                 className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white disabled:opacity-50 transition-colors"
-                style={{ background: '#0f1410' }}
+                style={{ background: '#063921' }}
               >
                 {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating…</> : 'Create & Copy Code'}
               </button>
@@ -221,6 +344,181 @@ export function InvitationsPage() {
           </form>
         </motion.div>
       )}
+
+      {/* Access requests */}
+      <section className="mb-8">
+        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Inbox className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold">Access Requests</h2>
+            {pendingRequests.length > 0 && (
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+                {pendingRequests.length} pending
+              </span>
+            )}
+          </div>
+          <div className="flex gap-1 bg-muted rounded-lg p-0.5">
+            {(['pending', 'approved', 'rejected'] as AccessRequestStatus[]).map(s => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setRequestFilter(s)}
+                className={`px-3 py-1 text-xs rounded-md capitalize transition-colors ${
+                  requestFilter === s ? 'bg-white shadow-sm font-medium text-foreground' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {visibleRequests.length === 0 ? (
+          <div className="text-center py-8 text-sm text-muted-foreground bg-white border border-dashed border-border rounded-xl">
+            No {requestFilter} access requests.
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {visibleRequests.map(req => {
+              const busy = busyRequestId === req.id
+              const approving = approvingId === req.id
+              return (
+                <motion.div
+                  key={req.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-white border border-border rounded-xl"
+                >
+                  <div className="flex items-start gap-4 flex-wrap sm:flex-nowrap">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-medium">{req.full_name}</p>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
+                          {REQUESTED_ROLE_LABEL[req.requested_role] ?? req.requested_role}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(req.created_at).toLocaleString('en-LR', { dateStyle: 'medium', timeStyle: 'short' })}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                        <a href={`mailto:${req.email}`} className="flex items-center gap-1.5 hover:text-foreground truncate">
+                          <Mail className="w-3 h-3 flex-shrink-0" />{req.email}
+                        </a>
+                        {req.phone && (
+                          <a href={`tel:${req.phone}`} className="flex items-center gap-1.5 hover:text-foreground truncate">
+                            <Phone className="w-3 h-3 flex-shrink-0" />{req.phone}
+                          </a>
+                        )}
+                        {req.organization && (
+                          <span className="flex items-center gap-1.5 truncate"><Building2 className="w-3 h-3 flex-shrink-0" />{req.organization}</span>
+                        )}
+                        {req.job_title && (
+                          <span className="flex items-center gap-1.5 truncate"><Briefcase className="w-3 h-3 flex-shrink-0" />{req.job_title}</span>
+                        )}
+                      </div>
+                      {req.message && (
+                        <p className="mt-2 text-xs text-foreground/80 bg-muted/50 rounded-lg px-3 py-2 whitespace-pre-wrap break-words">
+                          {req.message}
+                        </p>
+                      )}
+                      {req.status !== 'pending' && req.reviewed_at && (
+                        <p className="mt-2 text-[11px] text-muted-foreground">
+                          {req.status === 'approved' ? 'Approved' : 'Rejected'} {new Date(req.reviewed_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
+                          {req.status === 'approved' && ' · invitation emailed'}
+                        </p>
+                      )}
+                    </div>
+
+                    {req.status === 'pending' && !approving && (
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => handleReject(req)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border rounded-lg text-muted-foreground hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        >
+                          <UserX className="w-3.5 h-3.5" /> Reject
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => startApprove(req)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-lg text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                          style={{ background: '#063921' }}
+                        >
+                          <UserCheck className="w-3.5 h-3.5" /> Approve
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {approving && (
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Approving sends <strong className="text-foreground">{req.email}</strong> an invitation email with an access code.
+                        They sign in via Institutional Sign In, then set their password.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Grant role *</label>
+                          <select
+                            value={approveForm.role}
+                            onChange={e => setApproveForm(p => ({ ...p, role: e.target.value as UserRole }))}
+                            className={inputCls}
+                          >
+                            {APPROVE_ROLE_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Organization *</label>
+                          <input
+                            value={approveForm.organization}
+                            onChange={e => setApproveForm(p => ({ ...p, organization: e.target.value }))}
+                            placeholder="EPA Liberia…"
+                            className={inputCls}
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Expires in</label>
+                          <select
+                            value={approveForm.expiryDays}
+                            onChange={e => setApproveForm(p => ({ ...p, expiryDays: e.target.value }))}
+                            className={inputCls}
+                          >
+                            <option value="3">3 days</option>
+                            <option value="7">7 days</option>
+                            <option value="14">14 days</option>
+                            <option value="30">30 days</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-2 mt-3">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => setApprovingId(null)}
+                          className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground border border-border rounded-lg transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy || !approveForm.organization.trim()}
+                          onClick={() => handleApprove(req)}
+                          className="flex items-center gap-1.5 px-4 py-1.5 text-xs rounded-lg text-white disabled:opacity-50"
+                          style={{ background: '#063921' }}
+                        >
+                          {busy ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Sending…</> : 'Approve & Send Invitation'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
+      </section>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
@@ -298,6 +596,16 @@ export function InvitationsPage() {
                       className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     >
                       <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Resend invitation email"
+                      title="Resend email"
+                      disabled={resendingToken === inv.token}
+                      onClick={() => resendInvitation(inv)}
+                      className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+                    >
+                      {resendingToken === inv.token ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                     </button>
                     <button
                       type="button"

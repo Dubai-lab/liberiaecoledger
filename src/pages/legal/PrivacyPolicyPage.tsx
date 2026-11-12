@@ -4,8 +4,8 @@ import { LandingFooter } from '@/components/landing/LandingFooter'
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-10">
-      <h2 className="text-lg font-bold text-[#0f0f0e] mb-4 pb-2 border-b border-[#e8e5de]">{title}</h2>
-      <div className="space-y-3 text-sm text-[#6b6b68] leading-relaxed">{children}</div>
+      <h2 className="text-lg font-bold text-brand-ink mb-4 pb-2 border-b border-brand-line">{title}</h2>
+      <div className="space-y-3 text-sm text-brand-muted leading-relaxed">{children}</div>
     </div>
   )
 }
@@ -16,29 +16,29 @@ export function PrivacyPolicyPage() {
       <LandingNav alwaysOpaque />
 
       {/* Page header */}
-      <div className="bg-[#fafaf8] border-b border-[#e8e5de] pt-24 pb-10 px-6">
+      <div className="bg-brand-tint border-b border-brand-line pt-32 pb-10 px-5 md:px-8 lg:px-12">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#9b9b98] uppercase mb-2">Legal</p>
-          <h1 className="text-4xl font-bold text-[#0f0f0e] mb-3" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}>
+          <p className="text-[11px] font-semibold tracking-widest text-brand-muted uppercase mb-2">Legal</p>
+          <h1 className="text-4xl font-bold text-brand mb-3 font-display font-bold">
             Privacy Policy
           </h1>
-          <p className="text-sm text-[#9b9b98]">Last updated: May 2026 · GDPR-aligned · No personal data sold</p>
+          <p className="text-sm text-brand-muted">Last updated: May 2026 · GDPR-aligned · No personal data sold</p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto box-content px-5 md:px-8 lg:px-12 py-12">
 
         <Section title="1. Who We Are">
           <p>EcoLedger Foundation ("EcoLedger", "we", "us", "our") operates the Liberia EcoLedger platform — a blockchain-based electronic device lifecycle tracking registry for the Republic of Liberia. Our registered address is Monrovia, Liberia, West Africa.</p>
-          <p>For questions about this policy or your personal data, contact us at <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>.</p>
+          <p>For questions about this policy or your personal data, contact us at <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>.</p>
         </Section>
 
         <Section title="2. What Data We Collect">
-          <p><strong className="text-[#0f0f0e]">Account data:</strong> When you register or are invited to the platform, we collect your full name, email address, organisation name, and role. This is stored securely in our off-chain database (Supabase) and is never published publicly.</p>
-          <p><strong className="text-[#0f0f0e]">Wallet address:</strong> If you use a blockchain wallet to authenticate, your public wallet address is stored. Wallet addresses are pseudonymous — they do not directly identify you by name.</p>
-          <p><strong className="text-[#0f0f0e]">Device data:</strong> Device registrations (brand, model, IMEI, hazard class), ownership transfers, and disposal events are recorded on-chain (Ethereum Sepolia). This data is permanently public by design, as it forms the immutable audit trail of the registry.</p>
-          <p><strong className="text-[#0f0f0e]">Usage data:</strong> Standard server logs may include IP addresses and browser user agents for security and performance monitoring purposes. These are not used for profiling.</p>
+          <p><strong className="text-brand-ink">Account data:</strong> When you register or are invited to the platform, we collect your full name, email address, organisation name, and role. This is stored securely in our off-chain database (Supabase) and is never published publicly.</p>
+          <p><strong className="text-brand-ink">Wallet address:</strong> If you use a blockchain wallet to authenticate, your public wallet address is stored. Wallet addresses are pseudonymous — they do not directly identify you by name.</p>
+          <p><strong className="text-brand-ink">Device data:</strong> Device registrations (brand, model, IMEI, hazard class), ownership transfers, and disposal events are recorded on-chain (Ethereum Sepolia). This data is permanently public by design, as it forms the immutable audit trail of the registry.</p>
+          <p><strong className="text-brand-ink">Usage data:</strong> Standard server logs may include IP addresses and browser user agents for security and performance monitoring purposes. These are not used for profiling.</p>
         </Section>
 
         <Section title="3. How We Use Your Data">
@@ -58,10 +58,10 @@ export function PrivacyPolicyPage() {
         </Section>
 
         <Section title="5. Data Sharing">
-          <p><strong className="text-[#0f0f0e]">With regulators:</strong> The Environmental Protection Agency of Liberia (EPA Liberia) and authorised government bodies may access compliance data as part of their regulatory mandate.</p>
-          <p><strong className="text-[#0f0f0e]">With auditors:</strong> Authorised NGO auditors can read device lifecycle records and compliance flags. They cannot access your personal contact details.</p>
-          <p><strong className="text-[#0f0f0e]">Service providers:</strong> We use Supabase (EU data centres) for off-chain data storage, and Vercel for application hosting. Both providers operate under data processing agreements.</p>
-          <p><strong className="text-[#0f0f0e]">No other sharing:</strong> We do not sell, rent, or share personal data with any other third party.</p>
+          <p><strong className="text-brand-ink">With regulators:</strong> The Environmental Protection Agency of Liberia (EPA Liberia) and authorised government bodies may access compliance data as part of their regulatory mandate.</p>
+          <p><strong className="text-brand-ink">With auditors:</strong> Authorised NGO auditors can read device lifecycle records and compliance flags. They cannot access your personal contact details.</p>
+          <p><strong className="text-brand-ink">Service providers:</strong> We use Supabase (EU data centres) for off-chain data storage, and Vercel for application hosting. Both providers operate under data processing agreements.</p>
+          <p><strong className="text-brand-ink">No other sharing:</strong> We do not sell, rent, or share personal data with any other third party.</p>
         </Section>
 
         <Section title="6. Data Retention">
@@ -70,19 +70,19 @@ export function PrivacyPolicyPage() {
         </Section>
 
         <Section title="7. Cookies">
-          <p>We use only strictly essential cookies for session management and authentication. No advertising, tracking, or analytics cookies are set. See our <a href="/cookies" className="text-[#2d6a3f] hover:underline">Cookie Policy</a> for full details.</p>
+          <p>We use only strictly essential cookies for session management and authentication. No advertising, tracking, or analytics cookies are set. See our <a href="/cookies" className="text-brand hover:underline">Cookie Policy</a> for full details.</p>
         </Section>
 
         <Section title="8. Your Rights">
           <p>You have the right to:</p>
           <ul className="list-disc list-inside space-y-1 pl-2">
-            <li><strong className="text-[#0f0f0e]">Access</strong> — request a copy of the personal data we hold about you</li>
-            <li><strong className="text-[#0f0f0e]">Rectification</strong> — request correction of inaccurate data</li>
-            <li><strong className="text-[#0f0f0e]">Erasure</strong> — request deletion of your off-chain account data</li>
-            <li><strong className="text-[#0f0f0e]">Data portability</strong> — request your data in a structured, machine-readable format</li>
-            <li><strong className="text-[#0f0f0e]">Objection</strong> — object to processing based on legitimate interest</li>
+            <li><strong className="text-brand-ink">Access</strong> — request a copy of the personal data we hold about you</li>
+            <li><strong className="text-brand-ink">Rectification</strong> — request correction of inaccurate data</li>
+            <li><strong className="text-brand-ink">Erasure</strong> — request deletion of your off-chain account data</li>
+            <li><strong className="text-brand-ink">Data portability</strong> — request your data in a structured, machine-readable format</li>
+            <li><strong className="text-brand-ink">Objection</strong> — object to processing based on legitimate interest</li>
           </ul>
-          <p>To exercise any of these rights, email <a href="mailto:support@liberiaecoledger.com" className="text-[#2d6a3f] hover:underline">support@liberiaecoledger.com</a>. We will respond within 30 days.</p>
+          <p>To exercise any of these rights, email <a href="mailto:support@liberiaecoledger.com" className="text-brand hover:underline">support@liberiaecoledger.com</a>. We will respond within 30 days.</p>
         </Section>
 
         <Section title="9. Security">

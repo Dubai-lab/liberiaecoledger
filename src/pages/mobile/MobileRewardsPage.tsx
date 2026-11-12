@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
-import logoCompactLight from '@/brands/logo-compact-light.png'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 const LRD = 150
 
@@ -109,43 +109,43 @@ export function MobileRewardsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f0ede6' }}>
-        <Loader2 className="w-6 h-6 animate-spin text-[#9b9b98]" />
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
+        <Loader2 className="w-6 h-6 animate-spin text-brand-muted" />
       </div>
     )
   }
 
   return (
-    <div className="px-5 pt-6 pb-8" style={{ background: '#f0ede6', minHeight: '100vh' }}>
+    <div className="px-5 pt-6 pb-8" style={{ background: '#F4F7F2', minHeight: '100vh' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <img src={logoCompactLight} alt="EcoLedger" className="h-8 w-auto object-contain" />
-        <p className="text-xs text-[#9b9b98]">EcoCredits</p>
+        <EcoLedgerLogo />
+        <p className="text-xs text-brand-muted">EcoCredits</p>
       </div>
 
       {/* Balance card */}
-      <div className="rounded-2xl p-5 mb-6" style={{ background: '#0f0f0e' }}>
-        <p className="text-[10px] tracking-widest text-[#6b6b68] uppercase mb-1">Available Balance</p>
+      <div className="rounded-2xl p-5 mb-6" style={{ background: '#083D24' }}>
+        <p className="text-[10px] tracking-widest text-white/60 uppercase mb-1">Available Balance</p>
         <p className="text-4xl font-bold text-white">{fmt(balance)}</p>
-        <p className="text-sm text-[#9b9b98] mb-1">EcoCredits</p>
-        <p className="text-xs text-[#6b6b68]">≈ LRD {fmt(balance * LRD)}</p>
+        <p className="text-sm text-white/70 mb-1">EcoCredits</p>
+        <p className="text-xs text-white/60">≈ LRD {fmt(balance * LRD)}</p>
         <div className="flex gap-4 mt-4 pt-4 border-t border-white/10">
           <div>
-            <p className="text-xs text-[#6b6b68]">Total earned</p>
+            <p className="text-xs text-white/60">Total earned</p>
             <p className="text-sm font-semibold text-white">{fmt(earned)} EC</p>
           </div>
           <div>
-            <p className="text-xs text-[#6b6b68]">Redeemed</p>
+            <p className="text-xs text-white/60">Redeemed</p>
             <p className="text-sm font-semibold text-white">{fmt(redeemed)} EC</p>
           </div>
         </div>
       </div>
 
       {/* Catalogue */}
-      <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">Redeem Rewards</p>
+      <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-3">Redeem Rewards</p>
       {catalogue.length === 0 ? (
         <div className="bg-white rounded-2xl p-5 mb-5 text-center">
-          <p className="text-sm text-[#9b9b98]">No rewards available yet.</p>
+          <p className="text-sm text-brand-muted">No rewards available yet.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 mb-5">
@@ -159,27 +159,27 @@ export function MobileRewardsPage() {
                 type="button"
                 onClick={() => setSelected(isSelected ? null : item)}
                 className={`bg-white rounded-2xl p-4 text-left border-2 transition-all ${
-                  isSelected ? 'border-[#0f0f0e]' : 'border-transparent'
+                  isSelected ? 'border-[#083D24]' : 'border-transparent'
                 } ${!canAfford ? 'opacity-50' : ''}`}
               >
                 {item.image_url
                   ? <img src={item.image_url} alt={item.title} className="w-10 h-10 rounded-lg object-cover mb-2" />
                   : <p className="text-xl mb-1">🎁</p>
                 }
-                <p className="text-sm font-semibold text-[#0f0f0e] leading-tight">{item.title}</p>
-                <p className="text-[10px] text-[#b0afa8]">{item.partner}</p>
+                <p className="text-sm font-semibold text-brand-ink leading-tight">{item.title}</p>
+                <p className="text-[10px] text-brand-sage">{item.partner}</p>
                 {item.description && (
-                  <p className="text-xs text-[#9b9b98] mt-0.5 line-clamp-2">{item.description}</p>
+                  <p className="text-xs text-brand-muted mt-0.5 line-clamp-2">{item.description}</p>
                 )}
-                <p className="text-xs font-bold text-[#2d6a3f] mt-2">{fmt(item.cost_ec)} EC</p>
+                <p className="text-xs font-bold text-brand mt-2">{fmt(item.cost_ec)} EC</p>
                 {outOfStock ? (
                   <p className="text-[10px] text-red-400 mt-0.5 font-semibold">Out of stock</p>
                 ) : item.stock !== null && item.stock <= 3 ? (
                   <p className="text-[10px] text-red-400 mt-0.5">{item.stock} left</p>
                 ) : item.stock !== null ? (
-                  <p className="text-[10px] text-[#b0afa8] mt-0.5">{item.stock} left</p>
+                  <p className="text-[10px] text-brand-sage mt-0.5">{item.stock} left</p>
                 ) : !canAfford ? (
-                  <p className="text-[10px] text-[#b0afa8] mt-0.5">Need {fmt(item.cost_ec - balance)} more</p>
+                  <p className="text-[10px] text-brand-sage mt-0.5">Need {fmt(item.cost_ec - balance)} more</p>
                 ) : null}
               </button>
             )
@@ -190,9 +190,9 @@ export function MobileRewardsPage() {
       {/* Selected item summary + confirm */}
       {selected && (
         <div className="bg-white rounded-2xl p-4 mb-4">
-          <p className="text-xs text-[#9b9b98] mb-1">Redeeming</p>
-          <p className="text-sm font-semibold text-[#0f0f0e]">{selected.title}</p>
-          <p className="text-xs text-[#9b9b98] mt-0.5">Cost: {fmt(selected.cost_ec)} EC · Balance after: {fmt(balance - selected.cost_ec)} EC</p>
+          <p className="text-xs text-brand-muted mb-1">Redeeming</p>
+          <p className="text-sm font-semibold text-brand-ink">{selected.title}</p>
+          <p className="text-xs text-brand-muted mt-0.5">Cost: {fmt(selected.cost_ec)} EC · Balance after: {fmt(balance - selected.cost_ec)} EC</p>
         </div>
       )}
 
@@ -201,7 +201,7 @@ export function MobileRewardsPage() {
         onClick={handleRedeem}
         disabled={!selected || redeeming || (selected ? balance < selected.cost_ec : false)}
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40 flex items-center justify-center gap-2"
-        style={{ background: '#0f0f0e' }}
+        style={{ background: '#083D24' }}
       >
         {redeeming ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Redeem'}
       </button>
@@ -209,20 +209,20 @@ export function MobileRewardsPage() {
       {/* History */}
       {credits.length > 0 && (
         <div className="mt-6">
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">History</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-3">History</p>
           <div className="space-y-2">
             {credits.slice(0, 10).map((c, i) => (
               <div key={i} className="bg-white rounded-2xl px-4 py-3 flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${c.type === 'redeemed' ? 'bg-red-50' : 'bg-[#e8f5ec]'}`}>
-                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke={c.type === 'redeemed' ? '#c0392b' : '#2d6a3f'} strokeWidth={2}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${c.type === 'redeemed' ? 'bg-red-50' : 'bg-brand-tint'}`}>
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke={c.type === 'redeemed' ? '#c0392b' : '#083D24'} strokeWidth={2}>
                     <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#0f0f0e] truncate">{c.description ?? c.type}</p>
-                  <p className="text-xs text-[#9b9b98]">{new Date(c.created_at).toLocaleDateString()}</p>
+                  <p className="text-sm font-medium text-brand-ink truncate">{c.description ?? c.type}</p>
+                  <p className="text-xs text-brand-muted">{new Date(c.created_at).toLocaleDateString()}</p>
                 </div>
-                <p className={`text-sm font-bold flex-shrink-0 ${c.type === 'redeemed' ? 'text-red-500' : 'text-[#2d6a3f]'}`}>
+                <p className={`text-sm font-bold flex-shrink-0 ${c.type === 'redeemed' ? 'text-red-500' : 'text-brand'}`}>
                   {c.type === 'redeemed' ? '-' : '+'}{fmt(c.amount)} EC
                 </p>
               </div>

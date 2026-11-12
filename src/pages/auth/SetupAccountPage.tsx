@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 function PasswordStrength({ password }: { password: string }) {
   const checks = [
@@ -17,8 +18,8 @@ function PasswordStrength({ password }: { password: string }) {
     <div className="space-y-1 mt-2">
       {checks.map(c => (
         <div key={c.label} className="flex items-center gap-2">
-          <CheckCircle className={`w-3 h-3 flex-shrink-0 ${c.pass ? 'text-eco-700' : 'text-muted-foreground/40'}`} />
-          <span className={`text-xs ${c.pass ? 'text-eco-700' : 'text-muted-foreground'}`}>{c.label}</span>
+          <CheckCircle className={`w-3 h-3 flex-shrink-0 ${c.pass ? 'text-brand' : 'text-brand-muted/40'}`} />
+          <span className={`text-xs ${c.pass ? 'text-brand' : 'text-brand-muted'}`}>{c.label}</span>
         </div>
       ))}
     </div>
@@ -57,10 +58,10 @@ export function SetupAccountPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-8 bg-white">
         <div className="text-center max-w-xs">
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-brand-muted mb-4">
             Could not load your account details. Your invitation link may have expired or already been used.
           </p>
-          <a href="/login" className="text-sm font-medium text-eco-700 hover:underline">
+          <a href="/login" className="text-sm font-medium text-brand hover:underline">
             Back to sign in
           </a>
         </div>
@@ -133,21 +134,15 @@ export function SetupAccountPage() {
       {/* Dark panel */}
       <div
         className="hidden lg:flex flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: '#0f1410' }}
+        style={{ background: '#063921' }}
       >
-        <div className="absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full opacity-10" style={{ border: '1px solid #fafaf7' }} />
-        <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full opacity-5" style={{ border: '1px solid #fafaf7' }} />
+        <div className="absolute -top-32 -right-32 w-[560px] h-[560px] rounded-full opacity-10" style={{ border: '1px solid #FFFFFF' }} />
+        <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full opacity-5" style={{ border: '1px solid #FFFFFF' }} />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#1a2e1c' }}>
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fafaf7" strokeWidth={1.5}>
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-            </svg>
-          </div>
           <div>
-            <p className="font-medium text-sm" style={{ color: '#fafaf7' }}>EcoLedger</p>
-            <p className="text-xs tracking-widest uppercase" style={{ color: '#fafaf7', opacity: 0.4 }}>Account Setup</p>
+            <EcoLedgerLogo tone="dark" />
+            <p className="text-xs tracking-widest uppercase mt-2" style={{ color: '#FFFFFF', opacity: 0.6 }}>Account Setup</p>
           </div>
         </div>
 
@@ -159,11 +154,11 @@ export function SetupAccountPage() {
         >
           <h1
             className="text-4xl leading-tight mb-5"
-            style={{ color: '#fafaf7', fontFamily: "'Cormorant Garamond', serif", fontWeight: 400 }}
+            style={{ color: '#FFFFFF', fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}
           >
             One last step before you begin.
           </h1>
-          <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#fafaf7', opacity: 0.5 }}>
+          <p className="text-sm leading-relaxed max-w-xs" style={{ color: '#FFFFFF', opacity: 0.5 }}>
             Your identity has been verified. Set your display name and a secure password to complete your EcoLedger account.
           </p>
         </motion.div>
@@ -176,10 +171,10 @@ export function SetupAccountPage() {
           ].map(stat => (
             <div key={stat.label}>
               <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#2f6b3a' }} />
-                <p className="text-xs font-medium" style={{ color: '#fafaf7', opacity: 0.5 }}>{stat.label}</p>
+                <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#8FD3A8' }} />
+                <p className="text-xs font-medium" style={{ color: '#FFFFFF', opacity: 0.5 }}>{stat.label}</p>
               </div>
-              <p className="text-sm font-semibold" style={{ color: '#fafaf7' }}>{stat.value}</p>
+              <p className="text-sm font-semibold" style={{ color: '#FFFFFF' }}>{stat.value}</p>
             </div>
           ))}
         </div>
@@ -193,21 +188,22 @@ export function SetupAccountPage() {
           transition={{ delay: 0.1 }}
           className="w-full max-w-sm"
         >
-          <p className="text-xs text-muted-foreground tracking-widest uppercase mb-1">Almost there</p>
+          <div className="lg:hidden mb-10"><EcoLedgerLogo /></div>
+          <p className="text-xs text-brand-muted tracking-widest uppercase mb-1">Almost there</p>
           <h2
             className="text-3xl mb-2"
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, color: '#0f1410' }}
+            style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, color: '#063921' }}
           >
             Set up your account
           </h2>
-          <p className="text-sm text-muted-foreground mb-8">
+          <p className="text-sm text-brand-muted mb-8">
             You're signing in as <strong>{profile?.email}</strong>. Create a password so you can log in next time.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full name */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+              <label className="text-xs font-medium tracking-widest uppercase text-brand-muted">
                 Full Name *
               </label>
               <input
@@ -217,13 +213,13 @@ export function SetupAccountPage() {
                 onChange={e => setFullName(e.target.value)}
                 placeholder="Your full name"
                 required
-                className="w-full border border-border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
+                className="w-full border border-brand-line rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors"
               />
             </div>
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+              <label className="text-xs font-medium tracking-widest uppercase text-brand-muted">
                 Create Password *
               </label>
               <div className="relative">
@@ -234,13 +230,13 @@ export function SetupAccountPage() {
                   onChange={e => setPassword(e.target.value)}
                   placeholder="············"
                   required
-                  className="w-full border border-border rounded-lg px-3 py-2.5 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
+                  className="w-full border border-brand-line rounded-lg px-3 py-2.5 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-colors"
                 />
                 <button
                   type="button"
                   aria-label={showPw ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPw(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-ink transition-colors"
                 >
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -250,7 +246,7 @@ export function SetupAccountPage() {
 
             {/* Confirm password */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">
+              <label className="text-xs font-medium tracking-widest uppercase text-brand-muted">
                 Confirm Password *
               </label>
               <input
@@ -263,7 +259,7 @@ export function SetupAccountPage() {
                 className={`w-full border rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 transition-colors ${
                   confirm && confirm !== password
                     ? 'border-red-400 focus:ring-red-200 focus:border-red-400'
-                    : 'border-border focus:ring-eco-700/20 focus:border-eco-700'
+                    : 'border-brand-line focus:ring-brand/20 focus:border-brand'
                 }`}
               />
               {confirm && confirm !== password && (
@@ -275,7 +271,7 @@ export function SetupAccountPage() {
               type="submit"
               disabled={loading || !isValid}
               className="w-full py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              style={{ background: '#0f1410', color: '#fafaf7' }}
+              style={{ background: '#063921', color: '#FFFFFF' }}
             >
               {loading
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Setting up…</>

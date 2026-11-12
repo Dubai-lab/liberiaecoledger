@@ -92,41 +92,41 @@ export function MobileSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen" style={{ background: '#f0ede6' }}>
-        <Loader2 className="w-6 h-6 animate-spin text-[#9b9b98]" />
+      <div className="flex items-center justify-center min-h-screen" style={{ background: '#F4F7F2' }}>
+        <Loader2 className="w-6 h-6 animate-spin text-brand-muted" />
       </div>
     )
   }
 
   return (
-    <div className="px-5 pt-6 pb-10" style={{ background: '#f0ede6', minHeight: '100vh' }}>
+    <div className="px-5 pt-6 pb-10" style={{ background: '#F4F7F2', minHeight: '100vh' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <button
           type="button"
           aria-label="Go back"
           onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center flex-shrink-0"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="white" strokeWidth={2}>
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
-        <p className="text-base font-semibold text-[#0f0f0e]">Account Settings</p>
+        <p className="text-base font-semibold text-brand-ink">Account Settings</p>
       </div>
 
       {/* Profile summary */}
       <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-3">
-        <div className="w-12 h-12 rounded-xl bg-[#0f0f0e] flex items-center justify-center flex-shrink-0">
+        <div className="w-12 h-12 rounded-xl bg-brand flex items-center justify-center flex-shrink-0">
           <span className="text-base font-bold text-white">
             {(data?.full_name ?? data?.email ?? 'U').slice(0, 2).toUpperCase()}
           </span>
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-[#0f0f0e] truncate">{data?.full_name ?? 'No name set'}</p>
-          <p className="text-xs text-[#9b9b98] truncate">{data?.email}</p>
+          <p className="text-sm font-semibold text-brand-ink truncate">{data?.full_name ?? 'No name set'}</p>
+          <p className="text-xs text-brand-muted truncate">{data?.email}</p>
           {data?.created_at && (
-            <p className="text-[10px] text-[#b0afa8] mt-0.5">
+            <p className="text-[10px] text-brand-sage mt-0.5">
               Member since {new Date(data.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </p>
           )}
@@ -135,17 +135,17 @@ export function MobileSettingsPage() {
 
       {/* Read-only */}
       <div className="bg-white rounded-2xl p-4 mb-4">
-        <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-3">Account</p>
+        <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-3">Account</p>
         <div>
-          <p className="text-[10px] tracking-widest text-[#9b9b98] uppercase mb-0.5">Email</p>
-          <p className="text-sm text-[#0f0f0e]">{data?.email ?? '—'}</p>
-          <p className="text-[10px] text-[#b0afa8] mt-0.5">Cannot be changed here</p>
+          <p className="text-[10px] tracking-widest text-brand-muted uppercase mb-0.5">Email</p>
+          <p className="text-sm text-brand-ink">{data?.email ?? '—'}</p>
+          <p className="text-[10px] text-brand-sage mt-0.5">Cannot be changed here</p>
         </div>
       </div>
 
       {/* Editable profile */}
       <div className="bg-white rounded-2xl p-4 mb-4">
-        <p className="text-[10px] tracking-widests text-[#9b9b98] uppercase mb-4">Profile</p>
+        <p className="text-[10px] tracking-widests text-brand-muted uppercase mb-4">Profile</p>
         <div className="space-y-4">
           {[
             { label: 'Full Name', value: fullName, set: setFullName, placeholder: 'Your full name', type: 'text' },
@@ -154,13 +154,13 @@ export function MobileSettingsPage() {
             { label: 'City', value: city, set: setCity, placeholder: 'Monrovia', type: 'text' },
           ].map(f => (
             <div key={f.label}>
-              <label className="text-[10px] tracking-widests text-[#9b9b98] uppercase block mb-1">{f.label}</label>
+              <label className="text-[10px] tracking-widests text-brand-muted uppercase block mb-1">{f.label}</label>
               <input
                 value={f.value}
                 onChange={e => f.set(e.target.value)}
                 placeholder={f.placeholder}
                 type={f.type}
-                className="w-full border border-[#e8e5de] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#0f0f0e]"
+                className="w-full border border-brand-line rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#083D24]"
               />
             </div>
           ))}
@@ -172,7 +172,7 @@ export function MobileSettingsPage() {
         onClick={handleSave}
         disabled={saving}
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2 mb-6"
-        style={{ background: '#0f0f0e' }}
+        style={{ background: '#083D24' }}
       >
         {saving && <Loader2 className="w-4 h-4 animate-spin" />}
         {saving ? 'Saving…' : 'Save Changes'}
@@ -180,11 +180,11 @@ export function MobileSettingsPage() {
 
       {/* Security */}
       <div className="bg-white rounded-2xl p-4 mb-4">
-        <p className="text-[10px] tracking-widests text-[#9b9b98] uppercase mb-3">Security</p>
+        <p className="text-[10px] tracking-widests text-brand-muted uppercase mb-3">Security</p>
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-[#0f0f0e]">Password</p>
-            <p className="text-xs text-[#9b9b98] mt-0.5">
+            <p className="text-sm font-semibold text-brand-ink">Password</p>
+            <p className="text-xs text-brand-muted mt-0.5">
               {resetSent ? 'Reset link sent — check your email' : 'Send a reset link to your email'}
             </p>
           </div>
@@ -192,7 +192,7 @@ export function MobileSettingsPage() {
             type="button"
             onClick={handleResetPassword}
             disabled={resetSent}
-            className="flex-shrink-0 px-4 py-2 rounded-xl border border-[#e8e5de] text-sm font-semibold text-[#0f0f0e] disabled:opacity-50"
+            className="flex-shrink-0 px-4 py-2 rounded-xl border border-brand-line text-sm font-semibold text-brand-ink disabled:opacity-50"
           >
             {resetSent ? 'Sent' : 'Reset'}
           </button>
@@ -205,8 +205,8 @@ export function MobileSettingsPage() {
         {!showDelete ? (
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-[#0f0f0e]">Delete Account</p>
-              <p className="text-xs text-[#9b9b98] mt-0.5">Permanently removes your profile and data.</p>
+              <p className="text-sm font-semibold text-brand-ink">Delete Account</p>
+              <p className="text-xs text-brand-muted mt-0.5">Permanently removes your profile and data.</p>
             </div>
             <button
               type="button"
@@ -218,7 +218,7 @@ export function MobileSettingsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm text-[#0f0f0e]">
+            <p className="text-sm text-brand-ink">
               Type <span className="font-mono font-bold">DELETE</span> to confirm.
             </p>
             <input
@@ -240,7 +240,7 @@ export function MobileSettingsPage() {
               <button
                 type="button"
                 onClick={() => { setShowDelete(false); setDeleteInput('') }}
-                className="flex-1 py-3 rounded-xl border border-[#e8e5de] text-sm font-semibold text-[#0f0f0e]"
+                className="flex-1 py-3 rounded-xl border border-brand-line text-sm font-semibold text-brand-ink"
               >
                 Cancel
               </button>

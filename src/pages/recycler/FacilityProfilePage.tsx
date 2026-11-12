@@ -185,7 +185,7 @@ export function FacilityProfilePage() {
 
         <button type="submit" disabled={saving}
           className="w-full py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          style={{ background: '#0f1410', color: '#fafaf7' }}>
+          style={{ background: '#063921', color: '#FFFFFF' }}>
           {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</> : <><Save className="w-4 h-4" /> {facility ? 'Update Facility' : 'Register Facility'}</>}
         </button>
       </motion.form>

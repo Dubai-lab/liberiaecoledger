@@ -96,7 +96,7 @@ export function FlaggedCasesPage() {
           type="button"
           onClick={raiseFlag}
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-colors flex-shrink-0"
-          style={{ background: '#0f1410' }}
+          style={{ background: '#063921' }}
         >
           <ShieldAlert className="w-4 h-4" />
           Raise Flag

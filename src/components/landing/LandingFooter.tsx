@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import logoCompactDark from '@/brands/logo-compact-dark.png'
+import { ArrowRight } from 'lucide-react'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 const cols = [
   {
@@ -46,33 +47,34 @@ const cols = [
 
 export function LandingFooter() {
   return (
-    <footer className="bg-[#0f0f0e] pt-16 pb-10 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col lg:flex-row gap-12 mb-12">
-          <div className="flex-shrink-0 max-w-xs">
-            <div className="flex items-center gap-2 mb-4">
-              <img src={logoCompactDark} alt="EcoLedger" className="h-7 w-auto object-contain" />
-            </div>
-            <p className="text-sm text-[#6b6b68] leading-relaxed">
+    <footer className="bg-brand-deep text-white">
+      <div className="max-w-content mx-auto px-5 md:px-8 lg:px-12 pt-14 lg:pt-16 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_repeat(4,max-content)] gap-10 lg:gap-0">
+          {/* Brand + CTA */}
+          <div className="lg:pr-10">
+            <EcoLedgerLogo tone="dark" />
+            <p className="text-sm text-white/80 leading-relaxed mt-4 max-w-xs">
               Blockchain-powered e-waste tracking for Liberia. Making accountability verifiable, one device at a time.
             </p>
+            <Link
+              to="/stakeholders/request-access"
+              className="inline-flex items-center gap-2 h-11 px-5 mt-6 rounded-lg bg-white text-brand text-sm font-semibold hover:bg-brand-tint transition-colors whitespace-nowrap"
+            >
+              Request access <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 flex-1">
+
+          {/* Link columns */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:contents">
             {cols.map(col => (
-              <div key={col.title}>
-                <p className="text-[10px] font-bold tracking-widest text-[#6b6b68] uppercase mb-4">{col.title}</p>
+              <div key={col.title} className="lg:border-l lg:border-white/15 lg:px-7 xl:px-9">
+                <p className="font-display text-[15px] font-semibold text-white mb-4">{col.title}</p>
                 <ul className="space-y-2.5">
                   {col.links.map(l => (
                     <li key={l.label}>
-                      {l.href.startsWith('/') && !l.href.startsWith('/#') ? (
-                        <Link to={l.href} className="text-sm text-[#9b9b98] hover:text-white transition-colors">
-                          {l.label}
-                        </Link>
-                      ) : (
-                        <a href={l.href} className="text-sm text-[#9b9b98] hover:text-white transition-colors">
-                          {l.label}
-                        </a>
-                      )}
+                      <Link to={l.href} className="text-sm text-white/75 hover:text-white transition-colors lg:whitespace-nowrap">
+                        {l.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -80,9 +82,12 @@ export function LandingFooter() {
             ))}
           </div>
         </div>
-        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-[#6b6b68]">© 2026 EcoLedger Foundation · Liberia, West Africa · Built for the SDGs</p>
-          <p className="text-xs text-[#6b6b68]">Sepolia Testnet · EcoToken 0xffEA…1B4 · EcoLedger 0xb4Fa…2E</p>
+
+        <div className="border-t border-white/15 mt-12 pt-6 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <p className="text-xs text-white/75">© 2026 EcoLedger Foundation · Liberia, West Africa · Built for the SDGs</p>
+          <Link to="/block-explorer#ledger" className="text-xs text-white/60 hover:text-white md:border-l md:border-white/15 md:pl-6 transition-colors">
+            Live on Ethereum Sepolia · View the public ledger →
+          </Link>
         </div>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
+import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 const ROLE_META: Record<UserRole, { label: string; description: string; path: string }> = {
   consumer:     { label: 'Consumer',         description: 'Track devices you own',             path: '/consumer' },
@@ -89,30 +90,21 @@ export function RoleSelectPage() {
   const displayName = profile?.full_name ?? profile?.email ?? 'Unknown user'
 
   return (
-    <div className="min-h-screen" style={{ background: '#fafaf7' }}>
+    <div className="min-h-screen" style={{ background: '#FFFFFF' }}>
       {/* Header */}
-      <header className="border-b border-border px-6 py-4 flex items-center justify-between bg-white">
+      <header className="border-b border-brand-line px-6 py-4 flex items-center justify-between bg-white">
         <div className="flex items-center gap-2.5">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: '#0f1410' }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="#fafaf7" strokeWidth={1.5}>
-              <rect x="3" y="3" width="18" height="18" rx="3" />
-              <circle cx="15" cy="9" r="2" fill="#2f6b3a" stroke="none" />
-            </svg>
-          </div>
           <div>
-            <p className="font-medium text-sm" style={{ color: '#0f1410' }}>EcoLedger</p>
-            <p className="text-[10px] tracking-widest uppercase text-muted-foreground">Liberia</p>
+            <EcoLedgerLogo />
+            <p className="text-[10px] tracking-widest uppercase text-brand-muted mt-1">Liberia</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 text-sm text-brand-muted">
           <span className="hidden sm:block">{displayName}</span>
           <button
             type="button"
             onClick={signOut}
-            className="text-xs hover:text-foreground transition-colors border border-border rounded-md px-3 py-1.5"
+            className="text-xs hover:text-brand-ink transition-colors border border-brand-line rounded-md px-3 py-1.5"
           >
             Sign out
           </button>
@@ -121,14 +113,14 @@ export function RoleSelectPage() {
 
       <div className="max-w-2xl mx-auto px-6 py-12">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <p className="text-xs text-muted-foreground tracking-widest uppercase mb-1">Identity verified</p>
+          <p className="text-xs text-brand-muted tracking-widest uppercase mb-1">Identity verified</p>
           <h1
             className="text-3xl mb-2"
-            style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500, color: '#0f1410' }}
+            style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, color: '#063921' }}
           >
             Continue as...
           </h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-brand-muted text-sm">
             Select the stakeholder workspace you want to enter.
           </p>
         </motion.div>
@@ -136,7 +128,7 @@ export function RoleSelectPage() {
         <div className="mt-8">
           {loadingRoles ? (
             <div className="flex items-center justify-center py-16">
-              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              <Loader2 className="w-5 h-5 animate-spin text-brand-muted" />
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -151,16 +143,16 @@ export function RoleSelectPage() {
                     transition={{ delay: i * 0.07 }}
                     onClick={() => handleSelect(role)}
                     disabled={!!selecting}
-                    className="text-left p-5 border border-border rounded-xl bg-white hover:border-eco-700 hover:shadow-sm transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="text-left p-5 border border-brand-line rounded-xl bg-white hover:border-brand hover:shadow-sm transition-all group disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <span className="text-muted-foreground group-hover:text-eco-700 transition-colors">
+                      <span className="text-brand-muted group-hover:text-brand transition-colors">
                         {ROLE_ICONS[role]}
                       </span>
-                      {isSelecting && <Loader2 className="w-4 h-4 animate-spin text-eco-700" />}
+                      {isSelecting && <Loader2 className="w-4 h-4 animate-spin text-brand" />}
                     </div>
-                    <p className="font-medium text-sm text-foreground">{meta.label}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{meta.description}</p>
+                    <p className="font-medium text-sm text-brand-ink">{meta.label}</p>
+                    <p className="text-xs text-brand-muted mt-0.5">{meta.description}</p>
                   </motion.button>
                 )
               })}
@@ -168,9 +160,9 @@ export function RoleSelectPage() {
           )}
         </div>
 
-        <p className="text-xs text-center text-muted-foreground mt-10">
+        <p className="text-xs text-center text-brand-muted mt-10">
           Don't see the right role?{' '}
-          <a href="mailto:support@liberiaecoledger.com" className="hover:underline" style={{ color: '#2f6b3a' }}>
+          <a href="mailto:support@liberiaecoledger.com" className="hover:underline" style={{ color: '#8FD3A8' }}>
             Contact support
           </a>
         </p>
