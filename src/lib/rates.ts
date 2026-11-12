@@ -5,6 +5,7 @@ import type { PlatformRate } from '@/types/database'
 /** Fallbacks mirror the seed values in 20261113_manufacturer_imei_registry_and_rates.sql */
 export const DEFAULT_RATES: Record<string, number> = {
   credits_registration: 10,
+  credits_registration_other: 10,
   credits_transfer:     5,
   lrd_per_credit:       150,
   price_gold:           7500,

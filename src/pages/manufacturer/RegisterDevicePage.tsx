@@ -86,6 +86,15 @@ export function RegisterDevicePage() {
   const imeiOk = isLaptop ? (form.imei === '' || isValidImei(form.imei)) : isValidImei(form.imei)
   const serialOk = !isLaptop || form.serial_number.trim().length >= 4
   const isValid = !!(form.brand.trim() && form.model.trim() && form.category && imeiOk && serialOk)
+  // Tell the user exactly why the Register button is disabled
+  const missing = [
+    !form.brand.trim() && 'brand',
+    !form.model.trim() && 'model',
+    !form.category && 'category (Smartphone or Laptop)',
+    form.category && !isLaptop && form.imei.length < 15 && `IMEI (${form.imei.length}/15 digits)`,
+    form.category && form.imei.length === 15 && !imeiOk && 'a valid IMEI — the last (check) digit does not match',
+    isLaptop && !serialOk && 'serial number (at least 4 characters)',
+  ].filter(Boolean) as string[]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -296,7 +305,9 @@ export function RegisterDevicePage() {
               />
               <p className={`text-[11px] ${form.imei.length === 15 && !imeiOk ? 'text-red-600' : 'text-muted-foreground'}`}>
                 {form.imei.length === 15 && !imeiOk
-                  ? 'Invalid check digit — re-check the IMEI.'
+                  ? 'Invalid check digit — re-check the IMEI (dial *#06# on the phone or read it from the box).'
+                  : form.imei.length > 0 && form.imei.length < 15
+                    ? `${form.imei.length}/15 digits`
                   : isLaptop
                     ? 'Only if the laptop has a mobile-data modem. Consumers can verify by serial number instead.'
                     : 'Unique per unit. Consumers verify this number when they register the device.'}
@@ -395,6 +406,12 @@ export function RegisterDevicePage() {
             />
           </label>
         </motion.div>
+
+        {missing.length > 0 && (
+          <p className="text-xs text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2.5" role="status">
+            <span className="font-semibold text-foreground">To register, add: </span>{missing.join(' · ')}
+          </p>
+        )}
 
         <div className="flex gap-3">
           <button
