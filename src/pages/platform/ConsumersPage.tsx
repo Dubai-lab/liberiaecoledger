@@ -23,7 +23,7 @@ const features = [
   {
     icon: '💰',
     title: 'Earn EcoCredits',
-    body: 'Every device you register and every transfer earns EcoCredits, and every verified disposal earns between +200 and +500 EC — automatically, the moment the recycler confirms it.',
+    body: 'Every device you register and every transfer earns EcoCredits, and every verified disposal earns EcoCredits worth the market value of the materials recovered, at current prices set by the platform — automatically, the moment the recycler confirms it.',
   },
   {
     icon: '🎁',
@@ -82,7 +82,7 @@ export function ConsumersPage() {
         <div className="max-w-content mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
           <p className="text-white font-bold text-lg">The consumer never pays. Every credit is funded by manufacturer EPR fees.</p>
           <div className="flex gap-6 flex-shrink-0">
-            {[`+${Math.round(rates.credits_registration)} EC per register`, `+${Math.round(rates.credits_transfer)} EC per transfer`, '+200–500 EC per disposal'].map(s => (
+            {[`+${Math.round(rates.credits_registration)} EC per register`, `+${Math.round(rates.credits_transfer)} EC per transfer`, 'Material value per disposal'].map(s => (
               <div key={s} className="text-center">
                 <p className="text-[10px] font-bold tracking-widest text-[#8FD3A8]">{s}</p>
               </div>

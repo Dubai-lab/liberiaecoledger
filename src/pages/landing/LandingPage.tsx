@@ -407,7 +407,7 @@ function EcoCreditsSection({ stats }: { stats: LandingStats }) {
             Every properly disposed device earns the owner EcoCredits — redeemable for mobile airtime, supermarket vouchers, cash via Orange Money / MTN MoMo, and partner payments. The manufacturer EPR fee, not user expenses, finances the reward pool. The consumer never spends a coin.
           </p>
           <div className="flex flex-wrap gap-3">
-            {[`+${Math.round(rates.credits_registration)} PER REGISTER`, '+200–500 PER RECYCLE', `+${Math.round(rates.credits_transfer)} PER TRANSFER`].map(s => (
+            {[`+${Math.round(rates.credits_registration)} PER REGISTER`, 'MATERIAL VALUE PER RECYCLE', `+${Math.round(rates.credits_transfer)} PER TRANSFER`].map(s => (
               <span key={s} className="text-[11px] font-semibold tracking-widest bg-brand-tint border border-brand-line rounded-full px-3.5 py-2 text-brand">
                 {s}
               </span>

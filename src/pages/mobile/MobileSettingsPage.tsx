@@ -80,8 +80,9 @@ export function MobileSettingsPage() {
     if (deleteInput !== 'DELETE' || !profile) return
     setDeleting(true)
     try {
-      await supabase.from('user_roles').delete().eq('user_id', profile.id)
-      await supabase.from('profiles').delete().eq('id', profile.id)
+      // Deletes the login; the database then removes all of this user's data
+      const { error } = await (supabase.rpc as any)('delete_my_account')
+      if (error) throw error
       await signOut()
       navigate('/mobile/login', { replace: true })
     } catch {

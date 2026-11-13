@@ -159,7 +159,7 @@ export function WhitepaperPage() {
               {[
                 { action: 'Register a device', credits: `+${Math.round(rates.credits_registration)} EC` },
                 { action: 'Transfer ownership', credits: `+${Math.round(rates.credits_transfer)} EC` },
-                { action: 'Proper disposal', credits: '+200–500 EC' },
+                { action: 'Proper disposal', credits: 'Material value' },
               ].map(r => (
                 <div key={r.action} className="bg-brand-tint rounded-xl p-4 text-center">
                   <p className="text-xl font-bold text-brand mb-1">{r.credits}</p>
