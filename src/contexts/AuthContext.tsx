@@ -5,6 +5,7 @@ import { syncPrivyToSupabase } from '@/lib/auth'
 import type { Profile, UserRole } from '@/types/database'
 
 const PRIVY_READY_TIMEOUT_MS = 8000
+const LOADING_GIVE_UP_MS = 15000
 
 interface AuthState {
   isLoading: boolean
@@ -59,6 +60,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile: data ?? null,
         activeRole: data?.active_role ?? 'consumer',
       })
+    } catch (err) {
+      // Never leave the app stuck on the loading screen
+      console.error('[useAuth] loadProfile failed:', err)
+      setState({ isLoading: false, isAuthenticated: false, profile: null, activeRole: null })
     } finally {
       profileFetching.current = false
     }
@@ -72,6 +77,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, PRIVY_READY_TIMEOUT_MS)
     return () => clearTimeout(timer)
   }, [ready, loadProfile])
+
+  // Safety net: if Privy/Supabase hang (common on first launch of the installed
+  // app on a slow network), stop waiting and continue with whatever session exists.
+  useEffect(() => {
+    if (!state.isLoading) return
+    const timer = setTimeout(() => {
+      profileFetching.current = false
+      loadProfile()
+    }, LOADING_GIVE_UP_MS)
+    return () => clearTimeout(timer)
+  }, [state.isLoading, loadProfile])
 
   // React to Privy auth state changes
   useEffect(() => {

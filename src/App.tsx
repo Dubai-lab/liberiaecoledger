@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { useAuth } from '@/hooks/useAuth'
 import { AuthLayout } from '@/layouts/AuthLayout'
@@ -9,6 +10,7 @@ import { RoleSelectPage } from '@/pages/auth/RoleSelectPage'
 import { InstitutionalLoginPage } from '@/pages/auth/InstitutionalLoginPage'
 import { SetupAccountPage } from '@/pages/auth/SetupAccountPage'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
+import { SplashScreen, isStandalone } from '@/components/ui/SplashScreen'
 import { ConsumerRoutes } from '@/routes/ConsumerRoutes'
 import { ManufacturerRoutes } from '@/routes/ManufacturerRoutes'
 import { RecyclerRoutes } from '@/routes/RecyclerRoutes'
@@ -44,8 +46,20 @@ import { BoardPage } from '@/pages/stakeholders/BoardPage'
 
 export default function App() {
   const { isLoading, isAuthenticated, profile, activeRole } = useAuth()
+  const { pathname } = useLocation()
 
-  if (isLoading) return <LoadingScreen />
+  // Installed app (home screen): show the brand splash briefly on launch
+  const [standalone] = useState(isStandalone)
+  const [splashDone, setSplashDone] = useState(!standalone)
+  useEffect(() => {
+    if (!standalone) return
+    const t = setTimeout(() => setSplashDone(true), 1800)
+    return () => clearTimeout(t)
+  }, [standalone])
+
+  if (isLoading || !splashDone) {
+    return standalone || pathname.startsWith('/mobile') ? <SplashScreen /> : <LoadingScreen />
+  }
 
   // First-time invited users have no full_name — send them to account setup
   const needsSetup = isAuthenticated && profile !== null && !profile.full_name
@@ -58,7 +72,9 @@ export default function App() {
       <Route
         path="/"
         element={
-          isAuthenticated
+          standalone
+            ? <Navigate to="/mobile" replace />   // app opened from home screen → mobile app, not the website
+            : isAuthenticated
             ? <Navigate to={`/${activeRole ?? 'consumer'}`} replace />
             : <LandingPage />
         }
