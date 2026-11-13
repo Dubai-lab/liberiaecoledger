@@ -849,7 +849,7 @@ export function EPRReportsPage() {
             <p className="text-white/30 text-xs mt-1">
               Score based on {includedCount} of 5 criteria with verified data
             </p>
-            <div className="grid grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-6">
               {[
                 {
                   label: 'Quarterly change',

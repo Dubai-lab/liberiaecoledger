@@ -96,7 +96,7 @@ export function RecyclersPage() {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         {[
           { label: 'Total Facilities', value: facilities.length, color: 'text-foreground' },
           { label: 'Active',           value: activeCount,        color: 'text-eco-700' },

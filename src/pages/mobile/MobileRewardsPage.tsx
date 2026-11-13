@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { usePlatformRates } from '@/lib/rates'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
-const LRD = 150
 
 function fmt(n: number) { return new Intl.NumberFormat().format(n) }
 
@@ -22,6 +22,7 @@ interface CatalogueItem {
 }
 
 export function MobileRewardsPage() {
+  const LRD = usePlatformRates().values.lrd_per_credit
   const { profile, isLoading: authLoading } = useAuth()
   const [credits, setCredits] = useState<{ amount: number; type: string; description: string | null; created_at: string }[]>([])
   const [catalogue, setCatalogue] = useState<CatalogueItem[]>([])

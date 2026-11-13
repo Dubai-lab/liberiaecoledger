@@ -38,6 +38,27 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Phones / installed app: the page always fits the screen width —
+     no sideways scrolling, and no auto-zoom when tapping a field
+     (iOS zooms into inputs smaller than 16px). */
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  #root {
+    min-height: 100dvh;
+  }
+  @media (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+  }
+  img, svg, video, canvas {
+    max-width: 100%;
   }
 
   /* Design system: Poppins for display typography, Inter (font-sans) for everything else */

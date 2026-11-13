@@ -408,7 +408,7 @@ export function RegisterDevicePage() {
         onSubmit={handleVerify}
         className="bg-white border border-border rounded-xl p-5 space-y-3"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
           <h2 className="text-sm font-semibold text-foreground">1. Verify your device</h2>
           <span className="text-[11px] text-muted-foreground">Phones: dial *#06# for the IMEI · Laptops: serial on the label or box</span>
         </div>

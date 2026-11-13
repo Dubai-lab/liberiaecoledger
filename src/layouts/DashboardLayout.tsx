@@ -6,7 +6,10 @@ import {
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
   ChevronRight, Menu, X, LogOut, Gift, Building2, Coins,
+  PlusCircle, LayoutGrid, Map as MapIcon,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { BottomNav } from '@/components/nav/BottomNav'
 import { useAuth } from '@/hooks/useAuth'
 import type { UserRole } from '@/types/database'
 import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
@@ -62,6 +65,46 @@ const NAV: Record<UserRole, NavItem[]> = {
     { label: 'Smart Contracts',   path: '/admin/contracts',              icon: <Code2 className="w-4 h-4" /> },
     { label: 'System Settings',   path: '/admin/settings',               icon: <Settings className="w-4 h-4" /> },
     { label: 'Notifications',     path: '/admin/notifications',          icon: <Bell className="w-4 h-4" /> },
+  ],
+}
+
+/** Phone bottom bar: the 4 most used destinations per role; "More" opens the full menu. */
+const TABS: Record<UserRole, { label: string; to: string; icon: LucideIcon; end?: boolean }[]> = {
+  consumer: [
+    { label: 'Devices',  to: '/consumer',          icon: Cpu, end: true },
+    { label: 'Register', to: '/consumer/register', icon: PlusCircle },
+    { label: 'Transfer', to: '/consumer/transfer', icon: Send },
+    { label: 'Credits',  to: '/consumer/credits',  icon: Leaf },
+  ],
+  manufacturer: [
+    { label: 'Overview',  to: '/manufacturer',           icon: LayoutDashboard, end: true },
+    { label: 'Catalogue', to: '/manufacturer/catalogue', icon: Cpu },
+    { label: 'Register',  to: '/manufacturer/register',  icon: PlusCircle },
+    { label: 'Reports',   to: '/manufacturer/epr',       icon: FileText },
+  ],
+  recycler: [
+    { label: 'Hub',      to: '/recycler',          icon: LayoutDashboard, end: true },
+    { label: 'Intake',   to: '/recycler/intake',   icon: ClipboardList },
+    { label: 'Dispose',  to: '/recycler/disposal', icon: Trash2 },
+    { label: 'Received', to: '/recycler/received', icon: Recycle },
+  ],
+  regulator: [
+    { label: 'Overview', to: '/regulator',         icon: LayoutDashboard, end: true },
+    { label: 'Map',      to: '/regulator/map',     icon: MapIcon },
+    { label: 'Flags',    to: '/regulator/flags',   icon: ShieldAlert },
+    { label: 'Reports',  to: '/regulator/reports', icon: FileText },
+  ],
+  auditor: [
+    { label: 'Explorer', to: '/auditor',               icon: Search, end: true },
+    { label: 'Records',  to: '/auditor/records',       icon: CheckSquare },
+    { label: 'Detail',   to: '/auditor/transaction',   icon: BookOpen },
+    { label: 'Alerts',   to: '/auditor/notifications', icon: Bell },
+  ],
+  admin: [
+    { label: 'Overview', to: '/admin',             icon: LayoutDashboard, end: true },
+    { label: 'Users',    to: '/admin/users',       icon: Users },
+    { label: 'Invites',  to: '/admin/invitations', icon: MailPlus },
+    { label: 'Rates',    to: '/admin/rates',       icon: Coins },
   ],
 }
 
@@ -204,10 +247,19 @@ export function DashboardLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
           <Outlet />
         </main>
       </div>
+
+      {/* Phone bottom navigation */}
+      <BottomNav
+        id="dash"
+        items={[
+          ...TABS[role],
+          { label: 'More', icon: LayoutGrid, onClick: () => setMobileOpen(o => !o), active: mobileOpen },
+        ]}
+      />
     </div>
   )
 }

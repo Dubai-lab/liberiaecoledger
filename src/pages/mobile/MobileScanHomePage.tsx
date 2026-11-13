@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
+import { usePlatformRates } from '@/lib/rates'
 import { EcoLedgerLogo } from '@/components/brand/EcoLedgerLogo'
 
 function fmt(n: number) { return new Intl.NumberFormat().format(n) }
@@ -25,6 +26,7 @@ interface NearbyFacility {
 }
 
 export function MobileScanHomePage() {
+  const LRD = usePlatformRates().values.lrd_per_credit
   const { profile } = useAuth()
   const navigate = useNavigate()
   const [balance, setBalance] = useState(0)
@@ -73,7 +75,7 @@ export function MobileScanHomePage() {
         <p className="text-4xl font-bold text-white mb-0.5">
           {fmt(balance)} <span className="text-lg font-normal text-white/70">EcoCredits</span>
         </p>
-        <p className="text-xs text-white/60 mb-4">≈ LRD {fmt(balance * 150)}</p>
+        <p className="text-xs text-white/60 mb-4">≈ LRD {fmt(balance * LRD)}</p>
         <div className="flex gap-3">
           <button
             onClick={() => navigate('/mobile/rewards')}
