@@ -369,7 +369,7 @@ export function RegisterDevicePage() {
             <p className="text-xs text-muted-foreground mt-0.5">Estimated recoverable material per unit (grams). Used to calculate EcoCredits at disposal.</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {MATERIALS.map(m => (
               <div key={m.key} className="space-y-1.5">
                 <label className="text-xs font-medium tracking-widest uppercase text-muted-foreground">{m.label} ({m.unit})</label>

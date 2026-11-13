@@ -4,9 +4,9 @@ import { Leaf, Loader2, CheckCircle, Clock, XCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
+import { usePlatformRates } from '@/lib/rates'
 import type { EcoCredit, RewardCatalogueItem, Redemption } from '@/types/database'
 
-const LRD_PER_CREDIT = 150
 
 const TIERS = [
   { id: 'seedling',  label: 'SEEDLING',  min: 0,    max: 499  },
@@ -56,6 +56,7 @@ function historyLabel(c: EcoCredit): string {
 }
 
 export function EcoCreditsPage() {
+  const LRD_PER_CREDIT = usePlatformRates().values.lrd_per_credit
   const { profile } = useAuth()
   const [credits,     setCredits]     = useState<EcoCredit[]>([])
   const [catalogue,   setCatalogue]   = useState<RewardCatalogueItem[]>([])
@@ -173,10 +174,10 @@ export function EcoCreditsPage() {
         <span className="text-gray-700 font-medium">Rewards</span>
       </p>
 
-      <div className="flex gap-5 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 lg:items-start">
 
         {/* ── Left column ──────────────────────────────────────── */}
-        <div className="flex-[3] space-y-5 min-w-0">
+        <div className="w-full lg:flex-[3] space-y-5 min-w-0">
 
           {/* Hero balance card */}
           <div className="rounded-2xl p-6 relative overflow-hidden" style={{ background: '#063921' }}>
@@ -194,11 +195,11 @@ export function EcoCreditsPage() {
               <Loader2 className="w-6 h-6 animate-spin text-white/40" />
             ) : (
               <>
-                <div className="flex items-baseline gap-3 mb-1">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-1">
                   <p className="text-5xl font-bold text-white leading-none">{fmt(balance)}</p>
                   <p className="text-base text-white/50">EcoCredits · ≈ LRD {fmt(balance * LRD_PER_CREDIT)}</p>
                 </div>
-                <div className="flex gap-8 mt-5 mb-6">
+                <div className="flex flex-wrap gap-x-8 gap-y-3 mt-5 mb-6">
                   {[
                     { label: 'EARNED YTD', value: `+${fmt(ytdEarned)}`, color: '#8FD3A8' },
                     { label: 'REDEEMED',   value: `-${fmt(redeemed)}`,  color: '#f87171' },
@@ -210,7 +211,7 @@ export function EcoCreditsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
                     onClick={() => setTab('catalogue')}
@@ -267,7 +268,7 @@ export function EcoCreditsPage() {
                   <p className="text-sm text-gray-400">No catalogue items available yet.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {catalogue.map((item, i) => {
                     const outOfStock = item.stock !== null && item.stock <= 0
                     const canAfford  = balance >= item.cost_ec && !outOfStock
@@ -393,11 +394,11 @@ export function EcoCreditsPage() {
         </div>
 
         {/* ── Right column ─────────────────────────────────────── */}
-        <div className="flex-[2] space-y-5 min-w-0">
+        <div className="w-full lg:flex-[2] space-y-5 min-w-0">
 
           {/* Tier card */}
           <div className="bg-white rounded-2xl border border-gray-200 p-5">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-3">
               <h2 className="text-sm font-semibold text-gray-900">
                 Tier · {currentTier.label.charAt(0) + currentTier.label.slice(1).toLowerCase()}
               </h2>

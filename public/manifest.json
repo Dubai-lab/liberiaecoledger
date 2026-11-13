@@ -3,7 +3,7 @@
   "name": "Liberia EcoLedger",
   "short_name": "EcoLedger",
   "description": "Blockchain e-waste tracking and accountability for Liberia",
-  "start_url": "/mobile?source=pwa",
+  "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

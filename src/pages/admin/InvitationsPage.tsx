@@ -521,7 +521,7 @@ export function InvitationsPage() {
       </section>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
         {[
           { label: 'Pending', count: pending.length, color: 'text-yellow-600', bg: 'bg-yellow-50' },
           { label: 'Accepted', count: accepted.length, color: 'text-eco-700', bg: 'bg-eco-50' },

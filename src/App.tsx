@@ -61,6 +61,13 @@ export default function App() {
     return standalone || pathname.startsWith('/mobile') ? <SplashScreen /> : <LoadingScreen />
   }
 
+  // The installed app runs the same flow as the website (sign in → choose
+  // assigned role → dashboard). Older installs that start at /mobile are
+  // sent into that flow too.
+  if (standalone && pathname.startsWith('/mobile')) {
+    return <Navigate to="/" replace />
+  }
+
   // First-time invited users have no full_name — send them to account setup
   const needsSetup = isAuthenticated && profile !== null && !profile.full_name
 
@@ -73,7 +80,8 @@ export default function App() {
         path="/"
         element={
           standalone
-            ? <Navigate to="/mobile" replace />   // app opened from home screen → mobile app, not the website
+            // App opened from the home screen → sign in, or pick a role if already signed in
+            ? <Navigate to={isAuthenticated ? (needsSetup ? '/setup-account' : '/role-select') : '/login'} replace />
             : isAuthenticated
             ? <Navigate to={`/${activeRole ?? 'consumer'}`} replace />
             : <LandingPage />

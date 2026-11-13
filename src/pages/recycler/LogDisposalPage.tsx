@@ -304,7 +304,7 @@ export function LogDisposalPage() {
               Pre-filled from the device record. Adjust to actual recovered weights.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {[
               { k: 'goldG', label: 'Gold', rate: creditsPerGram(rates, 'gold') },
               { k: 'copperG', label: 'Copper', rate: creditsPerGram(rates, 'copper') },
