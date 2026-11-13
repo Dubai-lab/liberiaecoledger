@@ -28,7 +28,7 @@ createRoot(document.getElementById('root')!).render(
         appearance: {
           theme: 'light',
           accentColor: '#083D24',
-          logo: 'https://liberiaecoledger.com/app-icon-192.png',
+          logo: `${window.location.origin}/icons/icon-192.png`,
         },
         loginMethods: ['email', 'wallet'],
         embeddedWallets: {
@@ -76,3 +76,10 @@ createRoot(document.getElementById('root')!).render(
     </PrivyProvider>
   </StrictMode>,
 )
+
+// Service worker: makes the app installable and lets it launch from the home screen
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => console.warn('[pwa] service worker:', err))
+  })
+}

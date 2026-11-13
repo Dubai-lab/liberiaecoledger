@@ -1,5 +1,6 @@
 import { LandingNav } from '@/components/landing/LandingNav'
 import { LandingFooter } from '@/components/landing/LandingFooter'
+import { usePlatformRates } from '@/lib/rates'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export function TermsOfServicePage() {
+  const { values: rates } = usePlatformRates()
   return (
     <div className="min-h-screen bg-white">
       <LandingNav alwaysOpaque />
@@ -57,7 +59,7 @@ export function TermsOfServicePage() {
         </Section>
 
         <Section title="5. EcoCredits">
-          <p>EcoCredits are platform-issued reward points tied to verified device disposals. They are not currency, securities, or financial instruments. Their redeemable value (approximately LRD 150 per EcoCredit) is indicative only and may change.</p>
+          <p>EcoCredits are platform-issued reward points tied to verified device disposals. They are not currency, securities, or financial instruments. Their redeemable value (approximately LRD {new Intl.NumberFormat().format(rates.lrd_per_credit)} per EcoCredit, as currently set by the platform) is indicative only and may change.</p>
           <p>EcoCredits may not be transferred between accounts, sold, or exchanged for cash outside of the Platform's approved redemption partners. Abuse of the reward system — including falsified disposal events — will result in credit reversal and account termination.</p>
         </Section>
 
