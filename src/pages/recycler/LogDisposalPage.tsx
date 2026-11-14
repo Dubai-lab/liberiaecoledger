@@ -110,7 +110,7 @@ export function LogDisposalPage() {
         const result = await uploadToIPFS(file, {
           name: `evidence-${form.deviceId}-${Date.now()}`,
           keyvalues: { recycler: profile.id, facility: facility.id, device: form.deviceId },
-        })
+        }, 'evidence')
         evidenceUrls.push(result.url)
       }
 
