@@ -61,6 +61,12 @@
     max-width: 100%;
   }
 
+  /* QR scanner sweep line */
+  @keyframes scanline {
+    0%, 100% { top: 8%; }
+    50%      { top: 92%; }
+  }
+
   /* Design system: Poppins for display typography, Inter (font-sans) for everything else */
   h1, h2, h3, h4 {
     @apply font-display;

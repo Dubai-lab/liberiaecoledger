@@ -3,6 +3,7 @@ import { MyDevicesPage } from '@/pages/consumer/MyDevicesPage'
 import { RegisterDevicePage } from '@/pages/consumer/RegisterDevicePage'
 import { TransferDevicePage } from '@/pages/consumer/TransferDevicePage'
 import { EcoCreditsPage } from '@/pages/consumer/EcoCreditsPage'
+import { ScanDevicePage } from '@/pages/shared/ScanDevicePage'
 import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 import { DeviceDetailPage } from '@/pages/consumer/DeviceDetailPage'
 
@@ -11,6 +12,7 @@ export function ConsumerRoutes() {
     <Routes>
       <Route index element={<MyDevicesPage />} />
       <Route path="devices/:id" element={<DeviceDetailPage />} />
+      <Route path="scan" element={<ScanDevicePage />} />
       <Route path="register" element={<RegisterDevicePage />} />
       <Route path="transfer" element={<TransferDevicePage />} />
       <Route path="credits" element={<EcoCreditsPage />} />
