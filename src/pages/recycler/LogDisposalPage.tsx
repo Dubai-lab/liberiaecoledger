@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, Upload, Loader2, Leaf } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -20,6 +20,7 @@ const DISPOSAL_TYPES = [
 export function LogDisposalPage() {
   const { profile } = useAuth()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
   // Material prices are set by admins (Admin → Rates & Prices) and fluctuate with the market
   const { values: rates } = usePlatformRates()
   const [devices, setDevices] = useState<Device[]>([])
@@ -54,8 +55,16 @@ export function LogDisposalPage() {
   }, [profile])
 
   // Auto-populate material fields when device is selected
-  const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = e.target.value
+  const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => selectDevice(e.target.value)
+
+  // Arriving from the QR scanner (?device=<id>) pre-selects that device
+  useEffect(() => {
+    const pre = params.get('device')
+    if (pre && devices.some(d => d.id === pre)) selectDevice(pre)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [devices])
+
+  function selectDevice(id: string) {
     const dev = devices.find(d => d.id === id)
     setForm(p => ({
       ...p,

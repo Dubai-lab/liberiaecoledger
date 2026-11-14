@@ -3,6 +3,7 @@ import { NationalOverviewPage } from '@/pages/regulator/NationalOverviewPage'
 import { FlaggedCasesPage } from '@/pages/regulator/FlaggedCasesPage'
 import { ComplianceMapPage } from '@/pages/regulator/ComplianceMapPage'
 import { ReportsPage } from '@/pages/regulator/ReportsPage'
+import { ScanDevicePage } from '@/pages/shared/ScanDevicePage'
 import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 import { FlagCaseDetailPage } from '@/pages/regulator/FlagCaseDetailPage'
 import { RegulatorRecyclersPage } from '@/pages/regulator/RegulatorRecyclersPage'
@@ -12,6 +13,7 @@ export function RegulatorRoutes() {
   return (
     <Routes>
       <Route index element={<NationalOverviewPage />} />
+      <Route path="scan" element={<ScanDevicePage />} />
       <Route path="map" element={<ComplianceMapPage />} />
       <Route path="recyclers" element={<RegulatorRecyclersPage />} />
       <Route path="manufacturers" element={<RegulatorManufacturersPage />} />

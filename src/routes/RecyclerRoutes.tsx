@@ -5,12 +5,14 @@ import { LogDisposalPage } from '@/pages/recycler/LogDisposalPage'
 import { DevicesReceivedPage } from '@/pages/recycler/DevicesReceivedPage'
 import { DisposalDetailPage } from '@/pages/recycler/DisposalDetailPage'
 import { FacilityProfilePage } from '@/pages/recycler/FacilityProfilePage'
+import { ScanDevicePage } from '@/pages/shared/ScanDevicePage'
 import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 
 export function RecyclerRoutes() {
   return (
     <Routes>
       <Route index element={<HubOverviewPage />} />
+      <Route path="scan" element={<ScanDevicePage />} />
       <Route path="intake" element={<IntakeQueuePage />} />
       <Route path="disposal" element={<LogDisposalPage />} />
       <Route path="received" element={<DevicesReceivedPage />} />

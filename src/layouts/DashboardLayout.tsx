@@ -6,7 +6,7 @@ import {
   BarChart3, Recycle, ClipboardList, Trash2, MapPin, ShieldAlert,
   FileText, Search, CheckSquare, Users, MailPlus, Code2, Settings,
   ChevronRight, Menu, X, LogOut, Gift, Building2, Coins,
-  PlusCircle, LayoutGrid, Map as MapIcon,
+  PlusCircle, LayoutGrid, Map as MapIcon, ScanLine,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { BottomNav } from '@/components/nav/BottomNav'
@@ -20,6 +20,7 @@ const NAV: Record<UserRole, NavItem[]> = {
   consumer: [
     { label: 'My Devices',       path: '/consumer',          icon: <Cpu className="w-4 h-4" /> },
     { label: 'Register Device',  path: '/consumer/register', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Scan Device',      path: '/consumer/scan',     icon: <ScanLine className="w-4 h-4" /> },
     { label: 'Transfer Device',  path: '/consumer/transfer', icon: <Send className="w-4 h-4" /> },
     { label: 'EcoCredits',       path: '/consumer/credits',  icon: <Leaf className="w-4 h-4" /> },
     { label: 'Notifications',    path: '/consumer/notifications', icon: <Bell className="w-4 h-4" /> },
@@ -34,6 +35,7 @@ const NAV: Record<UserRole, NavItem[]> = {
   ],
   recycler: [
     { label: 'Hub Overview',     path: '/recycler',                      icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Scan Device',      path: '/recycler/scan',                 icon: <ScanLine className="w-4 h-4" /> },
     { label: 'Intake Queue',     path: '/recycler/intake',               icon: <ClipboardList className="w-4 h-4" /> },
     { label: 'Log Disposal',     path: '/recycler/disposal',             icon: <Trash2 className="w-4 h-4" /> },
     { label: 'Devices Received', path: '/recycler/received',             icon: <Recycle className="w-4 h-4" /> },
@@ -42,6 +44,7 @@ const NAV: Record<UserRole, NavItem[]> = {
   ],
   regulator: [
     { label: 'National Overview', path: '/regulator',                    icon: <LayoutDashboard className="w-4 h-4" /> },
+    { label: 'Scan Device',       path: '/regulator/scan',               icon: <ScanLine className="w-4 h-4" /> },
     { label: 'Compliance Map',    path: '/regulator/map',                icon: <MapPin className="w-4 h-4" /> },
     { label: 'Recyclers',         path: '/regulator/recyclers',          icon: <Recycle className="w-4 h-4" /> },
     { label: 'Manufacturers',     path: '/regulator/manufacturers',      icon: <Building2 className="w-4 h-4" /> },
@@ -73,7 +76,7 @@ const TABS: Record<UserRole, { label: string; to: string; icon: LucideIcon; end?
   consumer: [
     { label: 'Devices',  to: '/consumer',          icon: Cpu, end: true },
     { label: 'Register', to: '/consumer/register', icon: PlusCircle },
-    { label: 'Transfer', to: '/consumer/transfer', icon: Send },
+    { label: 'Scan',     to: '/consumer/scan',     icon: ScanLine },
     { label: 'Credits',  to: '/consumer/credits',  icon: Leaf },
   ],
   manufacturer: [
@@ -85,13 +88,13 @@ const TABS: Record<UserRole, { label: string; to: string; icon: LucideIcon; end?
   recycler: [
     { label: 'Hub',      to: '/recycler',          icon: LayoutDashboard, end: true },
     { label: 'Intake',   to: '/recycler/intake',   icon: ClipboardList },
+    { label: 'Scan',     to: '/recycler/scan',     icon: ScanLine },
     { label: 'Dispose',  to: '/recycler/disposal', icon: Trash2 },
-    { label: 'Received', to: '/recycler/received', icon: Recycle },
   ],
   regulator: [
     { label: 'Overview', to: '/regulator',         icon: LayoutDashboard, end: true },
-    { label: 'Map',      to: '/regulator/map',     icon: MapIcon },
     { label: 'Flags',    to: '/regulator/flags',   icon: ShieldAlert },
+    { label: 'Scan',     to: '/regulator/scan',    icon: ScanLine },
     { label: 'Reports',  to: '/regulator/reports', icon: FileText },
   ],
   auditor: [
