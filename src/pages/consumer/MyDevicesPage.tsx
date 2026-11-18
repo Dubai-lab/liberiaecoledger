@@ -1,10 +1,12 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus, Cpu, ChevronRight, Loader2, Search,
-  Send, CheckCircle, XCircle, Leaf, Recycle, ArrowRight,
+  Send, CheckCircle, XCircle, Leaf, Recycle, ArrowRight, Clock, History, Undo2,
 } from 'lucide-react'
+import { DeviceQrButton } from '@/components/device/DeviceQrButton'
+import { relayTx } from '@/lib/contracts'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
@@ -40,12 +42,22 @@ interface IncomingTransfer extends Transfer {
   senderName: string
 }
 
+/** A transfer this consumer sent: still waiting, or completed (device now owned by someone else). */
+interface OutgoingTransfer extends Transfer {
+  device: Pick<Device, 'id' | 'brand' | 'model' | 'category' | 'serial_number'>
+  recipientName: string
+}
+
+const nameOf = (p?: { organization?: string | null; full_name?: string | null; email?: string | null }) =>
+  p?.organization ?? p?.full_name ?? p?.email ?? 'Deleted user'
+
 function fmt(n: number) { return new Intl.NumberFormat('en-LR').format(n) }
 
 export function MyDevicesPage() {
   const { profile } = useAuth()
   const [devices, setDevices]   = useState<Device[]>([])
   const [incoming, setIncoming] = useState<IncomingTransfer[]>([])
+  const [outgoing, setOutgoing] = useState<OutgoingTransfer[]>([])
   const [credits, setCredits]   = useState(0)
   const [loading, setLoading]   = useState(true)
   const [acting, setActing]     = useState<string | null>(null)
@@ -54,9 +66,10 @@ export function MyDevicesPage() {
   const load = useCallback(async () => {
     if (!profile) return
 
-    const [{ data: devData }, { data: txData }, { data: creditData }] = await Promise.all([
+    const [{ data: devData }, { data: txData }, { data: outData }, { data: creditData }] = await Promise.all([
       supabase.from('devices').select('*').eq('current_owner_id', profile.id).order('created_at', { ascending: false }),
       supabase.from('transfers').select('*').eq('to_user_id', profile.id).eq('status', 'pending').order('created_at', { ascending: false }),
+      supabase.from('transfers').select('*').eq('from_user_id', profile.id).in('status', ['pending', 'confirmed']).order('created_at', { ascending: false }),
       supabase.from('eco_credits').select('amount, type').eq('user_id', profile.id),
     ])
 
@@ -66,23 +79,25 @@ export function MyDevicesPage() {
     const redeemed = (creditData ?? []).filter(c => c.type === 'redeemed').reduce((s, c) => s + c.amount, 0)
     setCredits(earned - redeemed)
 
-    if (txData && txData.length > 0) {
-      const deviceIds  = txData.map(t => t.device_id)
-      const senderIds  = txData.map(t => t.from_user_id)
-      const [{ data: txDevices }, { data: senders }] = await Promise.all([
+    const inTx  = (txData ?? []) as Transfer[]
+    const outTx = (outData ?? []) as Transfer[]
+    const deviceIds = [...new Set([...inTx, ...outTx].map(t => t.device_id))]
+    const peopleIds = [...new Set([...inTx.map(t => t.from_user_id), ...outTx.map(t => t.to_user_id)].filter(Boolean))] as string[]
+    let devMap: Record<string, Pick<Device, 'id' | 'brand' | 'model' | 'category' | 'serial_number'>> = {}
+    let peopleMap: Record<string, { organization?: string | null; full_name?: string | null; email?: string | null }> = {}
+    if (deviceIds.length) {
+      const [{ data: txDevices }, { data: people }] = await Promise.all([
         supabase.from('devices').select('id, brand, model, category, serial_number').in('id', deviceIds),
-        supabase.from('profiles').select('id, full_name, organization, email').in('id', senderIds),
+        supabase.from('profiles').select('id, full_name, organization, email').in('id', peopleIds.length ? peopleIds : ['00000000-0000-0000-0000-000000000000']),
       ])
-      const devMap    = Object.fromEntries((txDevices ?? []).map(d => [d.id, d]))
-      const senderMap = Object.fromEntries((senders ?? []).map(s => [s.id, s]))
-      setIncoming(txData.map(t => ({
-        ...t,
-        device:     devMap[t.device_id] ?? { id: t.device_id, brand: 'Unknown', model: '', category: '', serial_number: null },
-        senderName: senderMap[t.from_user_id]?.organization ?? senderMap[t.from_user_id]?.full_name ?? senderMap[t.from_user_id]?.email ?? 'Unknown',
-      })))
-    } else {
-      setIncoming([])
+      devMap    = Object.fromEntries(((txDevices ?? []) as Device[]).map(d => [d.id, d]))
+      peopleMap = Object.fromEntries(((people ?? []) as { id: string; full_name: string | null; organization: string | null; email: string | null }[]).map(p => [p.id, p]))
     }
+    const devOf = (id: string) => devMap[id] ?? { id, brand: 'Device', model: '', category: '', serial_number: null }
+
+    setIncoming(inTx.map(t => ({ ...t, device: devOf(t.device_id), senderName: nameOf(peopleMap[t.from_user_id]) })))
+    // Completed transfers stay listed for the sender as history
+    setOutgoing(outTx.map(t => ({ ...t, device: devOf(t.device_id), recipientName: nameOf(peopleMap[t.to_user_id]) })))
 
     setLoading(false)
   }, [profile])
@@ -93,20 +108,16 @@ export function MyDevicesPage() {
     if (!profile) return
     setActing(t.id)
     try {
-      const { error: txErr } = await supabase.from('transfers').update({ status: 'confirmed' }).eq('id', t.id)
-      if (txErr) throw txErr
-      const { error: devErr } = await supabase.from('devices').update({ current_owner_id: profile.id, status: 'in_use' }).eq('id', t.device_id)
-      if (devErr) throw devErr
-      await supabase.from('device_lifecycle').insert({
-        device_id:  t.device_id,
-        event_type: 'transferred',
-        actor_id:   profile.id,
-        actor_name: profile.full_name ?? profile.email ?? 'Consumer',
-        location:   profile.city ? `${profile.city}, Liberia` : 'Liberia',
-        metadata:   { reason: t.reason, from_user_id: t.from_user_id, from_name: t.senderName, sale_price_lrd: t.sale_price_lrd, completed: true },
-      })
-      toast.success(`${t.device.brand} ${t.device.model} is now yours!`)
+      // One atomic step in the database: ownership, history, sender's credits and a new QR code
+      const { data, error } = await (supabase.rpc as any)('respond_transfer', { p_transfer_id: t.id, p_accept: true })
+      if (error) throw new Error(error.message)
+      toast.success(`${t.device.brand} ${t.device.model} is now yours. A new QR code has been issued to you.`)
       load()
+      // Anchor on-chain (non-fatal)
+      const r = data as { from_wallet?: string | null; to_wallet?: string | null }
+      if (r?.from_wallet && r?.to_wallet) {
+        relayTx({ action: 'transfer', deviceId: t.device_id, userWallet: r.from_wallet, toWallet: r.to_wallet }).catch(() => {})
+      }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to accept transfer')
     } finally {
@@ -117,10 +128,8 @@ export function MyDevicesPage() {
   const declineTransfer = async (t: IncomingTransfer) => {
     setActing(t.id)
     try {
-      await Promise.all([
-        supabase.from('transfers').update({ status: 'rejected' }).eq('id', t.id),
-        supabase.from('devices').update({ status: 'in_use' }).eq('id', t.device_id),
-      ])
+      const { error } = await (supabase.rpc as any)('respond_transfer', { p_transfer_id: t.id, p_accept: false })
+      if (error) throw new Error(error.message)
       toast.success('Transfer declined.')
       load()
     } catch (err: unknown) {
@@ -129,6 +138,23 @@ export function MyDevicesPage() {
       setActing(null)
     }
   }
+
+  const cancelTransfer = async (t: OutgoingTransfer) => {
+    setActing(t.id)
+    try {
+      const { error } = await (supabase.rpc as any)('cancel_transfer', { p_transfer_id: t.id })
+      if (error) throw new Error(error.message)
+      toast.success('Transfer cancelled. The device is back in your list.')
+      load()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to cancel transfer')
+    } finally {
+      setActing(null)
+    }
+  }
+
+  const pendingOut     = outgoing.filter(t => t.status === 'pending')
+  const transferredOut = outgoing.filter(t => t.status === 'confirmed')
 
   const activeDevices   = devices.filter(d => d.status === 'in_use').length
   const disposedDevices = devices.filter(d => d.status === 'disposed').length
@@ -149,7 +175,7 @@ export function MyDevicesPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
 
-      {/* â”€â”€ Welcome banner â”€â”€ */}
+      {/* ── Welcome banner ── */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs text-muted-foreground tracking-widest uppercase mb-0.5">Consumer</p>
@@ -168,7 +194,7 @@ export function MyDevicesPage() {
         </Link>
       </div>
 
-      {/* â”€â”€ Stats row â”€â”€ */}
+      {/* ── Stats row ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0 }}
           className="bg-white border border-border rounded-xl p-4">
@@ -203,7 +229,7 @@ export function MyDevicesPage() {
         </motion.div>
       </div>
 
-      {/* â”€â”€ Quick actions â”€â”€ */}
+      {/* ── Quick actions ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: 'Transfer Device',  desc: 'Send to another user',          path: '/consumer/transfer',      icon: <Send className="w-4 h-4" /> },
@@ -222,7 +248,7 @@ export function MyDevicesPage() {
         ))}
       </div>
 
-      {/* â”€â”€ Incoming transfers â”€â”€ */}
+      {/* ── Incoming transfers ── */}
       <AnimatePresence>
         {incoming.length > 0 && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
@@ -245,11 +271,11 @@ export function MyDevicesPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{t.device.brand} {t.device.model}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {t.device.category}{t.device.serial_number && ` Â· SN: ${t.device.serial_number}`}
+                        {t.device.category}{t.device.serial_number && ` · SN: ${t.device.serial_number}`}
                       </p>
                       <p className="text-xs text-blue-700 mt-1">
-                        From <strong>{t.senderName}</strong> Â· {REASON_LABEL[t.reason]}
-                        {t.sale_price_lrd ? ` Â· LRD ${t.sale_price_lrd.toLocaleString()}` : ''}
+                        From <strong>{t.senderName}</strong> · {REASON_LABEL[t.reason]}
+                        {t.sale_price_lrd ? ` · LRD ${t.sale_price_lrd.toLocaleString()}` : ''}
                       </p>
                       {t.condition_notes && (
                         <p className="text-xs text-muted-foreground mt-0.5 italic">"{t.condition_notes}"</p>
@@ -274,7 +300,35 @@ export function MyDevicesPage() {
         )}
       </AnimatePresence>
 
-      {/* â”€â”€ Device list â”€â”€ */}
+      {/* ── Outgoing transfers waiting for the recipient ── */}
+      {pendingOut.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="w-4 h-4 text-amber-600" />
+            <h2 className="text-sm font-semibold">Waiting for acceptance</h2>
+          </div>
+          <div className="space-y-2">
+            {pendingOut.map(t => (
+              <div key={t.id} className="flex flex-col sm:flex-row sm:items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">{t.device.brand} {t.device.model}</p>
+                  <p className="text-xs text-amber-800 mt-0.5">
+                    Sent to <strong>{t.recipientName}</strong> · {REASON_LABEL[t.reason] ?? t.reason} · {new Date(t.created_at).toLocaleDateString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">It moves to their account when they accept it from their dashboard.</p>
+                </div>
+                <button type="button" onClick={() => cancelTransfer(t)} disabled={acting === t.id}
+                  className="flex-shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white border border-amber-300 text-amber-800 disabled:opacity-50">
+                  {acting === t.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Undo2 className="w-3.5 h-3.5" />}
+                  Cancel transfer
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Device list ── */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold">My Devices</h2>
@@ -285,7 +339,7 @@ export function MyDevicesPage() {
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="Searchâ€¦"
+                placeholder="Search…"
                 className="pl-8 pr-3 py-1.5 text-xs border border-border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-eco-700/20 focus:border-eco-700 transition-colors"
               />
             </div>
@@ -303,7 +357,7 @@ export function MyDevicesPage() {
             </p>
             {!query && (
               <Link to="/consumer/register" className="text-xs font-medium hover:underline" style={{ color: '#1E5A3C' }}>
-                Register a device â†’
+                Register a device →
               </Link>
             )}
           </div>
@@ -327,13 +381,14 @@ export function MyDevicesPage() {
                     </div>
                     <p className="text-xs text-muted-foreground truncate">
                       {device.category}
-                      {device.serial_number && ` Â· SN: ${device.serial_number}`}
-                      {device.imei && ` Â· IMEI: ${device.imei}`}
+                      {device.serial_number && ` · SN: ${device.serial_number}`}
+                      {device.imei && ` · IMEI: ${device.imei}`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                    <DeviceQrButton device={device} ownerName={profile?.full_name ?? profile?.email} />
                     {device.chain_tx_hash && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-eco-50 text-eco-700 font-medium border border-eco-200">On-chain</span>
+                      <span className="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-eco-50 text-eco-700 font-medium border border-eco-200">On-chain</span>
                     )}
                     <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </div>
@@ -343,6 +398,33 @@ export function MyDevicesPage() {
           </div>
         )}
       </div>
+
+      {/* ── Devices transferred to other owners (kept as history) ── */}
+      {transferredOut.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <History className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold">Transferred to others</h2>
+          </div>
+          <div className="space-y-2">
+            {transferredOut.map(t => (
+              <Link key={t.id} to={`/consumer/devices/${t.device_id}`}
+                className="flex items-center gap-4 p-4 bg-white border border-border rounded-xl hover:border-eco-700/40 transition-all group">
+                <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
+                  <Send className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{t.device.brand} {t.device.model}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    Transferred to {t.recipientName} · {REASON_LABEL[t.reason] ?? t.reason} · {new Date(t.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium flex-shrink-0">Previous owner</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

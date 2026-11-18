@@ -157,6 +157,8 @@ export type Device = {
   receipt_url: string | null
   receipt_ipfs_hash: string | null
   chain_tx_hash: string | null
+  qr_code: string | null
+  qr_issued_at: string | null
   block_number: number | null
   co2_kg_avoided: number
   material_gold_g: number

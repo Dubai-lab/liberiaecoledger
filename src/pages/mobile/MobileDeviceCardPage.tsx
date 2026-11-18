@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Loader2 } from 'lucide-react'
@@ -39,7 +39,7 @@ const HAZARD_LABEL: Record<string, string> = {
 function eventLabel(e: LifecycleEvent) {
   const byActor = e.actor_name ? `by ${e.actor_name}` : ''
   const loc = e.location ?? ''
-  const actorAndLoc = [byActor, loc].filter(Boolean).join(' Â· ')
+  const actorAndLoc = [byActor, loc].filter(Boolean).join(' · ')
 
   switch (e.event_type) {
     case 'registered':  return { title: 'Registered', sub: actorAndLoc }

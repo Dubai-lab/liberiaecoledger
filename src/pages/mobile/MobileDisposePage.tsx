@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
@@ -199,7 +199,7 @@ export function MobileDisposePage() {
         <textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
-          placeholder="Device condition, preferred pickup time, addressâ€¦"
+          placeholder="Device condition, preferred pickup time, address…"
           rows={3}
           className="w-full bg-white rounded-2xl px-4 py-3 text-sm text-brand-ink placeholder:text-brand-sage focus:outline-none resize-none"
           style={{ border: '2px solid transparent' }}
@@ -227,7 +227,7 @@ export function MobileDisposePage() {
         className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-50 flex items-center justify-center gap-2"
         style={{ background: '#083D24' }}
       >
-        {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submittingâ€¦</> : 'Mark for Recycling'}
+        {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting…</> : 'Mark for Recycling'}
       </button>
     </div>
   )

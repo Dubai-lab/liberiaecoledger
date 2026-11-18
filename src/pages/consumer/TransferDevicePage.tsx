@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronLeft, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import { relayTx, EXPLORER } from '@/lib/contracts'
 import { useAuth } from '@/hooks/useAuth'
 import { usePlatformRates } from '@/lib/rates'
 import { toast } from 'sonner'
@@ -45,88 +44,20 @@ export function TransferDevicePage() {
     setLoading(true)
 
     try {
-      // Resolve recipient by email (fetch wallet_address too for on-chain relay)
-      const { data: recipient } = await supabase
-        .from('profiles')
-        .select('id, wallet_address')
-        .eq('email', recipientEmail.toLowerCase().trim())
-        .maybeSingle()
-
-      if (!recipient) {
-        toast.error('Recipient not found. They must be registered on EcoLedger.')
-        return
-      }
-
-      const { error } = await supabase.from('transfers').insert({
-        device_id: deviceId,
-        from_user_id: profile.id,
-        to_user_id: recipient.id,
-        reason: reason as 'resale' | 'donation' | 'gift' | 'warranty_return',
-        sale_price_lrd: price ? Number(price) : null,
-        condition_notes: notes || null,
-        evidence_urls: [],
-        status: 'pending',
+      // One secure step in the database: checks you own the device and the
+      // recipient has an account, then creates the pending transfer.
+      const { error } = await (supabase.rpc as any)('initiate_transfer', {
+        p_device_id: deviceId,
+        p_recipient_email: recipientEmail.toLowerCase().trim(),
+        p_reason: reason,
+        p_sale_price_lrd: price ? Number(price) : null,
+        p_condition_notes: notes || null,
       })
+      if (error) throw new Error(error.message)
 
-      if (error) throw error
-
-      // Mark device as awaiting transfer
-      await supabase
-        .from('devices')
-        .update({ status: 'awaiting_transfer' })
-        .eq('id', deviceId)
-
-      // Write immutable lifecycle event
-      const selectedDevice = devices.find(d => d.id === deviceId)
-      await supabase.from('device_lifecycle').insert({
-        device_id: deviceId,
-        event_type: 'transferred',
-        actor_id: profile.id,
-        actor_name: profile.full_name ?? profile.email ?? 'Consumer',
-        location: profile.city ? `${profile.city}, Liberia` : 'Liberia',
-        metadata: {
-          reason,
-          to_email: recipientEmail.toLowerCase().trim(),
-          to_user_id: recipient.id,
-          sale_price_lrd: price ? Number(price) : null,
-          condition_notes: notes || null,
-          brand: selectedDevice?.brand,
-          model: selectedDevice?.model,
-        },
-      })
-
-      // Award the admin-set transfer rate to the sender
-      if (transferCredits > 0) await supabase.from('eco_credits').insert({
-        user_id: profile.id,
-        amount: transferCredits,
-        type: 'earned',
-        source: 'transfer',
-        device_id: deviceId,
-        description: `Transferred ${selectedDevice?.brand ?? ''} ${selectedDevice?.model ?? ''} to new owner`,
-      })
-
-      toast.success(transferCredits > 0 ? `Transfer initiated — ${transferCredits} EcoCredits earned!` : 'Transfer initiated')
-
-      // Anchor on-chain via relay (non-fatal)
-      if (profile.wallet_address) {
-        toast.loading('Anchoring to Sepolia blockchain…', { id: 'relay' })
-        const toAddr = (recipient as { id: string; wallet_address?: string | null }).wallet_address
-        const result = await relayTx({
-          action: 'transfer',
-          deviceId,
-          userWallet: profile.wallet_address,
-          toWallet: toAddr ?? profile.wallet_address,
-        })
-        if (result) {
-          toast.success(
-            <span>On-chain confirmed! <a href={`${EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noreferrer" className="underline">View tx</a></span>,
-            { id: 'relay', duration: 6000 }
-          )
-        } else {
-          toast.dismiss('relay')
-        }
-      }
-
+      toast.success(transferCredits > 0
+        ? `Transfer sent. The device moves to the new owner once they accept, and you earn ${transferCredits} EcoCredits.`
+        : 'Transfer sent. The device moves to the new owner once they accept it.')
       navigate('/consumer')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Transfer failed')

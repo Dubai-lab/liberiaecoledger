@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ClipboardList, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -33,7 +33,7 @@ export function IntakeQueuePage() {
       toast.error(error.message)
     } else {
       setDevices(prev => prev.filter(d => d.id !== deviceId))
-      toast.success('Device accepted â€” it will now appear in Log Disposal')
+      toast.success('Device accepted — it will now appear in Log Disposal')
     }
     setAccepting(null)
   }
@@ -85,13 +85,13 @@ export function IntakeQueuePage() {
                   </span>
                   {d.hazard_class !== 'none' && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-50 text-red-600 font-medium">
-                      âš  {HAZARD_LABELS[d.hazard_class]}
+                      ⚠ {HAZARD_LABELS[d.hazard_class]}
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {d.serial_number && `SN: ${d.serial_number} Â· `}
-                  {d.manufacture_year && `Mfg: ${d.manufacture_year} Â· `}
+                  {d.serial_number && `SN: ${d.serial_number} · `}
+                  {d.manufacture_year && `Mfg: ${d.manufacture_year} · `}
                   Status: <span className="capitalize">{d.status.replace(/_/g, ' ')}</span>
                 </p>
               </div>
