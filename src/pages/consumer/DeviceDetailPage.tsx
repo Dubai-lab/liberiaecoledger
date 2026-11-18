@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 import { toast } from 'sonner'
 import type { Device, DeviceLifecycleEvent } from '@/types/database'
+import { DeviceQrCard } from '@/components/device/DeviceQrButton'
 
 const STATUS_COLORS: Record<string, string> = {
   in_use:             'bg-green-100 text-green-700',
@@ -61,7 +62,7 @@ export function DeviceDetailPage() {
     if (!id || !profile) return
 
     const [{ data: dev }, { data: evts }] = await Promise.all([
-      supabase.from('devices').select('*').eq('id', id).eq('current_owner_id', profile.id).maybeSingle(),
+      supabase.from('devices').select('*').eq('id', id).maybeSingle(),
       supabase.from('device_lifecycle').select('*').eq('device_id', id).order('created_at', { ascending: true }),
     ])
 
@@ -99,6 +100,8 @@ export function DeviceDetailPage() {
     setActing(false)
   }
 
+  const isOwner = !!device && device.current_owner_id === profile?.id
+
   const MATERIALS = [
     { label: 'Gold',     value: device?.material_gold_g,     color: '#b45309' },
     { label: 'Copper',   value: device?.material_copper_g,   color: '#b91c1c' },
@@ -135,11 +138,23 @@ export function DeviceDetailPage() {
               <p className="text-sm text-muted-foreground">{device.category}</p>
             </div>
           </div>
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0 ${STATUS_COLORS[device.status]}`}>
-            {STATUS_LABEL[device.status]}
-          </span>
+          {isOwner ? (
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0 ${STATUS_COLORS[device.status]}`}>
+              {STATUS_LABEL[device.status]}
+            </span>
+          ) : (
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium flex-shrink-0 bg-gray-100 text-gray-600">Previous owner</span>
+          )}
         </div>
       </div>
+
+      {isOwner ? (
+        <DeviceQrCard device={device} ownerName={profile?.full_name ?? profile?.email} />
+      ) : (
+        <div className="rounded-xl border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
+          You transferred this device to a new owner. Its history stays here for your records; the new owner holds the current QR code.
+        </div>
+      )}
 
       {/* Device info */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-xl border border-border p-6">
@@ -149,12 +164,12 @@ export function DeviceDetailPage() {
             { label: 'Brand', value: device.brand },
             { label: 'Model', value: device.model },
             { label: 'Category', value: device.category },
-            { label: 'Year', value: device.manufacture_year?.toString() ?? 'â€”' },
-            { label: 'Serial Number', value: device.serial_number ?? 'â€”' },
-            { label: 'IMEI', value: device.imei ?? 'â€”' },
+            { label: 'Year', value: device.manufacture_year?.toString() ?? '—' },
+            { label: 'Serial Number', value: device.serial_number ?? '—' },
+            { label: 'IMEI', value: device.imei ?? '—' },
             { label: 'Hazard Class', value: HAZARD_LABEL[device.hazard_class] ?? device.hazard_class },
-            { label: 'Retailer', value: device.retailer_name ?? 'â€”' },
-            { label: 'Purchase Price', value: device.purchase_price_lrd ? `LRD ${device.purchase_price_lrd.toLocaleString()}` : 'â€”' },
+            { label: 'Retailer', value: device.retailer_name ?? '—' },
+            { label: 'Purchase Price', value: device.purchase_price_lrd ? `LRD ${device.purchase_price_lrd.toLocaleString()}` : '—' },
           ].map(row => (
             <div key={row.label}>
               <p className="text-xs text-muted-foreground mb-0.5">{row.label}</p>
@@ -192,7 +207,7 @@ export function DeviceDetailPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <p className="text-sm font-medium capitalize">{evt.event_type}</p>
                       {evt.actor_name && <span className="text-xs text-muted-foreground">by {evt.actor_name}</span>}
-                      {evt.location && <span className="text-xs text-muted-foreground">Â· {evt.location}</span>}
+                      {evt.location && <span className="text-xs text-muted-foreground">· {evt.location}</span>}
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {new Date(evt.created_at).toLocaleDateString('en-LR', { dateStyle: 'medium' })}
@@ -238,7 +253,7 @@ export function DeviceDetailPage() {
       {device.receipt_ipfs_hash && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.11 }} className="bg-white rounded-xl border border-border p-6">
           <h2 className="text-sm font-semibold mb-3">Purchase Receipt (IPFS)</h2>
-          <p className="text-xs text-muted-foreground mb-2">Your receipt is permanently stored on IPFS â€” it cannot be altered or deleted.</p>
+          <p className="text-xs text-muted-foreground mb-2">Your receipt is permanently stored on IPFS — it cannot be altered or deleted.</p>
           <div className="flex items-center justify-between bg-muted rounded-lg px-3 py-2.5">
             <span className="text-xs font-mono text-muted-foreground truncate">{device.receipt_ipfs_hash}</span>
             <a
@@ -281,7 +296,7 @@ export function DeviceDetailPage() {
       )}
 
       {/* Actions */}
-      {device.status === 'in_use' && (
+      {isOwner && device.status === 'in_use' && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-white rounded-xl border border-border p-6">
           <h2 className="text-sm font-semibold mb-1">Actions</h2>
           <p className="text-xs text-muted-foreground mb-4">Manage this device's next step in its lifecycle.</p>
@@ -305,7 +320,7 @@ export function DeviceDetailPage() {
         </motion.div>
       )}
 
-      {device.status === 'ready_for_disposal' && (
+      {isOwner && device.status === 'ready_for_disposal' && (
         <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
           <div className="flex items-center gap-2 mb-1">
             <Trash2 className="w-4 h-4 text-orange-600" />

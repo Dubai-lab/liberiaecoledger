@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -88,6 +88,13 @@ export function RegisterDevicePage() {
   const [receiptFile, setReceiptFile] = useState<File | null>(null)
   const [purchase, setPurchase] = useState({ purchase_date: '', purchase_price_lrd: '', retailer_name: '' })
   const [registeredDevice, setRegisteredDevice] = useState<{ id: string; brand: string; model: string; credits: number } | null>(null)
+  // The QR code saved on the device (issued to its owner by the database)
+  const [savedQr, setSavedQr] = useState<string | null>(null)
+  useEffect(() => {
+    if (!registeredDevice) { setSavedQr(null); return }
+    supabase.from('devices').select('qr_code').eq('id', registeredDevice.id).maybeSingle()
+      .then(({ data }) => setSavedQr((data as { qr_code: string | null } | null)?.qr_code ?? null))
+  }, [registeredDevice])
 
   const looksNumeric = /^[\d\s-]+$/.test(imei.trim())
   const digits = imei.replace(/\D/g, '')
@@ -230,7 +237,7 @@ export function RegisterDevicePage() {
           <div className="bg-white border border-border rounded-2xl p-6 flex flex-col items-center gap-4">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">Device QR Code</p>
             <div className="p-3 bg-white rounded-xl border border-border">
-              <QRCode id="device-qr-svg" value={registeredDevice.id} size={200} fgColor="#102F27" bgColor="#ffffff" />
+              <QRCode id="device-qr-svg" value={savedQr ?? registeredDevice.id} size={200} fgColor="#102F27" bgColor="#ffffff" />
             </div>
             <div className="text-center">
               <p className="text-sm font-semibold">{registeredDevice.brand} {registeredDevice.model}</p>
