@@ -61,6 +61,7 @@ const NAV: Record<UserRole, NavItem[]> = {
   admin: [
     { label: 'Overview',          path: '/admin',                        icon: <LayoutDashboard className="w-4 h-4" /> },
     { label: 'Users',             path: '/admin/users',                  icon: <Users className="w-4 h-4" /> },
+    { label: 'Devices',           path: '/admin/devices',                icon: <Cpu className="w-4 h-4" /> },
     { label: 'Invitations',       path: '/admin/invitations',            icon: <MailPlus className="w-4 h-4" /> },
     { label: 'Recyclers',         path: '/admin/recyclers',              icon: <Recycle className="w-4 h-4" /> },
     { label: 'Rewards',           path: '/admin/rewards',                icon: <Gift className="w-4 h-4" /> },
@@ -106,7 +107,7 @@ const TABS: Record<UserRole, { label: string; to: string; icon: LucideIcon; end?
   admin: [
     { label: 'Overview', to: '/admin',             icon: LayoutDashboard, end: true },
     { label: 'Users',    to: '/admin/users',       icon: Users },
-    { label: 'Invites',  to: '/admin/invitations', icon: MailPlus },
+    { label: 'Devices',  to: '/admin/devices',     icon: Cpu },
     { label: 'Rates',    to: '/admin/rates',       icon: Coins },
   ],
 }

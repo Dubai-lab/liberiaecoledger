@@ -8,12 +8,14 @@ import { SystemSettingsPage } from '@/pages/admin/SystemSettingsPage'
 import { NotificationsPage } from '@/pages/shared/NotificationsPage'
 import { RewardsPage } from '@/pages/admin/RewardsPage'
 import { RatesPage } from '@/pages/admin/RatesPage'
+import { AdminDevicesPage } from '@/pages/admin/AdminDevicesPage'
 
 export function AdminRoutes() {
   return (
     <Routes>
       <Route index element={<AdminOverviewPage />} />
       <Route path="users" element={<UsersPage />} />
+      <Route path="devices" element={<AdminDevicesPage />} />
       <Route path="invitations" element={<InvitationsPage />} />
       <Route path="recyclers" element={<RecyclersPage />} />
       <Route path="contracts" element={<SmartContractsPage />} />
